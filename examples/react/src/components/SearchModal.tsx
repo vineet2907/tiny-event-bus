@@ -1,7 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { useEvent } from 'tiny-event-bus/react';
-import { useEventBus } from 'tiny-event-bus/react';
-import { bus } from '../events';
+import { useShopEvent, useShopEventBus } from '../events';
 import { useCart } from '../context/CartContext';
 import { products, type Product } from '../data/products';
 
@@ -9,12 +7,12 @@ export default function SearchModal() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const { addItem } = useCart();
-  const { emit } = useEventBus(bus);
+  const { emit } = useShopEventBus();
 
-  useEvent('shortcut:search', useCallback(() => {
+  useShopEvent('shortcut:search', useCallback(() => {
     setOpen((prev) => !prev);
     setQuery('');
-  }, []), bus);
+  }, []));
 
   useEffect(() => {
     if (!open) return;

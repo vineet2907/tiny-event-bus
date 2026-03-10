@@ -1,4 +1,5 @@
 import { createEventBus } from 'tiny-event-bus';
+import { createBusContext } from 'tiny-event-bus/react';
 
 export type ShopEvents = {
   'toast:show': { message: string; severity: 'info' | 'success' | 'error' };
@@ -6,3 +7,10 @@ export type ShopEvents = {
 };
 
 export const bus = createEventBus<ShopEvents>();
+
+export const {
+  Provider: ShopBusProvider,
+  useEvent: useShopEvent,
+  useEventBus: useShopEventBus,
+  useAnyEvent: useShopAnyEvent,
+} = createBusContext<ShopEvents>();

@@ -7,7 +7,7 @@ A live React app showing **when to use React state** vs **when to use an event b
 Clicking **"Add to Cart"** does two things simultaneously:
 
 1. **React state** → `addItem()` updates the cart → CartSidebar re-renders with the new item
-2. **Event bus** → `emit('toast:show', ...)` and `emit('analytics:track', ...)` → toast appears, analytics logs — no re-render triggered
+2. **Event bus** → `emit('toast:show', ...)` → toast appears, analytics logs — no re-render triggered
 
 Same user action, two paths, zero coupling between them.
 
@@ -17,7 +17,7 @@ Same user action, two paths, zero coupling between them.
 |----------|-----|-----|
 | Cart items, totals, quantities | React state (Context) | Data drives the UI — must trigger re-renders |
 | Toast notifications | Event bus | Ephemeral signal — producer doesn't know or care who shows it |
-| Analytics tracking | Event bus | Fire-and-forget side-effect — no UI coupling |
+| Analytics tracking | Event bus (onAny) | Catch-all listener logs every event — no explicit emit needed |
 | Search modal toggle (⌘K) | Event bus | DOM event → bus signal → any subscriber can respond |
 | Theme, user preferences | React state (Context) | Shared data consumed by many components for rendering |
 
@@ -26,25 +26,29 @@ Same user action, two paths, zero coupling between them.
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│  App                                                        │
-│                                                             │
-│  ┌──── STATE PATH ────┐     ┌──── BUS PATH ─────────────┐  │
-│  │                     │     │                            │  │
-│  │  CartContext         │     │  bus (createEventBus)      │  │
-│  │  ├─ items[]         │     │  ├─ toast:show             │  │
-│  │  ├─ addItem()       │     │  ├─ analytics:track        │  │
-│  │  └─ removeItem()    │     │  └─ shortcut:search        │  │
-│  │                     │     │                            │  │
-│  └──────┬──────────────┘     └──────┬─────────────────────┘  │
-│         │                           │                        │
-│  ┌──────▼──────────┐  ┌────────────▼──────────────────┐     │
-│  │ ProductCatalog   │  │ ToastContainer (useEvent)     │     │
-│  │ (uses BOTH)      │  │ AnalyticsLogger (useAnyEvent) │     │
-│  │ CartSidebar      │  │ SearchModal (useEvent)        │     │
-│  │ (uses BOTH)      │  │ BusInspector (bus.eventNames) │     │
-│  └──────────────────┘  └─────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────┐
+│  App                                                             │
+│                                                                  │
+│  <ShopBusProvider bus={bus}>   ← scoped context via              │
+│                                  createBusContext<ShopEvents>()  │
+│                                                                  │
+│  ┌──── STATE PATH ────┐     ┌──── BUS PATH ──────────────────┐  │
+│  │                     │     │                                │  │
+│  │  CartContext         │     │  bus (createEventBus)          │  │
+│  │  ├─ items[]         │     │  ├─ toast:show                 │  │
+│  │  ├─ addItem()       │     │  └─ shortcut:search            │  │
+│  │  └─ removeItem()    │     │                                │  │
+│  │                     │     │  Scoped hooks (no bus arg):    │  │
+│  └──────┬──────────────┘     │  useShopEvent, useShopEventBus │  │
+│         │                    │  useShopAnyEvent                │  │
+│         │                    └──────┬─────────────────────────┘  │
+│  ┌──────▼──────────┐  ┌────────────▼──────────────────────┐     │
+│  │ ProductCatalog   │  │ ToastContainer (useShopEvent)     │     │
+│  │ (uses BOTH)      │  │ AnalyticsLogger (useShopAnyEvent) │     │
+│  │ CartSidebar      │  │ SearchModal (useShopEvent)        │     │
+│  │ (uses BOTH)      │  │ BusInspector (bus prop)           │     │
+│  └──────────────────┘  └─────────────────────────────────────┘  │
+└──────────────────────────────────────────────────────────────────┘
 ```
 
 ## Component Breakdown
@@ -52,12 +56,12 @@ Same user action, two paths, zero coupling between them.
 | Component | State | Bus | Role |
 |-----------|-------|-----|------|
 | **CartContext** | ✓ | — | Manages cart items via `useState`. Pure React state. |
-| **ProductCatalog** | ✓ | ✓ | Calls `addItem()` (state) + emits `toast:show` and `analytics:track` (bus) |
-| **CartSidebar** | ✓ | ✓ | Reads cart from context (state) + emits on remove/checkout (bus) |
-| **ToastContainer** | — | ✓ | Listens to `toast:show` via `useEvent`. Pure bus consumer. |
-| **AnalyticsLogger** | — | ✓ | Listens to **all events** via `useAnyEvent`. Logs every bus event with timestamp and payload. |
-| **SearchModal** | — | ✓ | Listens to `shortcut:search` via `useEvent`. DOM → bus → UI. |
-| **BusInspector** | — | ✓ | Calls `bus.eventNames()`, `bus.listenerCount()`, `bus.hasListeners()` directly. Demonstrates introspection API. |
+| **ProductCatalog** | ✓ | ✓ | Calls `addItem()` (state) + emits `toast:show` (bus) via `useShopEventBus()` |
+| **CartSidebar** | ✓ | ✓ | Reads cart from context (state) + emits on remove/checkout (bus) via `useShopEventBus()` |
+| **ToastContainer** | — | ✓ | Listens to `toast:show` via `useShopEvent`. Pure bus consumer. |
+| **AnalyticsLogger** | — | ✓ | Listens to **all events** via `useShopAnyEvent`. Logs every bus event with timestamp and payload. |
+| **SearchModal** | — | ✓ | Listens to `shortcut:search` via `useShopEvent`. DOM → bus → UI. |
+| **BusInspector** | — | ✓ | Receives `bus` as prop. Calls `bus.eventNames()`, `bus.listenerCount()`, `bus.hasListeners()` directly. Demonstrates introspection API. |
 
 ## Setup
 
@@ -79,4 +83,4 @@ npm run example
 2. **Remove items** — same dual-path pattern
 3. **Press ⌘K / Ctrl+K** — search modal opens via bus event, add products from search
 4. **Click "Refresh" on Bus Inspector** — see live listener counts and active event names
-5. **Checkout** — toast + analytics fire, cart state unchanged (deliberate: no clear on checkout in this demo)
+5. **Checkout** — toast fires, cart state unchanged (deliberate: no clear on checkout in this demo)

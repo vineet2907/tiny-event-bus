@@ -1,10 +1,9 @@
 import { useCart } from '../context/CartContext';
-import { useEventBus } from 'tiny-event-bus/react';
-import { bus } from '../events';
+import { useShopEventBus } from '../events';
 
 export default function CartSidebar() {
   const { items, removeItem, total } = useCart();
-  const { emit } = useEventBus(bus);
+  const { emit } = useShopEventBus();
 
   function handleRemove(id: number, name: string) {
     // STATE path — updates cart UI

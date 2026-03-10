@@ -1,11 +1,10 @@
 import { useCart } from '../context/CartContext';
-import { useEventBus } from 'tiny-event-bus/react';
-import { bus } from '../events';
+import { useShopEventBus } from '../events';
 import { products, type Product } from '../data/products';
 
 export default function ProductCatalog() {
   const { addItem } = useCart();
-  const { emit } = useEventBus(bus);
+  const { emit } = useShopEventBus();
 
   function handleAdd(product: Product) {
     // STATE path — updates cart UI, triggers re-render

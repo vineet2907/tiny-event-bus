@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { bus } from '../events';
+import type { EventBus } from 'tiny-event-bus';
+import type { ShopEvents } from '../events';
 
-export default function BusInspector() {
+export default function BusInspector({ bus }: { bus: EventBus<ShopEvents> }) {
   const [, setTick] = useState(0);
   const refresh = () => setTick((t) => t + 1);
 

@@ -1,18 +1,17 @@
 import { useState, useCallback } from 'react';
-import { useAnyEvent } from 'tiny-event-bus/react';
-import { bus, type ShopEvents } from '../events';
+import { useShopAnyEvent, type ShopEvents } from '../events';
 
 type LogEntry = { timestamp: string; event: string; payload: unknown };
 
 export default function AnalyticsLogger() {
   const [logs, setLogs] = useState<LogEntry[]>([]);
 
-  useAnyEvent(useCallback((event: keyof ShopEvents, data: ShopEvents[keyof ShopEvents]) => {
+  useShopAnyEvent(useCallback((event: keyof ShopEvents, data: ShopEvents[keyof ShopEvents]) => {
     setLogs((prev) => [
       { timestamp: new Date().toLocaleTimeString(), event: String(event), payload: data },
       ...prev,
     ].slice(0, 50));
-  }, []), bus);
+  }, []));
 
   return (
     <section>

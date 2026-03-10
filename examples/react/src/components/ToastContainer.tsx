@@ -1,6 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { useEvent } from 'tiny-event-bus/react';
-import { bus, type ShopEvents } from '../events';
+import { useShopEvent, type ShopEvents } from '../events';
 
 type Toast = ShopEvents['toast:show'] & { id: number };
 
@@ -9,10 +8,10 @@ let nextId = 0;
 export default function ToastContainer() {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
-  useEvent('toast:show', useCallback((data: ShopEvents['toast:show']) => {
+  useShopEvent('toast:show', useCallback((data: ShopEvents['toast:show']) => {
     const id = nextId++;
     setToasts((prev) => [...prev, { ...data, id }]);
-  }, []), bus);
+  }, []));
 
   useEffect(() => {
     if (toasts.length === 0) return;
