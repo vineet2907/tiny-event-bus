@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import type { EventMap, EventHandler, Unsubscribe } from '../types.js';
 import type { EventBus } from '../event-bus.js';
 
-interface BusActions<T extends EventMap> {
+export interface BusActions<T extends EventMap> {
   emit: <K extends keyof T & string>(event: K, data: T[K]) => void;
   on: <K extends keyof T & string>(event: K, handler: EventHandler<T[K]>) => Unsubscribe;
   once: <K extends keyof T & string>(event: K, handler: EventHandler<T[K]>) => Unsubscribe;

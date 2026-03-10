@@ -22,6 +22,13 @@
 15. ✅ Bus-driven components — `ToastContainer`, `AnalyticsLogger`, `SearchModal`, keyboard shortcuts, toast + analytics + search all wired
 16. ✅ Bus Inspector + docs — `BusInspector` panel using introspection API, `examples/react/README.md` with decision table + architecture, update root README + MILESTONES + PROJECT_CONTEXT
 
+## v1.2 Milestones
+
+17. ✅ `onAny` catch-all listener (TDD) — 13 tests, `AnyEventHandler` type, `onAny` on `IEventBus` interface + `EventBus` class, separate `Set<AnyEventHandler>` storage, invoked in `emit` after event-specific handlers, fault isolation, snapshot safety, wired into `clear()`/`listenerCount()`, refactored tests into 3 files
+18. ✅ `useAnyEvent` hook (TDD) — 3 tests, subscribe to all events with auto-cleanup, `useRef` for handler stability, mirrors `useEvent` pattern
+19. ✅ `createBusContext` scoped instances (TDD) — 6 tests, factory returns `{ Provider, useEvent, useEventBus, useAnyEvent }`, `React.createContext` internally, throws outside Provider, isolated scopes, pre-typed hooks with no bus arg
+20. ⬜ Demo update + docs — refactor `AnalyticsLogger` to `useAnyEvent`, add scoped context usage, update README + MILESTONES + PROJECT_CONTEXT
+
 ## Test Summary
 
 | File | Tests | Covers |
@@ -32,16 +39,10 @@
 | `src/react/use-any-event.test.tsx` | 3 | subscribe to all events, cleanup on unmount, stable handler ref |
 | `src/react/use-event.test.tsx` | 4 | subscribe, cleanup, stable handler (useRef), no re-subscription |
 | `src/react/use-event-bus.test.tsx` | 4 | returns emit/on/once, emit fires, on+unsub, stable refs (useCallback) |
+| `src/react/create-bus-context.test.tsx` | 6 | Provider+useEvent, useEventBus via context, useAnyEvent via context, throws outside Provider, two-Provider isolation, cleanup on unmount |
 | `src/react/integration.test.tsx` | 8 | producer/consumer, multi-consumer, unmount isolation, event isolation, bus isolation, once+regular, cross-hook, rapid cycles |
 | `src/performance.test.ts` | 4 | emit throughput, sub/unsub throughput, many event types, clear frees refs |
-| **Total** | **64** | |
-
-## v1.2 Milestones
-
-17. ✅ `onAny` catch-all listener (TDD) — 13 tests, `AnyEventHandler` type, `onAny` on `IEventBus` interface + `EventBus` class, separate `Set<AnyEventHandler>` storage, invoked in `emit` after event-specific handlers, fault isolation, snapshot safety, wired into `clear()`/`listenerCount()`, refactored tests into 3 files
-18. ✅ `useAnyEvent` hook (TDD) — 3 tests, subscribe to all events with auto-cleanup, `useRef` for handler stability, mirrors `useEvent` pattern
-19. ⬜ `createBusContext` scoped instances (TDD) — ~6 tests, factory returns `{ Provider, useEvent, useEventBus, useAnyEvent }`, `React.createContext` internally, throws outside Provider, isolated scopes, pre-typed hooks with no bus arg
-20. ⬜ Demo update + docs — refactor `AnalyticsLogger` to `useAnyEvent`, add scoped context usage, update README + MILESTONES + PROJECT_CONTEXT
+| **Total** | **70** | |
 
 ## Future Extensions (not in v1.2)
 

@@ -68,6 +68,8 @@ tiny-event-bus/
 │   │   ├── use-any-event.test.tsx # Catch-all hook tests
 │   │   ├── use-event-bus.ts   # useEventBus(bus) → { emit, on, once }
 │   │   ├── use-event-bus.test.tsx # Convenience hook tests
+│   │   ├── create-bus-context.ts # createBusContext factory (scoped instances)
+│   │   ├── create-bus-context.test.tsx # Scoped context tests
 │   │   ├── integration.test.tsx # Multi-component integration tests
 │   │   └── index.ts           # Public API (react)
 ├── examples/
@@ -109,6 +111,7 @@ tiny-event-bus/
 - `useEvent(event, handler, bus)` — subscribes in useEffect, cleans up on unmount, uses useRef for handler to prevent stale closures and re-subscription on re-render
 - `useAnyEvent(handler, bus)` — subscribes to all events via `bus.onAny`, same useRef + useEffect pattern, auto-cleanup on unmount
 - `useEventBus(bus)` — returns `{ emit, on, once }` with stable references
+- `createBusContext<T>()` — factory returns `{ Provider, useEvent, useEventBus, useAnyEvent }`, internally wraps `React.createContext<EventBus<T> | null>`. Provider accepts `bus` prop. Returned hooks are pre-typed to `T` and read bus from context (no bus arg). Throws if used outside Provider.
 
 ## Package Entrypoints
 
@@ -124,7 +127,7 @@ tiny-event-bus/
 - **Subscriber storage**: Map + Set. O(1) subscribe/unsubscribe, Set prevents duplicate handlers.
 - **Handler in hooks**: useRef. Prevents re-subscription every render, avoids stale closures.
 - **Global singleton**: consumer creates it, not the library. Library exports class + factory only.
-- **Scope**: global only in v1. Scoped instances trivially addable later via same createEventBus factory.
+- **Scope**: v1 global only. v1.2 adds `createBusContext` factory for scoped React contexts backed by `createEventBus`.
 
 ## Dev Dependencies (4 total)
 
