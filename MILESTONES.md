@@ -1,6 +1,6 @@
 # Milestones
 
-## v1 Milestones
+## v0.1.0 Milestones
 
 1. ✅ Scaffold — package.json, tsconfig, vitest config, folders, README with full vision and TODOs, example skeleton
 2. ✅ Core types — types.ts with IEventBus interface, update README
@@ -14,7 +14,7 @@
 10. ✅ Performance benchmarks — 4 tests, regression guards
 11. ✅ Build + polish — tsc build, package exports, size check, README finalized
 
-## v1.1 Milestones
+## v0.2.0 Milestones
 
 12. ✅ Introspection (TDD) — 11 tests, `hasListeners`, `listenerCount`, `eventNames` on `IEventBus` interface + `EventBus` class, empty-Set cleanup on unsubscribe, update README + docs
 13. ✅ React demo scaffold — `examples/react/` with Vite + React 19 + TS, event map, blank shell renders, `npm run example` script
@@ -22,29 +22,14 @@
 15. ✅ Bus-driven components — `ToastContainer`, `AnalyticsLogger`, `SearchModal`, keyboard shortcuts, toast + analytics + search all wired
 16. ✅ Bus Inspector + docs — `BusInspector` panel using introspection API, `examples/react/README.md` with decision table + architecture, update root README + MILESTONES + PROJECT_CONTEXT
 
-## v1.2 Milestones
+## v0.3.0 Milestones
 
 17. ✅ `onAny` catch-all listener (TDD) — 13 tests, `AnyEventHandler` type, `onAny` on `IEventBus` interface + `EventBus` class, separate `Set<AnyEventHandler>` storage, invoked in `emit` after event-specific handlers, fault isolation, snapshot safety, wired into `clear()`/`listenerCount()`, refactored tests into 3 files
 18. ✅ `useAnyEvent` hook (TDD) — 3 tests, subscribe to all events with auto-cleanup, `useRef` for handler stability, mirrors `useEvent` pattern
 19. ✅ `createBusContext` scoped instances (TDD) — 6 tests, factory returns `{ Provider, useEvent, useEventBus, useAnyEvent }`, `React.createContext` internally, throws outside Provider, isolated scopes, pre-typed hooks with no bus arg
 20. ✅ Demo update + docs — refactored `AnalyticsLogger` to `useAnyEvent` (logs all events), added `onAny`, `useAnyEvent`, `createBusContext` to README API tables, added scoped context example to README, updated demo README + MILESTONES + PROJECT_CONTEXT
 
-## Test Summary
-
-| File | Tests | Covers |
-|------|-------|--------|
-| `src/__tests__/event-bus.test.ts` | 17 | on, emit, unsubscribe, once, clear, error isolation, snapshot iteration, re-entrancy |
-| `src/__tests__/introspection.test.ts` | 11 | hasListeners, listenerCount, eventNames |
-| `src/__tests__/on-any.test.ts` | 13 | onAny subscribe, unsubscribe, multi-handler, fault isolation, clear, listenerCount, snapshot safety, ordering |
-| `src/__tests__/performance.test.ts` | 4 | emit throughput, sub/unsub throughput, many event types, clear frees refs |
-| `src/react/__tests__/use-event.test.tsx` | 4 | subscribe, cleanup, stable handler (useRef), no re-subscription |
-| `src/react/__tests__/use-event-bus.test.tsx` | 4 | returns emit/on/once, emit fires, on+unsub, stable refs (useCallback) |
-| `src/react/__tests__/use-any-event.test.tsx` | 3 | subscribe to all events, cleanup on unmount, stable handler ref |
-| `src/react/__tests__/create-bus-context.test.tsx` | 6 | Provider+useEvent, useEventBus via context, useAnyEvent via context, throws outside Provider, two-Provider isolation, cleanup on unmount |
-| `src/react/__tests__/integration.test.tsx` | 8 | producer/consumer, multi-consumer, unmount isolation, event isolation, bus isolation, once+regular, cross-hook, rapid cycles |
-| **Total** | **70** | |
-
-## Future Extensions (not in v1.2)
+## Future Extensions (not in v0.3.0)
 
 - Stress-test max event payload size a single bus instance can handle without performance degradation (large objects, arrays, binary data)
 - `off(event, handler)` as alternative to closure-based unsubscribe

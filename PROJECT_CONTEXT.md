@@ -131,18 +131,9 @@ tiny-event-bus/
 - **Global singleton**: consumer creates it, not the library. Library exports class + factory only.
 - **Scope**: v1 global only. v1.2 adds `createBusContext` factory for scoped React contexts backed by `createEventBus`.
 
-## Dev Dependencies (4 total)
-
-- `typescript` — type checking + ESM/CJS/.d.ts build
-- `vitest` — tests + type assertions
-- `jsdom` — DOM environment for React hook tests
-- `@testing-library/react` — React hook integration tests
-
-Runtime dependencies: none. Peer dependency: react >=17.
-
 ## Milestones
 
-See [MILESTONES.md](MILESTONES.md) for milestone status, test summary, and future extensions.
+See [MILESTONES.md](MILESTONES.md) for milestone status and future extensions.
 
 ## TDD Protocol
 
