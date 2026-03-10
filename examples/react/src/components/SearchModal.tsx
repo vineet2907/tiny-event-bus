@@ -28,7 +28,6 @@ export default function SearchModal() {
   function handleAdd(product: Product) {
     addItem(product);
     emit('toast:show', { message: `${product.name} added to cart!`, severity: 'success' });
-    emit('analytics:track', { action: 'add_to_cart_from_search', payload: { productId: product.id, name: product.name } });
     setOpen(false);
   }
 

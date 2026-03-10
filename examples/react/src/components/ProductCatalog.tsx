@@ -13,7 +13,6 @@ export default function ProductCatalog() {
 
     // BUS path — fire-and-forget signals, no re-render
     emit('toast:show', { message: `${product.name} added to cart!`, severity: 'success' });
-    emit('analytics:track', { action: 'add_to_cart', payload: { productId: product.id, name: product.name } });
   }
 
   return (

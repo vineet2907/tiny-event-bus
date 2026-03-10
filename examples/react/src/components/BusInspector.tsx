@@ -7,6 +7,8 @@ export default function BusInspector() {
 
   const names = bus.eventNames();
   const totalCount = bus.listenerCount();
+  const perEventCount = names.reduce((sum, name) => sum + bus.listenerCount(name), 0);
+  const anyCount = totalCount - perEventCount;
 
   return (
     <section style={{ marginTop: '2rem', padding: '1rem', background: '#f5f5f5', borderRadius: 8, fontSize: 14 }}>
@@ -30,9 +32,16 @@ export default function BusInspector() {
               <td style={{ padding: '4px 8px' }}>{bus.hasListeners(name) ? '✓' : '✗'}</td>
             </tr>
           ))}
-          {names.length === 0 && (
+          {names.length === 0 && anyCount === 0 && (
             <tr>
               <td colSpan={3} style={{ padding: '4px 8px', color: '#999' }}>No active listeners</td>
+            </tr>
+          )}
+          {anyCount > 0 && (
+            <tr style={{ borderBottom: '1px solid #eee', background: '#ede7f6' }}>
+              <td style={{ padding: '4px 8px', fontFamily: 'monospace', fontStyle: 'italic' }}>* (onAny)</td>
+              <td style={{ padding: '4px 8px' }}>{anyCount}</td>
+              <td style={{ padding: '4px 8px' }}>✓</td>
             </tr>
           )}
         </tbody>

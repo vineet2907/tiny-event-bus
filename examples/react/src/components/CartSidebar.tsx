@@ -12,12 +12,10 @@ export default function CartSidebar() {
 
     // BUS path — fire-and-forget
     emit('toast:show', { message: `${name} removed from cart`, severity: 'info' });
-    emit('analytics:track', { action: 'remove_from_cart', payload: { productId: id } });
   }
 
   function handleCheckout() {
     emit('toast:show', { message: 'Order placed! 🎉', severity: 'success' });
-    emit('analytics:track', { action: 'checkout', payload: { total, itemCount: items.length } });
   }
 
   return (

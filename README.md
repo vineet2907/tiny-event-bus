@@ -8,7 +8,9 @@ Zero-dependency, TypeScript-first event bus for React component communication.
 
 - **Type-safe** — full generic support, catch errors at compile time
 - **Zero runtime deps** — core has no dependencies at all
-- **React hooks** — `useEvent` and `useEventBus` with automatic cleanup
+- **React hooks** — `useEvent`, `useEventBus`, `useAnyEvent` with automatic cleanup
+- **Scoped contexts** — `createBusContext` for isolated, Provider-scoped buses
+- **Catch-all listener** — `onAny` / `useAnyEvent` to observe every event
 - **Fault-isolated** — one bad handler can't break others
 - **Tiny** — core ~450 B, with React hooks ~640 B (min+gzip)
 
@@ -59,6 +61,7 @@ function ToastListener() {
 | `bus.hasListeners(event)` | Returns `true` if `event` has at least one subscriber |
 | `bus.listenerCount(event?)` | Number of handlers for `event`, or total across all events if omitted |
 | `bus.eventNames()` | Array of event keys that currently have listeners |
+| `bus.onAny(handler)` | Subscribe to all events. Handler receives `(event, data)`. Returns `Unsubscribe`. |
 
 ### React Hooks
 
@@ -66,6 +69,32 @@ function ToastListener() {
 |------|-------------|
 | `useEvent(event, handler, bus)` | Subscribe with auto-cleanup on unmount. Uses `useRef` internally so handler updates never cause re-subscription. |
 | `useEventBus(bus)` | Returns `{ emit, on, once }` with stable refs via `useCallback`. Safe to pass as props or use in dependency arrays. |
+| `useAnyEvent(handler, bus)` | Subscribe to all events with auto-cleanup. Uses `useRef` for handler stability. |
+
+### Scoped Context
+
+| API | Description |
+|-----|-------------|
+| `createBusContext<T>()` | Factory — returns `{ Provider, useEvent, useEventBus, useAnyEvent }`. Hooks read bus from context (no bus arg needed). |
+| `<Provider bus={bus}>` | Provides a bus instance to descendant hooks. |
+
+```tsx
+import { createEventBus } from 'tiny-event-bus';
+import { createBusContext } from 'tiny-event-bus/react';
+
+type ChatEvents = { 'message:new': { text: string } };
+const { Provider, useEvent } = createBusContext<ChatEvents>();
+
+function ChatRoot() {
+  const bus = createEventBus<ChatEvents>();
+  return <Provider bus={bus}><ChatMessages /></Provider>;
+}
+
+function ChatMessages() {
+  useEvent('message:new', (data) => console.log(data.text)); // bus from context
+  return null;
+}
+```
 
 ## When to Use (vs React State)
 

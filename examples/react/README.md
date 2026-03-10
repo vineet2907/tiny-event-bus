@@ -40,7 +40,7 @@ Same user action, two paths, zero coupling between them.
 │         │                           │                        │
 │  ┌──────▼──────────┐  ┌────────────▼──────────────────┐     │
 │  │ ProductCatalog   │  │ ToastContainer (useEvent)     │     │
-│  │ (uses BOTH)      │  │ AnalyticsLogger (useEvent)    │     │
+│  │ (uses BOTH)      │  │ AnalyticsLogger (useAnyEvent) │     │
 │  │ CartSidebar      │  │ SearchModal (useEvent)        │     │
 │  │ (uses BOTH)      │  │ BusInspector (bus.eventNames) │     │
 │  └──────────────────┘  └─────────────────────────────────┘  │
@@ -55,7 +55,7 @@ Same user action, two paths, zero coupling between them.
 | **ProductCatalog** | ✓ | ✓ | Calls `addItem()` (state) + emits `toast:show` and `analytics:track` (bus) |
 | **CartSidebar** | ✓ | ✓ | Reads cart from context (state) + emits on remove/checkout (bus) |
 | **ToastContainer** | — | ✓ | Listens to `toast:show` via `useEvent`. Pure bus consumer. |
-| **AnalyticsLogger** | — | ✓ | Listens to `analytics:track` via `useEvent`. Pure bus consumer. |
+| **AnalyticsLogger** | — | ✓ | Listens to **all events** via `useAnyEvent`. Logs every bus event with timestamp and payload. |
 | **SearchModal** | — | ✓ | Listens to `shortcut:search` via `useEvent`. DOM → bus → UI. |
 | **BusInspector** | — | ✓ | Calls `bus.eventNames()`, `bus.listenerCount()`, `bus.hasListeners()` directly. Demonstrates introspection API. |
 
