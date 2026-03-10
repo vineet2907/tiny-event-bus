@@ -54,9 +54,11 @@ Framework-agnostic core + thin React hook layer.
 ```text
 tiny-event-bus/
 ├── src/
-│   ├── types.ts              # EventMap, EventHandler, Unsubscribe, IEventBus
+│   ├── types.ts              # EventMap, EventHandler, AnyEventHandler, Unsubscribe, IEventBus
 │   ├── event-bus.ts           # EventBus class + createEventBus factory
-│   ├── event-bus.test.ts      # Core unit tests
+│   ├── event-bus.test.ts      # Core unit tests (on, emit, unsub, once, clear, error isolation)
+│   ├── introspection.test.ts  # Introspection API tests
+│   ├── on-any.test.ts         # onAny catch-all listener tests
 │   ├── performance.test.ts    # Benchmark regression guards
 │   ├── index.ts               # Public API (core)
 │   ├── react/
@@ -95,6 +97,9 @@ tiny-event-bus/
 - `hasListeners(event)` checks `Set.size > 0` for O(1) lookup
 - `listenerCount(event?)` returns per-event or total count across all events
 - `eventNames()` returns `[...this.listeners.keys()]` — hygienic due to empty-Set cleanup
+- `onAny()` subscribes to all events via separate `Set<AnyEventHandler>`, invoked in `emit` after event-specific handlers, same try/catch + snapshot pattern
+- `clear()` clears both event-specific and `onAny` listeners; `clear(event)` only clears event-specific
+- `listenerCount()` includes `onAny` count in total; `listenerCount(event)` does not
 - No state storage, no getState, no replay by design
 
 ## React Layer
@@ -134,11 +139,12 @@ See [MILESTONES.md](MILESTONES.md) for milestone status, test summary, and futur
 ## TDD Protocol
 
 - Run `vitest --watch` continuously
-- Write failing test, implement minimum to pass, refactor
+- Write **one** failing test → implement minimum to pass → refactor → repeat. Never batch multiple failing tests at once.
 - Pause after each red-green-refactor cycle for user review before next test
 
 ## Code Style
 
+- **Update MILESTONES.md before starting implementation** — add planned milestones with ⬜ status before writing any code for a new version
 - No JSDoc or inline comments that restate what the code already says
 - Comments only for: TODOs, non-obvious "why" decisions, workarounds
 - Let type signatures, function names, and tests document intent

@@ -26,22 +26,30 @@
 
 | File | Tests | Covers |
 |------|-------|--------|
-| `src/event-bus.test.ts` | 28 | on, emit, unsubscribe, once, clear, error isolation, snapshot iteration, re-entrancy, hasListeners, listenerCount, eventNames |
+| `src/event-bus.test.ts` | 17 | on, emit, unsubscribe, once, clear, error isolation, snapshot iteration, re-entrancy |
+| `src/introspection.test.ts` | 11 | hasListeners, listenerCount, eventNames |
+| `src/on-any.test.ts` | 13 | onAny subscribe, unsubscribe, multi-handler, fault isolation, clear, listenerCount, snapshot safety, ordering |
 | `src/react/use-event.test.tsx` | 4 | subscribe, cleanup, stable handler (useRef), no re-subscription |
 | `src/react/use-event-bus.test.tsx` | 4 | returns emit/on/once, emit fires, on+unsub, stable refs (useCallback) |
 | `src/react/integration.test.tsx` | 8 | producer/consumer, multi-consumer, unmount isolation, event isolation, bus isolation, once+regular, cross-hook, rapid cycles |
 | `src/performance.test.ts` | 4 | emit throughput, sub/unsub throughput, many event types, clear frees refs |
-| **Total** | **48** | |
+| **Total** | **61** | |
 
-## Future Extensions (not in v1.1)
+## v1.2 Milestones
+
+17. ✅ `onAny` catch-all listener (TDD) — 13 tests, `AnyEventHandler` type, `onAny` on `IEventBus` interface + `EventBus` class, separate `Set<AnyEventHandler>` storage, invoked in `emit` after event-specific handlers, fault isolation, snapshot safety, wired into `clear()`/`listenerCount()`, refactored tests into 3 files
+18. ⬜ `useEventAny` hook (TDD) — ~3 tests, subscribe to all events with auto-cleanup, `useRef` for handler stability, mirrors `useEvent` pattern
+19. ⬜ `createBusContext` scoped instances (TDD) — ~6 tests, factory returns `{ Provider, useEvent, useEventBus, useEventAny }`, `React.createContext` internally, throws outside Provider, isolated scopes, pre-typed hooks with no bus arg
+20. ⬜ Demo update + docs — refactor `AnalyticsLogger` to `useEventAny`, add scoped context usage, update README + MILESTONES + PROJECT_CONTEXT
+
+## Future Extensions (not in v1.2)
 
 - Stress-test max event payload size a single bus instance can handle without performance degradation (large objects, arrays, binary data)
-- Wildcard/catch-all listener (`onAny` or `*` pattern) for logging, analytics, debugging
 - `off(event, handler)` as alternative to closure-based unsubscribe
-- Scoped instances via React Context
-- Middleware/plugins, event replay/history, priority listeners
+- Middleware/plugins
 - Debug/DevTools mode
 - Symbol event keys (non-colliding private events)
 - `useEventBus` returning `off`/`clear` for completeness
+- `onceAny` — fire catch-all handler only once then auto-unsubscribe
 
 Architecture supports all without breaking changes.

@@ -1,7 +1,8 @@
-import type { EventMap, EventHandler, Unsubscribe, IEventBus } from './types.js';
+import type { EventMap, EventHandler, AnyEventHandler, Unsubscribe, IEventBus } from './types.js';
 
 export class EventBus<T extends EventMap> implements IEventBus<T> {
   private listeners = new Map<keyof T, Set<EventHandler>>();
+  private anyListeners = new Set<AnyEventHandler<T>>();
 
   on<K extends keyof T>(event: K, handler: EventHandler<T[K]>): Unsubscribe {
     if (!this.listeners.has(event)) {
@@ -26,12 +27,20 @@ export class EventBus<T extends EventMap> implements IEventBus<T> {
 
   emit<K extends keyof T>(event: K, data: T[K]): void {
     const handlers = this.listeners.get(event);
-    if (!handlers) return;
-    for (const handler of [...handlers]) {
+    if (handlers) {
+      for (const handler of [...handlers]) {
+        try {
+          handler(data);
+        } catch {
+          // fault isolation: one bad handler must not break others
+        }
+      }
+    }
+    for (const handler of [...this.anyListeners]) {
       try {
-        handler(data);
+        handler(event, data);
       } catch {
-        // fault isolation: one bad handler must not break others
+        // fault isolation
       }
     }
   }
@@ -41,6 +50,7 @@ export class EventBus<T extends EventMap> implements IEventBus<T> {
       this.listeners.delete(event);
     } else {
       this.listeners.clear();
+      this.anyListeners.clear();
     }
   }
 
@@ -52,7 +62,7 @@ export class EventBus<T extends EventMap> implements IEventBus<T> {
     if (event !== undefined) {
       return this.listeners.get(event)?.size ?? 0;
     }
-    let total = 0;
+    let total = this.anyListeners.size;
     for (const set of this.listeners.values()) {
       total += set.size;
     }
@@ -61,6 +71,13 @@ export class EventBus<T extends EventMap> implements IEventBus<T> {
 
   eventNames(): (keyof T)[] {
     return [...this.listeners.keys()];
+  }
+
+  onAny(handler: AnyEventHandler<T>): Unsubscribe {
+    this.anyListeners.add(handler);
+    return () => {
+      this.anyListeners.delete(handler);
+    };
   }
 }
 
