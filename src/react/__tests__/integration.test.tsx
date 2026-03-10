@@ -1,9 +1,10 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent, renderHook } from '@testing-library/react';
-import { createElement } from 'react';
 import { createEventBus } from '../../event-bus.js';
 import { useEvent } from '../use-event.js';
 import { useEventBus } from '../use-event-bus.js';
+import { useAnyEvent } from '../use-any-event.js';
+import { createBusContext } from '../create-bus-context.js';
 
 type AppEvents = {
   'toast:show': string;
@@ -22,15 +23,10 @@ describe('integration', () => {
 
     function Producer() {
       const { emit } = useEventBus(bus);
-      return createElement('button', {
-        onClick: () => emit('toast:show', 'hello'),
-      }, 'Send');
+      return <button onClick={() => emit('toast:show', 'hello')}>Send</button>;
     }
 
-    render(createElement('div', null,
-      createElement(Producer),
-      createElement(Consumer),
-    ));
+    render(<div><Producer /><Consumer /></div>);
 
     fireEvent.click(screen.getByText('Send'));
 
@@ -47,11 +43,7 @@ describe('integration', () => {
     function ConsumerB() { useEvent('toast:show', handlerB, bus); return null; }
     function ConsumerC() { useEvent('toast:show', handlerC, bus); return null; }
 
-    render(createElement('div', null,
-      createElement(ConsumerA),
-      createElement(ConsumerB),
-      createElement(ConsumerC),
-    ));
+    render(<div><ConsumerA /><ConsumerB /><ConsumerC /></div>);
 
     bus.emit('toast:show', 'broadcast');
 
@@ -68,14 +60,9 @@ describe('integration', () => {
     function Stayer() { useEvent('toast:show', stayHandler, bus); return null; }
     function Leaver() { useEvent('toast:show', leaveHandler, bus); return null; }
 
-    const { rerender } = render(createElement('div', null,
-      createElement(Stayer),
-      createElement(Leaver),
-    ));
+    const { rerender } = render(<div><Stayer /><Leaver /></div>);
 
-    rerender(createElement('div', null,
-      createElement(Stayer),
-    ));
+    rerender(<div><Stayer /></div>);
 
     bus.emit('toast:show', 'after unmount');
 
@@ -91,10 +78,7 @@ describe('integration', () => {
     function ToastConsumer() { useEvent('toast:show', toastHandler, bus); return null; }
     function CounterConsumer() { useEvent('counter:increment', counterHandler, bus); return null; }
 
-    render(createElement('div', null,
-      createElement(ToastConsumer),
-      createElement(CounterConsumer),
-    ));
+    render(<div><ToastConsumer /><CounterConsumer /></div>);
 
     bus.emit('toast:show', 'hello');
 
@@ -111,10 +95,7 @@ describe('integration', () => {
     function ConsumerA() { useEvent('toast:show', handlerA, busA); return null; }
     function ConsumerB() { useEvent('toast:show', handlerB, busB); return null; }
 
-    render(createElement('div', null,
-      createElement(ConsumerA),
-      createElement(ConsumerB),
-    ));
+    render(<div><ConsumerA /><ConsumerB /></div>);
 
     busA.emit('toast:show', 'only A');
 
@@ -156,10 +137,7 @@ describe('integration', () => {
       return null;
     }
 
-    render(createElement('div', null,
-      createElement(Producer),
-      createElement(Consumer),
-    ));
+    render(<div><Producer /><Consumer /></div>);
 
     emitFromHook!('toast:show', 'from useEventBus');
 
@@ -172,15 +150,55 @@ describe('integration', () => {
 
     function Consumer() { useEvent('toast:show', handler, bus); return null; }
 
-    const { unmount, rerender } = render(createElement(Consumer));
+    const { unmount, rerender } = render(<Consumer />);
 
     for (let i = 0; i < 10; i++) {
-      rerender(createElement(Consumer));
+      rerender(<Consumer />);
     }
     unmount();
 
     bus.emit('toast:show', 'after cycles');
 
     expect(handler).not.toHaveBeenCalled();
+  });
+
+  it('useAnyEvent and useEvent both fire on the same emit', () => {
+    const bus = createEventBus<AppEvents>();
+    const specificHandler = vi.fn();
+    const anyHandler = vi.fn();
+
+    function SpecificConsumer() { useEvent('toast:show', specificHandler, bus); return null; }
+    function AnyConsumer() { useAnyEvent(anyHandler, bus); return null; }
+
+    render(<div><SpecificConsumer /><AnyConsumer /></div>);
+
+    bus.emit('toast:show', 'dual');
+
+    expect(specificHandler).toHaveBeenCalledWith('dual');
+    expect(anyHandler).toHaveBeenCalledWith('toast:show', 'dual');
+  });
+
+  it('createBusContext Provider isolates from direct-bus consumers', () => {
+    const contextBus = createEventBus<AppEvents>();
+    const directBus = createEventBus<AppEvents>();
+    const { Provider, useEvent: useCtxEvent } = createBusContext<AppEvents>();
+
+    const contextHandler = vi.fn();
+    const directHandler = vi.fn();
+
+    function ContextConsumer() { useCtxEvent('toast:show', contextHandler); return null; }
+    function DirectConsumer() { useEvent('toast:show', directHandler, directBus); return null; }
+
+    render(
+      <div>
+        <Provider bus={contextBus}><ContextConsumer /></Provider>
+        <DirectConsumer />
+      </div>
+    );
+
+    contextBus.emit('toast:show', 'from context');
+
+    expect(contextHandler).toHaveBeenCalledWith('from context');
+    expect(directHandler).not.toHaveBeenCalled();
   });
 });
