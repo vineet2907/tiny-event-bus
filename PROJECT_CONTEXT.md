@@ -56,22 +56,24 @@ tiny-event-bus/
 ├── src/
 │   ├── types.ts              # EventMap, EventHandler, AnyEventHandler, Unsubscribe, IEventBus
 │   ├── event-bus.ts           # EventBus class + createEventBus factory
-│   ├── event-bus.test.ts      # Core unit tests (on, emit, unsub, once, clear, error isolation)
-│   ├── introspection.test.ts  # Introspection API tests
-│   ├── on-any.test.ts         # onAny catch-all listener tests
-│   ├── performance.test.ts    # Benchmark regression guards
 │   ├── index.ts               # Public API (core)
+│   ├── __tests__/
+│   │   ├── event-bus.test.ts      # Core unit tests (on, emit, unsub, once, clear, error isolation)
+│   │   ├── introspection.test.ts  # Introspection API tests
+│   │   ├── on-any.test.ts         # onAny catch-all listener tests
+│   │   └── performance.test.ts    # Benchmark regression guards
 │   ├── react/
 │   │   ├── use-event.ts       # useEvent(event, handler, bus?) hook
-│   │   ├── use-event.test.tsx  # React hook tests
 │   │   ├── use-any-event.ts   # useAnyEvent(handler, bus) hook
-│   │   ├── use-any-event.test.tsx # Catch-all hook tests
 │   │   ├── use-event-bus.ts   # useEventBus(bus) → { emit, on, once }
-│   │   ├── use-event-bus.test.tsx # Convenience hook tests
 │   │   ├── create-bus-context.ts # createBusContext factory (scoped instances)
-│   │   ├── create-bus-context.test.tsx # Scoped context tests
-│   │   ├── integration.test.tsx # Multi-component integration tests
-│   │   └── index.ts           # Public API (react)
+│   │   ├── index.ts           # Public API (react)
+│   │   └── __tests__/
+│   │       ├── use-event.test.tsx       # React hook tests
+│   │       ├── use-any-event.test.tsx   # Catch-all hook tests
+│   │       ├── use-event-bus.test.tsx   # Convenience hook tests
+│   │       ├── create-bus-context.test.tsx # Scoped context tests
+│   │       └── integration.test.tsx     # Multi-component integration tests
 ├── examples/
 │   └── react/                # Shopping cart demo app (Vite + React 19)
 │       ├── src/events.ts      # Event map + shared bus instance

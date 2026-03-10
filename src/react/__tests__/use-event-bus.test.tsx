@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { renderHook } from '@testing-library/react';
-import { createEventBus } from '../event-bus.js';
-import { useEventBus } from './use-event-bus.js';
+import { createEventBus } from '../../event-bus.js';
+import { useEventBus } from '../use-event-bus.js';
 
 type TestEvents = {
   ping: void;

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { EventBus, createEventBus } from './event-bus.js';
+import { EventBus, createEventBus } from '../event-bus.js';
 
 type TestEvents = {
   ping: void;

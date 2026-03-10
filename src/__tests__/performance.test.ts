@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { createEventBus } from './event-bus.js';
+import { createEventBus } from '../event-bus.js';
 
 type PerfEvents = {
   tick: number;

@@ -33,15 +33,15 @@
 
 | File | Tests | Covers |
 |------|-------|--------|
-| `src/event-bus.test.ts` | 17 | on, emit, unsubscribe, once, clear, error isolation, snapshot iteration, re-entrancy |
-| `src/introspection.test.ts` | 11 | hasListeners, listenerCount, eventNames |
-| `src/on-any.test.ts` | 13 | onAny subscribe, unsubscribe, multi-handler, fault isolation, clear, listenerCount, snapshot safety, ordering |
-| `src/react/use-any-event.test.tsx` | 3 | subscribe to all events, cleanup on unmount, stable handler ref |
-| `src/react/use-event.test.tsx` | 4 | subscribe, cleanup, stable handler (useRef), no re-subscription |
-| `src/react/use-event-bus.test.tsx` | 4 | returns emit/on/once, emit fires, on+unsub, stable refs (useCallback) |
-| `src/react/create-bus-context.test.tsx` | 6 | Provider+useEvent, useEventBus via context, useAnyEvent via context, throws outside Provider, two-Provider isolation, cleanup on unmount |
-| `src/react/integration.test.tsx` | 8 | producer/consumer, multi-consumer, unmount isolation, event isolation, bus isolation, once+regular, cross-hook, rapid cycles |
-| `src/performance.test.ts` | 4 | emit throughput, sub/unsub throughput, many event types, clear frees refs |
+| `src/__tests__/event-bus.test.ts` | 17 | on, emit, unsubscribe, once, clear, error isolation, snapshot iteration, re-entrancy |
+| `src/__tests__/introspection.test.ts` | 11 | hasListeners, listenerCount, eventNames |
+| `src/__tests__/on-any.test.ts` | 13 | onAny subscribe, unsubscribe, multi-handler, fault isolation, clear, listenerCount, snapshot safety, ordering |
+| `src/__tests__/performance.test.ts` | 4 | emit throughput, sub/unsub throughput, many event types, clear frees refs |
+| `src/react/__tests__/use-event.test.tsx` | 4 | subscribe, cleanup, stable handler (useRef), no re-subscription |
+| `src/react/__tests__/use-event-bus.test.tsx` | 4 | returns emit/on/once, emit fires, on+unsub, stable refs (useCallback) |
+| `src/react/__tests__/use-any-event.test.tsx` | 3 | subscribe to all events, cleanup on unmount, stable handler ref |
+| `src/react/__tests__/create-bus-context.test.tsx` | 6 | Provider+useEvent, useEventBus via context, useAnyEvent via context, throws outside Provider, two-Provider isolation, cleanup on unmount |
+| `src/react/__tests__/integration.test.tsx` | 8 | producer/consumer, multi-consumer, unmount isolation, event isolation, bus isolation, once+regular, cross-hook, rapid cycles |
 | **Total** | **70** | |
 
 ## Future Extensions (not in v1.2)

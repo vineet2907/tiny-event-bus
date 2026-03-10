@@ -1,9 +1,9 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent, renderHook } from '@testing-library/react';
 import { createElement } from 'react';
-import { createEventBus } from '../event-bus.js';
-import { useEvent } from './use-event.js';
-import { useEventBus } from './use-event-bus.js';
+import { createEventBus } from '../../event-bus.js';
+import { useEvent } from '../use-event.js';
+import { useEventBus } from '../use-event-bus.js';
 
 type AppEvents = {
   'toast:show': string;
