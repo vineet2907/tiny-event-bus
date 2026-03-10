@@ -64,7 +64,9 @@ tiny-event-bus/
 │   ├── react/
 │   │   ├── use-event.ts       # useEvent(event, handler, bus?) hook
 │   │   ├── use-event.test.tsx  # React hook tests
-│   │   ├── use-event-bus.ts   # useEventBus(bus?) → { emit, on, once }
+│   │   ├── use-any-event.ts   # useAnyEvent(handler, bus) hook
+│   │   ├── use-any-event.test.tsx # Catch-all hook tests
+│   │   ├── use-event-bus.ts   # useEventBus(bus) → { emit, on, once }
 │   │   ├── use-event-bus.test.tsx # Convenience hook tests
 │   │   ├── integration.test.tsx # Multi-component integration tests
 │   │   └── index.ts           # Public API (react)
@@ -104,8 +106,9 @@ tiny-event-bus/
 
 ## React Layer
 
-- `useEvent(event, handler, bus?)` — subscribes in useEffect, cleans up on unmount, uses useRef for handler to prevent stale closures and re-subscription on re-render
-- `useEventBus(bus?)` — returns `{ emit, on, once }` with stable references
+- `useEvent(event, handler, bus)` — subscribes in useEffect, cleans up on unmount, uses useRef for handler to prevent stale closures and re-subscription on re-render
+- `useAnyEvent(handler, bus)` — subscribes to all events via `bus.onAny`, same useRef + useEffect pattern, auto-cleanup on unmount
+- `useEventBus(bus)` — returns `{ emit, on, once }` with stable references
 
 ## Package Entrypoints
 
