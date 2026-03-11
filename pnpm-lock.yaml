@@ -17,6 +17,12 @@ importers:
 
   examples/react:
     dependencies:
+      '@tiny-event-bus/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@tiny-event-bus/react':
+        specifier: workspace:*
+        version: link:../../packages/react
       react:
         specifier: ^19.0.0
         version: 19.2.4

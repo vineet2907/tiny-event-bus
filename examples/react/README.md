@@ -65,16 +65,19 @@ Same user action, two paths, zero coupling between them.
 
 ## Setup
 
+From the project root (pnpm workspace):
+
 ```bash
-cd examples/react
-npm install
-npm run dev
+pnpm install
+pnpm run example
 ```
 
-Or from the project root:
+Or directly:
 
 ```bash
-npm run example
+cd examples/react
+pnpm install
+pnpm run dev
 ```
 
 ## Things to Try

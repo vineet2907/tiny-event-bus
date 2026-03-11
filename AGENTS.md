@@ -44,7 +44,7 @@ Framework-agnostic core + thin React hook layer.
 | Node | >=20 | LTS target |
 | Module system | Dual ESM/CJS | `"type": "module"` with CJS fallback via package exports map |
 
-**Bundle size**: Core ~450 B, Core + React ~640 B (gzipped)
+**Bundle size** (ESM JS, gzipped): Core ~613 B, React ~623 B, Core + React ~1.2 KB. Keep updated after code changes.
 
 ## When to Use (vs React State)
 

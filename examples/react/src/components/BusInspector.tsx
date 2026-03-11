@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { EventBus } from 'tiny-event-bus';
+import type { EventBus } from '@tiny-event-bus/core';
 import type { ShopEvents } from '../events';
 
 export default function BusInspector({ bus }: { bus: EventBus<ShopEvents> }) {

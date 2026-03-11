@@ -7,6 +7,8 @@
     "build": "vite build"
   },
   "dependencies": {
+    "@tiny-event-bus/core": "workspace:*",
+    "@tiny-event-bus/react": "workspace:*",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

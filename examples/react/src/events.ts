@@ -1,5 +1,5 @@
-import { createEventBus } from 'tiny-event-bus';
-import { createBusContext } from 'tiny-event-bus/react';
+import { createEventBus } from '@tiny-event-bus/core';
+import { createBusContext } from '@tiny-event-bus/react';
 
 export type ShopEvents = {
   'toast:show': { message: string; severity: 'info' | 'success' | 'error' };

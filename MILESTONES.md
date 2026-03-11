@@ -34,8 +34,8 @@
 21. ✅ Monorepo scaffold — pnpm workspace setup, `pnpm-workspace.yaml`, root `package.json` (private, workspace scripts), `.npmrc`, delete `package-lock.json`, update MILESTONES + AGENTS.md with new structure and decisions
 22. ✅ Core package extraction — `packages/core/` with `package.json` (`@tiny-event-bus/core`), `tsconfig.json`, `tsconfig.cjs.json`, `vitest.config.ts`, move `types.ts` + `event-bus.ts` + `index.ts` + 4 test files, build ESM+CJS, all 45 core tests pass, add `packages/core/README.md`, update AGENTS.md
 23. ✅ React plugin extraction — `packages/react/` with `package.json` (`@tiny-event-bus/react`), peer deps on core + React, `tsconfig.json`, `tsconfig.cjs.json`, `vitest.config.ts`, move 5 source + 5 test files, update imports from relative core paths to `@tiny-event-bus/core`, all 27 React tests pass, delete old `src/`, add `packages/react/README.md`, update AGENTS.md
-24. ⬜ Workspace verification — `pnpm -r run build` + `pnpm -r run test` + `pnpm -r run typecheck` all green, `pnpm pack` produces correct tarballs, verify core has zero React code, verify React dist imports `@tiny-event-bus/core`, update MILESTONES.md
-25. ⬜ Example app migration — update `examples/react/` deps + imports to `@tiny-event-bus/core` + `@tiny-event-bus/react`, demo runs, update `examples/react/README.md`, update AGENTS.md
+24. ✅ Workspace verification — `pnpm -r run build` + `pnpm -r run test` + `pnpm -r run typecheck` all green, `pnpm pack` produces correct tarballs, verify core has zero React code, verify React dist imports `@tiny-event-bus/core`, `workspace:^` resolved to `^0.4.0` in tarball, update MILESTONES.md
+25. ✅ Example app migration — updated `examples/react/` deps to `@tiny-event-bus/core` + `@tiny-event-bus/react` (workspace:*), updated 3 imports across 2 files, `pnpm -r run build` all green (including Vite build), dev server verified, example README updated to pnpm, update AGENTS.md
 26. ⬜ Docs + plugin guide — rewrite root README.md (install, imports, dev commands, packages section, plugin architecture), final AGENTS.md update (full structure, entrypoints, decisions), update MILESTONES.md + backlog
 
 ## Future backlog
