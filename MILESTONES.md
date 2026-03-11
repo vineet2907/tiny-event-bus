@@ -29,14 +29,15 @@
 19. ✅ `createBusContext` scoped instances (TDD) — 6 tests, factory returns `{ Provider, useEvent, useEventBus, useAnyEvent }`, `React.createContext` internally, throws outside Provider, isolated scopes, pre-typed hooks with no bus arg
 20. ✅ Demo update + docs — refactored `AnalyticsLogger` to `useAnyEvent` (logs all events), added `onAny`, `useAnyEvent`, `createBusContext` to README API tables, added scoped context example to README, updated demo README + MILESTONES + PROJECT_CONTEXT
 
-## Future Extensions (not in v0.3.0)
+## Future backlog
 
-- Stress-test max event payload size a single bus instance can handle without performance degradation (large objects, arrays, binary data)
-- `off(event, handler)` as alternative to closure-based unsubscribe
-- Middleware/plugins
+- Plugins - have core as a separate package and ability to add additional features as plugins. Gave `react` features as a plugin
+- event replay support as plugin
+- integrate renovate to auto update dependencies
+- semver and CI pipeline
+- have a milestone archive, only have recent two milestones in this file, move older ones to archive
 - Debug/DevTools mode
-- Symbol event keys (non-colliding private events)
-- `useEventBus` returning `off`/`clear` for completeness
+- `useEventBus` returning `clear` for completeness
 - `onceAny` — fire catch-all handler only once then auto-unsubscribe
 
 Architecture supports all without breaking changes.

@@ -129,7 +129,7 @@ tiny-event-bus/
 - **Subscriber storage**: Map + Set. O(1) subscribe/unsubscribe, Set prevents duplicate handlers.
 - **Handler in hooks**: useRef. Prevents re-subscription every render, avoids stale closures.
 - **Global singleton**: consumer creates it, not the library. Library exports class + factory only.
-- **Scope**: v1 global only. v1.2 adds `createBusContext` factory for scoped React contexts backed by `createEventBus`.
+- **Scope**: `createBusContext` factory for scoped React contexts backed by `createEventBus`.
 
 ## Milestones
 
