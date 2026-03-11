@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent, renderHook } from '@testing-library/react';
-import { createEventBus } from '../../event-bus.js';
+import { createEventBus } from '@tiny-event-bus/core';
 import { useEvent } from '../use-event.js';
 import { useEventBus } from '../use-event-bus.js';
 import { useAnyEvent } from '../use-any-event.js';

@@ -116,7 +116,7 @@ tiny-event-bus/                    # pnpm workspace root (private)
 
 ## React Layer
 
-- `useEvent(event, handler, bus)` — subscribes in useEffect, cleans up on unmount, uses useRef for handler to prevent stale closures and re-subscription on re-render
+- `useEvent(event, handler, bus)` — subscribes in useEffect, cleans up on unmount, uses useRef for handler to prevent stale closures and re-subscription on re-render. Imports types from `@tiny-event-bus/core`.
 - `useAnyEvent(handler, bus)` — subscribes to all events via `bus.onAny`, same useRef + useEffect pattern, auto-cleanup on unmount
 - `useEventBus(bus)` — returns `{ emit, on, once }` with stable references
 - `createBusContext<T>()` — factory returns `{ Provider, useEvent, useEventBus, useAnyEvent }`, internally wraps `React.createContext<EventBus<T> | null>`. Provider accepts `bus` prop. Returned hooks are pre-typed to `T` and read bus from context (no bus arg). Throws if used outside Provider.

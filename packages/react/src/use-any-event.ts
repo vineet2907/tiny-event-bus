@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react';
-import type { EventMap, AnyEventHandler } from '../types.js';
-import type { EventBus } from '../event-bus.js';
+import type { EventMap, AnyEventHandler, EventBus } from '@tiny-event-bus/core';
 
 export function useAnyEvent<T extends EventMap>(
   handler: AnyEventHandler<T>,

@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
-import type { EventMap, EventHandler, Unsubscribe } from '../types.js';
-import type { EventBus } from '../event-bus.js';
+import type { EventMap, EventHandler, Unsubscribe, EventBus } from '@tiny-event-bus/core';
 
 export interface BusActions<T extends EventMap> {
   emit: <K extends keyof T & string>(event: K, data: T[K]) => void;

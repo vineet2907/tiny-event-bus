@@ -1,0 +1,55 @@
+{
+  "name": "@tiny-event-bus/react",
+  "version": "0.4.0",
+  "description": "React hooks plugin for @tiny-event-bus/core",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/esm/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build:esm": "tsc -p tsconfig.json",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build": "rm -rf dist && pnpm run build:esm && pnpm run build:cjs",
+    "test": "vitest run",
+    "test:watch": "vitest --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "peerDependencies": {
+    "@tiny-event-bus/core": "workspace:^",
+    "react": ">=17"
+  },
+  "devDependencies": {
+    "@tiny-event-bus/core": "workspace:*",
+    "@testing-library/react": "^16.3.0",
+    "@types/react": "^19.0.0",
+    "jsdom": "^26.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "keywords": [
+    "event-bus",
+    "react",
+    "hooks",
+    "typescript",
+    "plugin"
+  ]
+}

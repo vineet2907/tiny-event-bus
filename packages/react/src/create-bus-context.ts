@@ -1,6 +1,5 @@
 import React, { createContext, useContext } from 'react';
-import type { EventMap, EventHandler, AnyEventHandler } from '../types.js';
-import type { EventBus } from '../event-bus.js';
+import type { EventMap, EventHandler, AnyEventHandler, EventBus } from '@tiny-event-bus/core';
 import { useEvent as useEventBase } from './use-event.js';
 import { useEventBus as useEventBusBase } from './use-event-bus.js';
 import { useAnyEvent as useAnyEventBase } from './use-any-event.js';
