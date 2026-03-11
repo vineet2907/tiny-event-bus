@@ -1,8 +1,6 @@
 # tiny-event-bus
 
-Zero-dependency, TypeScript-first event bus for React component communication.
-
-> Framework-agnostic core + thin React hook layer. Under 1.2 KB total (gzipped).
+Zero-dependency, TypeScript-first event bus.
 
 ## Packages
 

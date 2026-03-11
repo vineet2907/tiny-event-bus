@@ -86,10 +86,6 @@ bus.clear();             // remove all handlers for all events + onAny
 - **Hygienic cleanup**: empty Sets are removed from the Map on unsubscribe
 - **No state storage**: no `getState`, no replay — pure fire-and-forget
 
-## Plugins
-
-This is the core package. For React hooks support, install [`@tiny-event-bus/react`](https://www.npmjs.com/package/@tiny-event-bus/react).
-
 ## License
 
 MIT

@@ -4,7 +4,7 @@
 
 ## What
 
-A zero-dependency, TypeScript-first event bus for React component communication.
+A zero-dependency, TypeScript-first event bus with plugin architecture.
 Framework-agnostic core + thin React hook layer.
 
 ## Architecture
