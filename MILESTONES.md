@@ -29,9 +29,17 @@
 19. ✅ `createBusContext` scoped instances (TDD) — 6 tests, factory returns `{ Provider, useEvent, useEventBus, useAnyEvent }`, `React.createContext` internally, throws outside Provider, isolated scopes, pre-typed hooks with no bus arg
 20. ✅ Demo update + docs — refactored `AnalyticsLogger` to `useAnyEvent` (logs all events), added `onAny`, `useAnyEvent`, `createBusContext` to README API tables, added scoped context example to README, updated demo README + MILESTONES + PROJECT_CONTEXT
 
+## v0.4.0 Milestones
+
+21. ✅ Monorepo scaffold — pnpm workspace setup, `pnpm-workspace.yaml`, root `package.json` (private, workspace scripts), `.npmrc`, delete `package-lock.json`, update MILESTONES + AGENTS.md with new structure and decisions
+22. ✅ Core package extraction — `packages/core/` with `package.json` (`@tiny-event-bus/core`), `tsconfig.json`, `tsconfig.cjs.json`, `vitest.config.ts`, move `types.ts` + `event-bus.ts` + `index.ts` + 4 test files, build ESM+CJS, all 45 core tests pass, add `packages/core/README.md`, update AGENTS.md
+23. ⬜ React plugin extraction — `packages/react/` with `package.json` (`@tiny-event-bus/react`), peer deps on core + React, `tsconfig.json`, `tsconfig.cjs.json`, `vitest.config.ts`, move 5 source + 5 test files, update imports from relative core paths to `@tiny-event-bus/core`, all React tests pass, delete old `src/`, add `packages/react/README.md`, update AGENTS.md
+24. ⬜ Workspace verification — `pnpm -r run build` + `pnpm -r run test` + `pnpm -r run typecheck` all green, `pnpm pack` produces correct tarballs, verify core has zero React code, verify React dist imports `@tiny-event-bus/core`, update MILESTONES.md
+25. ⬜ Example app migration — update `examples/react/` deps + imports to `@tiny-event-bus/core` + `@tiny-event-bus/react`, demo runs, update `examples/react/README.md`, update AGENTS.md
+26. ⬜ Docs + plugin guide — rewrite root README.md (install, imports, dev commands, packages section, plugin architecture), final AGENTS.md update (full structure, entrypoints, decisions), update MILESTONES.md + backlog
+
 ## Future backlog
 
-- Plugins - have core as a separate package and ability to add additional features as plugins. Gave `react` features as a plugin
 - event replay support as plugin
 - integrate renovate to auto update dependencies
 - semver and CI pipeline

@@ -24,9 +24,10 @@ Framework-agnostic core + thin React hook layer.
 
 **Data flow**: Producer calls `emit()` → EventBus iterates handler Set (snapshot copy) → each handler invoked in try/catch → Consumer receives typed payload. No state stored, no re-renders triggered.
 
-**Layer separation**:
-- **Core** (`tiny-event-bus`): `EventBus` class, pure TypeScript, zero deps, framework-agnostic
-- **React** (`tiny-event-bus/react`): `useEvent` + `useEventBus` hooks, thin wrappers over core, requires React >=17
+**Layer separation** (pnpm workspace monorepo):
+- **Core** (`@tiny-event-bus/core`): `EventBus` class, pure TypeScript, zero deps, framework-agnostic
+- **React plugin** (`@tiny-event-bus/react`): `useEvent` + `useEventBus` hooks, thin wrappers over core, peer dep on `@tiny-event-bus/core` + `react >=17`
+- Plugins import core types/classes via peer dependency — no `bus.use()` registry (yet)
 
 ## Tech Stack
 
@@ -34,10 +35,12 @@ Framework-agnostic core + thin React hook layer.
 |----------|--------|-----|
 | Language | TypeScript 5.7+ (strict) | Full generic type safety, catch errors at compile time |
 | Target | ES2020 | Supports Map/Set natively, covers Node 20+ and modern browsers |
-| Build | plain tsc (two passes) | Under 1KB — no bundler needed; ESM → `dist/esm`, CJS → `dist/cjs` |
-| Tests | Vitest 3.x + jsdom | Fast watch mode for TDD, built-in type assertions, jsdom for React hooks |
+| Package manager | pnpm 10.x (via corepack) | Strict dep isolation, industry standard for TS lib monorepos (Vue/Vite/Vitest) |
+| Monorepo | pnpm workspaces | `packages/*` + `examples/*`, shared lockfile, workspace protocol for inter-package deps |
+| Build | plain tsc (two passes per package) | Under 1KB — no bundler needed; ESM → `dist/esm`, CJS → `dist/cjs` |
+| Tests | Vitest 3.x | Fast watch mode for TDD, built-in type assertions; core uses `node` env, react uses `jsdom` |
 | React testing | @testing-library/react 16 | Industry standard for hook/component testing |
-| React | >=17 (peer dep) | Supports hooks API; tested with React 19 |
+| React | >=17 (peer dep of `@tiny-event-bus/react`) | Supports hooks API; tested with React 19 |
 | Node | >=20 | LTS target |
 | Module system | Dual ESM/CJS | `"type": "module"` with CJS fallback via package exports map |
 
@@ -52,42 +55,45 @@ Framework-agnostic core + thin React hook layer.
 ## Project Structure
 
 ```text
-tiny-event-bus/
-├── src/
-│   ├── types.ts              # EventMap, EventHandler, AnyEventHandler, Unsubscribe, IEventBus
-│   ├── event-bus.ts           # EventBus class + createEventBus factory
-│   ├── index.ts               # Public API (core)
-│   ├── __tests__/
-│   │   ├── event-bus.test.ts      # Core unit tests (on, emit, unsub, once, clear, error isolation)
-│   │   ├── introspection.test.ts  # Introspection API tests
-│   │   ├── on-any.test.ts         # onAny catch-all listener tests
-│   │   └── performance.test.ts    # Benchmark regression guards
-│   ├── react/
-│   │   ├── use-event.ts       # useEvent(event, handler, bus?) hook
-│   │   ├── use-any-event.ts   # useAnyEvent(handler, bus) hook
-│   │   ├── use-event-bus.ts   # useEventBus(bus) → { emit, on, once }
-│   │   ├── create-bus-context.ts # createBusContext factory (scoped instances)
-│   │   ├── index.ts           # Public API (react)
-│   │   └── __tests__/
-│   │       ├── use-event.test.tsx       # React hook tests
-│   │       ├── use-any-event.test.tsx   # Catch-all hook tests
-│   │       ├── use-event-bus.test.tsx   # Convenience hook tests
-│   │       ├── create-bus-context.test.tsx # Scoped context tests
-│   │       └── integration.test.tsx     # Multi-component integration tests
+tiny-event-bus/                    # pnpm workspace root (private)
+├── pnpm-workspace.yaml            # workspace: packages/* + examples/*
+├── .npmrc                         # link-workspace-packages=true
+├── package.json                   # private, workspace scripts, shared devDeps
+├── packages/
+│   ├── core/                      # @tiny-event-bus/core — framework-agnostic event bus
+│   │   ├── package.json           # zero deps, dual ESM/CJS exports
+│   │   ├── tsconfig.json          # ES2020, strict, declaration emit
+│   │   ├── tsconfig.cjs.json      # CJS build
+│   │   ├── vitest.config.ts       # env: node
+│   │   ├── README.md              # per-package README for npmjs.com
+│   │   └── src/
+│   │       ├── types.ts           # EventMap, EventHandler, AnyEventHandler, Unsubscribe, IEventBus
+│   │       ├── event-bus.ts       # EventBus class + createEventBus factory
+│   │       ├── index.ts           # Public API
+│   │       └── __tests__/         # event-bus, introspection, on-any, performance tests
+│   └── react/                     # @tiny-event-bus/react — React hooks plugin
+│       ├── package.json           # peerDeps: @tiny-event-bus/core + react >=17
+│       ├── tsconfig.json          # ES2020, strict, jsx: react-jsx
+│       ├── tsconfig.cjs.json      # CJS build
+│       ├── vitest.config.ts       # env: jsdom
+│       ├── README.md              # per-package README for npmjs.com
+│       └── src/
+│           ├── use-event.ts       # useEvent(event, handler, bus) hook
+│           ├── use-any-event.ts   # useAnyEvent(handler, bus) hook
+│           ├── use-event-bus.ts   # useEventBus(bus) → { emit, on, once }
+│           ├── create-bus-context.ts # createBusContext factory (scoped instances)
+│           ├── index.ts           # Public API
+│           └── __tests__/         # use-event, use-any-event, use-event-bus, create-bus-context, integration tests
 ├── examples/
-│   └── react/                # Shopping cart demo app (Vite + React 19)
-│       ├── src/events.ts      # Event map + shared bus instance
-│       ├── src/context/       # CartContext (React state)
-│       ├── src/data/          # Shared product data
-│       ├── src/components/    # ProductCatalog, CartSidebar, ToastContainer, AnalyticsLogger, SearchModal, BusInspector
-│       └── README.md          # State vs bus decision guide
-├── README.md                  # Living docs, updated every milestone
-├── MILESTONES.md              # Living docs, version wise milestone implementation status
-├── PROJECT_CONTEXT.md         # This file
-├── package.json
-├── tsconfig.json              # Strict, ES2020, declaration emit
-├── tsconfig.cjs.json          # CJS build config
-└── vitest.config.ts
+│   └── react/                     # Shopping cart demo app (Vite + React 19)
+│       ├── src/events.ts          # Event map + shared bus instance
+│       ├── src/context/           # CartContext (React state)
+│       ├── src/data/              # Shared product data
+│       ├── src/components/        # ProductCatalog, CartSidebar, ToastContainer, AnalyticsLogger, SearchModal, BusInspector
+│       └── README.md              # State vs bus decision guide
+├── README.md                      # Living docs, updated every milestone
+├── MILESTONES.md                  # Living docs, version wise milestone implementation status
+└── AGENTS.md                      # This file
 ```
 
 ## Core Design
@@ -117,8 +123,9 @@ tiny-event-bus/
 
 ## Package Entrypoints
 
-- Root `"."` exports core (no React dependency)
-- Subpath `"./react"` exports React hooks (requires React >=17 peer dep)
+- `@tiny-event-bus/core` — `npm install @tiny-event-bus/core` — exports `EventBus`, `createEventBus`, types. Zero dependencies.
+- `@tiny-event-bus/react` — `npm install @tiny-event-bus/react` — exports `useEvent`, `useEventBus`, `useAnyEvent`, `createBusContext`. Peer deps: `@tiny-event-bus/core` + `react >=17`.
+- Each package has dual ESM/CJS exports via `package.json` exports map.
 
 ## Key Decisions
 
@@ -130,6 +137,11 @@ tiny-event-bus/
 - **Handler in hooks**: useRef. Prevents re-subscription every render, avoids stale closures.
 - **Global singleton**: consumer creates it, not the library. Library exports class + factory only.
 - **Scope**: `createBusContext` factory for scoped React contexts backed by `createEventBus`.
+- **Monorepo (v0.4.0)**: pnpm workspaces for strict dep isolation, faster installs, industry standard for TS lib monorepos. No Turborepo — overkill for 2-3 packages.
+- **Scoped naming (v0.4.0)**: `@tiny-event-bus/core` + `@tiny-event-bus/react`. Consistent, scales to future plugins.
+- **Plugin model (v0.4.0)**: peer dependency — plugins import core types/classes directly. No `bus.use()` registry yet (deferred to behavior-modifying plugins like replay/middleware).
+- **Breaking import paths (v0.4.0)**: clean break, acceptable at pre-1.0. `tiny-event-bus` → `@tiny-event-bus/core`, `tiny-event-bus/react` → `@tiny-event-bus/react`.
+- **Docs per milestone (v0.4.0)**: AGENTS.md updated after every structural milestone to preserve context across agent sessions.
 
 ## Milestones
 
@@ -143,10 +155,11 @@ See [MILESTONES.md](MILESTONES.md) for milestone status and future extensions.
 
 ## Code Style
 
+- **Milestone gate**: after completing each milestone, wait for user review and approval before proceeding to the next milestone
 - **Update MILESTONES.md before starting implementation** — add planned milestones with ⬜ status before writing any code for a new version
 - No JSDoc or inline comments that restate what the code already says
 - Comments only for: TODOs, non-obvious "why" decisions, workarounds
 - Let type signatures, function names, and tests document intent
 - README and examples updated every milestone (check and update before marking complete)
 - TODOs in code and docs for pending features, removed when built
-- Run `grep -r "TODO" src/ examples/ README.md` to see pending work at any point
+- Run `grep -r "TODO" packages/ examples/ README.md` to see pending work at any point
