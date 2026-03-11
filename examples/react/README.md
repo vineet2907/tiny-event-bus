@@ -32,22 +32,22 @@ Same user action, two paths, zero coupling between them.
 │  <ShopBusProvider bus={bus}>   ← scoped context via              │
 │                                  createBusContext<ShopEvents>()  │
 │                                                                  │
-│  ┌──── STATE PATH ────┐     ┌──── BUS PATH ──────────────────┐  │
-│  │                     │     │                                │  │
-│  │  CartContext         │     │  bus (createEventBus)          │  │
-│  │  ├─ items[]         │     │  ├─ toast:show                 │  │
-│  │  ├─ addItem()       │     │  └─ shortcut:search            │  │
-│  │  └─ removeItem()    │     │                                │  │
-│  │                     │     │  Scoped hooks (no bus arg):    │  │
-│  └──────┬──────────────┘     │  useShopEvent, useShopEventBus │  │
-│         │                    │  useShopAnyEvent                │  │
-│         │                    └──────┬─────────────────────────┘  │
-│  ┌──────▼──────────┐  ┌────────────▼──────────────────────┐     │
+│  ┌──── STATE PATH ────┐     ┌──── BUS PATH ─────────────────┐    │
+│  │                     │    │                               │    │
+│  │  CartContext         │   │  bus (createEventBus)         │    │
+│  │  ├─ items[]         │    │  ├─ toast:show                │    │
+│  │  ├─ addItem()       │    │  └─ shortcut:search           │    │
+│  │  └─ removeItem()    │    │                               │    │
+│  │                     │    │  Scoped hooks (no bus arg):   │    │
+│  └──────┬──────────────┘    │  useShopEvent, useShopEventBus│    │
+│         │                   │  useShopAnyEvent              │    │
+│         │                   └──────┬────────────────────────┘    │
+│  ┌──────▼──────────┐  ┌────────────▼──────────────────────┐      │
 │  │ ProductCatalog   │  │ ToastContainer (useShopEvent)     │     │
 │  │ (uses BOTH)      │  │ AnalyticsLogger (useShopAnyEvent) │     │
 │  │ CartSidebar      │  │ SearchModal (useShopEvent)        │     │
 │  │ (uses BOTH)      │  │ BusInspector (bus prop)           │     │
-│  └──────────────────┘  └─────────────────────────────────────┘  │
+│  └──────────────────┘  └─────────────────────────────────────┘   │
 └──────────────────────────────────────────────────────────────────┘
 ```
 

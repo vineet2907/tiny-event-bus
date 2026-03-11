@@ -46,12 +46,6 @@ Framework-agnostic core + thin React hook layer.
 
 **Bundle size** (ESM JS, gzipped): Core ~613 B, React ~623 B, Core + React ~1.2 KB. Keep updated after code changes.
 
-## When to Use (vs React State)
-
-- **Event bus**: fire-and-forget signals (toasts, analytics, shortcuts, cross-module notifications). No re-renders. No stored state.
-- **React state**: UI data that drives rendering (useState, Context).
-- **Rule**: if a component needs to render data, use React state. If something needs to react to a signal, use the event bus.
-
 ## Project Structure
 
 ```text
@@ -114,7 +108,7 @@ tiny-event-bus/                    # pnpm workspace root (private)
 - `listenerCount()` includes `onAny` count in total; `listenerCount(event)` does not
 - No state storage, no getState, no replay by design
 
-## React Layer
+## React Plugin
 
 - `useEvent(event, handler, bus)` — subscribes in useEffect, cleans up on unmount, uses useRef for handler to prevent stale closures and re-subscription on re-render. Imports types from `@tiny-event-bus/core`.
 - `useAnyEvent(handler, bus)` — subscribes to all events via `bus.onAny`, same useRef + useEffect pattern, auto-cleanup on unmount
@@ -129,19 +123,16 @@ tiny-event-bus/                    # pnpm workspace root (private)
 
 ## Key Decisions
 
+- **Monorepo**: pnpm workspaces for strict dep isolation, faster installs, industry standard for TS lib monorepos. No Turborepo — overkill for 2-3 packages.
+- **Scoped naming**: `@tiny-event-bus/core` + `@tiny-event-bus/react`. Consistent, scales to future plugins.
+- **Plugin model**: peer dependency — plugins import core types/classes directly. No `bus.use()` registry yet (deferred to behavior-modifying plugins like replay/middleware).
 - **Build tool**: plain tsc, no bundler. Library is under 1KB; consumer bundler handles tree-shaking and minification.
 - **Test runner**: Vitest 3.x. Fast watch mode for TDD, built-in expectTypeOf, jsdom support.
-- **React test util**: @testing-library/react. Industry standard, 32M downloads/week.
-- **Type assertions**: Vitest built-in expectTypeOf. Eliminates separate expect-type dependency.
 - **Subscriber storage**: Map + Set. O(1) subscribe/unsubscribe, Set prevents duplicate handlers.
-- **Handler in hooks**: useRef. Prevents re-subscription every render, avoids stale closures.
 - **Global singleton**: consumer creates it, not the library. Library exports class + factory only.
+- **React test util**: @testing-library/react. Industry standard, 32M downloads/week.
+- **Handler in hooks**: useRef. Prevents re-subscription every render, avoids stale closures.
 - **Scope**: `createBusContext` factory for scoped React contexts backed by `createEventBus`.
-- **Monorepo (v0.4.0)**: pnpm workspaces for strict dep isolation, faster installs, industry standard for TS lib monorepos. No Turborepo — overkill for 2-3 packages.
-- **Scoped naming (v0.4.0)**: `@tiny-event-bus/core` + `@tiny-event-bus/react`. Consistent, scales to future plugins.
-- **Plugin model (v0.4.0)**: peer dependency — plugins import core types/classes directly. No `bus.use()` registry yet (deferred to behavior-modifying plugins like replay/middleware).
-- **Breaking import paths (v0.4.0)**: clean break, acceptable at pre-1.0. `tiny-event-bus` → `@tiny-event-bus/core`, `tiny-event-bus/react` → `@tiny-event-bus/react`.
-- **Docs per milestone (v0.4.0)**: AGENTS.md updated after every structural milestone to preserve context across agent sessions.
 
 ## Milestones
 
@@ -160,6 +151,7 @@ See [MILESTONES.md](MILESTONES.md) for milestone status and future extensions.
 - No JSDoc or inline comments that restate what the code already says
 - Comments only for: TODOs, non-obvious "why" decisions, workarounds
 - Let type signatures, function names, and tests document intent
-- README and examples updated every milestone (check and update before marking complete)
+- AGENTS.md, MILESTONES.md, README and examples updated every milestone (check and update before marking complete)
+- Request human code review after every milestone implementation
 - TODOs in code and docs for pending features, removed when built
 - Run `grep -r "TODO" packages/ examples/ README.md` to see pending work at any point

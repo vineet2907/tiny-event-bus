@@ -39,16 +39,6 @@ bus.on('toast:show', (data) => {
 bus.emit('toast:show', { message: 'Saved!', severity: 'info' });
 ```
 
-## When to Use (vs React State)
-
-| Use event bus | Use React state |
-|---------------|-----------------|
-| Fire-and-forget signals (toasts, analytics, shortcuts) | UI data that drives rendering |
-| Cross-module notifications | Component-local data |
-| No re-renders needed | Must trigger re-render |
-
-**Rule of thumb**: if a component needs to *render* data, use React state. If something needs to *react to a signal*, use the event bus.
-
 ## Example App
 
 A full shopping cart demo lives in [`examples/react/`](examples/react/) — shows state vs event bus side by side.
