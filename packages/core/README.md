@@ -1,6 +1,6 @@
 # @tiny-event-bus/core
 
-Zero-dependency, TypeScript-first event bus. Framework-agnostic core.
+Zero-dependency, TypeScript-first event bus. Framework-agnostic core. ~613 B gzipped.
 
 ## Install
 
@@ -20,13 +20,16 @@ type AppEvents = {
 
 const bus = createEventBus<AppEvents>();
 
+// Subscribe — returns an unsubscribe function
 const unsub = bus.on('toast:show', (data) => {
   console.log(data.message); // fully typed
 });
 
+// Emit
 bus.emit('toast:show', { message: 'Saved!', severity: 'info' });
 
-unsub(); // clean up
+// Unsubscribe
+unsub();
 ```
 
 ## API
@@ -42,6 +45,46 @@ unsub(); // clean up
 | `bus.listenerCount(event?)` | Number of handlers for `event`, or total across all events if omitted |
 | `bus.eventNames()` | Array of event keys that currently have listeners |
 | `bus.onAny(handler)` | Subscribe to all events. Handler receives `(event, data)`. Returns `Unsubscribe`. |
+
+### `once` — one-time subscription
+
+```ts
+bus.once('shortcut:save', () => {
+  console.log('Fired once, then auto-unsubscribed');
+});
+```
+
+### `onAny` — catch-all listener
+
+```ts
+const unsub = bus.onAny((event, data) => {
+  console.log(`[${String(event)}]`, data); // logs every event
+});
+```
+
+### Introspection
+
+```ts
+bus.hasListeners('toast:show'); // true/false
+bus.listenerCount('toast:show'); // number of handlers for this event
+bus.listenerCount();             // total across all events (includes onAny)
+bus.eventNames();                // ['toast:show', ...]
+```
+
+### `clear` — remove listeners
+
+```ts
+bus.clear('toast:show'); // remove all handlers for one event
+bus.clear();             // remove all handlers for all events + onAny
+```
+
+## Design Notes
+
+- **Fault isolation**: each handler is wrapped in try/catch — one bad handler can't break others
+- **Safe mid-emit mutation**: `emit()` snapshots the handler Set before iterating
+- **No duplicate handlers**: `Set` storage prevents registering the same function twice
+- **Hygienic cleanup**: empty Sets are removed from the Map on unsubscribe
+- **No state storage**: no `getState`, no replay — pure fire-and-forget
 
 ## Plugins
 

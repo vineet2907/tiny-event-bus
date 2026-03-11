@@ -36,7 +36,7 @@
 23. ✅ React plugin extraction — `packages/react/` with `package.json` (`@tiny-event-bus/react`), peer deps on core + React, `tsconfig.json`, `tsconfig.cjs.json`, `vitest.config.ts`, move 5 source + 5 test files, update imports from relative core paths to `@tiny-event-bus/core`, all 27 React tests pass, delete old `src/`, add `packages/react/README.md`, update AGENTS.md
 24. ✅ Workspace verification — `pnpm -r run build` + `pnpm -r run test` + `pnpm -r run typecheck` all green, `pnpm pack` produces correct tarballs, verify core has zero React code, verify React dist imports `@tiny-event-bus/core`, `workspace:^` resolved to `^0.4.0` in tarball, update MILESTONES.md
 25. ✅ Example app migration — updated `examples/react/` deps to `@tiny-event-bus/core` + `@tiny-event-bus/react` (workspace:*), updated 3 imports across 2 files, `pnpm -r run build` all green (including Vite build), dev server verified, example README updated to pnpm, update AGENTS.md
-26. ⬜ Docs + plugin guide — rewrite root README.md (install, imports, dev commands, packages section, plugin architecture), final AGENTS.md update (full structure, entrypoints, decisions), update MILESTONES.md + backlog
+26. ✅ Docs + plugin guide — rewrote root README.md (packages table, separate install paths, plugin architecture section, monorepo dev commands), verified AGENTS.md up to date, zero stale TODOs, update MILESTONES.md + backlog
 
 ## Future backlog
 
