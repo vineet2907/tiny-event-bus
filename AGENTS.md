@@ -57,13 +57,18 @@ Framework-agnostic core + thin React hook layer.
 tiny-event-bus/                    # pnpm workspace root (private)
 ├── pnpm-workspace.yaml            # workspace: packages/* + examples/*
 ├── .npmrc                         # link-workspace-packages=true
+├── .editorconfig                  # 2-space indent, UTF-8, LF, trim trailing whitespace
+├── .prettierrc                    # singleQuote, semi, trailingComma: all
+├── .prettierignore                # dist, coverage, pnpm-lock.yaml
+├── eslint.config.mjs              # ESLint 10 flat config + typescript-eslint + prettier + react-hooks
+├── .gitignore                     # node_modules, dist, coverage, tsbuildinfo
 ├── package.json                   # private, workspace scripts, shared devDeps
 ├── packages/
 │   ├── core/                      # @tiny-event-bus/core — framework-agnostic event bus
 │   │   ├── package.json           # zero deps, dual ESM/CJS exports
 │   │   ├── tsconfig.json          # ES2020, strict, declaration emit
 │   │   ├── tsconfig.cjs.json      # CJS build
-│   │   ├── vitest.config.ts       # env: node
+│   │   ├── vitest.config.ts       # env: node, v8 coverage, 90% thresholds
 │   │   ├── README.md              # per-package README for npmjs.com
 │   │   └── src/
 │   │       ├── types.ts           # EventMap, EventHandler, AnyEventHandler, Unsubscribe, IEventBus
@@ -74,7 +79,7 @@ tiny-event-bus/                    # pnpm workspace root (private)
 │       ├── package.json           # peerDeps: @tiny-event-bus/core + react >=17
 │       ├── tsconfig.json          # ES2020, strict, jsx: react-jsx
 │       ├── tsconfig.cjs.json      # CJS build
-│       ├── vitest.config.ts       # env: jsdom
+│       ├── vitest.config.ts       # env: jsdom, v8 coverage, 90% thresholds
 │       ├── README.md              # per-package README for npmjs.com
 │       └── src/
 │           ├── use-event.ts       # useEvent(event, handler, bus) hook
@@ -90,9 +95,11 @@ tiny-event-bus/                    # pnpm workspace root (private)
 │       ├── src/data/              # Shared product data
 │       ├── src/components/        # ProductCatalog, CartSidebar, ToastContainer, AnalyticsLogger, SearchModal, BusInspector
 │       └── README.md              # State vs bus decision guide
+├── docs/
+│   ├── MILESTONES.md              # Living docs, version wise milestone implementation status
+│   ├── ARCHIVE.md                 # Older milestones
+│   └── PLUGIN_ARCHITECTURE.md     # Plugin system design (decorator pattern, composition conventions)
 ├── README.md                      # Living docs, updated every milestone
-├── MILESTONES.md                  # Living docs, version wise milestone implementation status
-├── PLUGIN_ARCHITECTURE.md         # Plugin system design (decorator pattern, composition conventions)
 └── AGENTS.md                      # This file
 ```
 
