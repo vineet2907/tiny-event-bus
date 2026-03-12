@@ -52,6 +52,7 @@ function withReplay<T>(bus: IEventBus<T>): ReplayBus<T> {
 ```
 
 The decorator:
+
 - Accepts `IEventBus<T>` — works with any bus (plain or already decorated)
 - Returns `IEventBus<T>` + plugin-specific methods
 - Does not modify the original bus
@@ -110,7 +111,7 @@ const { Provider, useEventBus } = createBusContext<MyEvents>();
 // Provider accepts IEventBus<T> — decorated bus works
 <Provider bus={bus}>
   <App />
-</Provider>
+</Provider>;
 ```
 
 ## Future: Generic `useEventBus`
@@ -130,40 +131,40 @@ This avoids needing separate framework wrappers for each feature plugin.
 
 ## Plugin Authoring Conventions
 
-| Convention | Rule |
-|------------|------|
-| **Package naming** | `@tiny-event-bus/<plugin-name>` |
-| **Core dependency** | Peer-depend on `@tiny-event-bus/core`, never bundle it |
-| **Export pattern** | Export a factory function that accepts `IEventBus<T>` |
-| **Type imports** | Import types from `@tiny-event-bus/core` |
-| **Framework coupling** | Feature plugins must be framework-agnostic |
-| **Bridge packages** | Only if a feature plugin needs framework-specific UI (e.g., `@tiny-event-bus/react-devtools` for a devtools panel) |
+| Convention             | Rule                                                                                                               |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| **Package naming**     | `@tiny-event-bus/<plugin-name>`                                                                                    |
+| **Core dependency**    | Peer-depend on `@tiny-event-bus/core`, never bundle it                                                             |
+| **Export pattern**     | Export a factory function that accepts `IEventBus<T>`                                                              |
+| **Type imports**       | Import types from `@tiny-event-bus/core`                                                                           |
+| **Framework coupling** | Feature plugins must be framework-agnostic                                                                         |
+| **Bridge packages**    | Only if a feature plugin needs framework-specific UI (e.g., `@tiny-event-bus/react-devtools` for a devtools panel) |
 
 ## Implemented
 
-| Package | Status |
-|---------|--------|
-| `@tiny-event-bus/core` | ✅ Published |
+| Package                 | Status       |
+| ----------------------- | ------------ |
+| `@tiny-event-bus/core`  | ✅ Published |
 | `@tiny-event-bus/react` | ✅ Published |
 
 ## Planned (not yet implemented)
 
 The conventions in this document apply to future plugins:
 
-| Package | Description |
-|---------|-------------|
-| `@tiny-event-bus/replay` | Event replay — buffer past events, replay to late subscribers |
-| `@tiny-event-bus/devtools` | Debug/inspection tooling |
-| `@tiny-event-bus/react-devtools` | React UI panel for devtools (bridge package) |
+| Package                          | Description                                                   |
+| -------------------------------- | ------------------------------------------------------------- |
+| `@tiny-event-bus/replay`         | Event replay — buffer past events, replay to late subscribers |
+| `@tiny-event-bus/devtools`       | Debug/inspection tooling                                      |
+| `@tiny-event-bus/react-devtools` | React UI panel for devtools (bridge package)                  |
 
 ## Peer Dependency Map
 
-| Package | Peer depends on |
-|---------|----------------|
-| `@tiny-event-bus/core` | — (no deps) |
-| `@tiny-event-bus/react` | `core` + `react >=17` |
-| `@tiny-event-bus/replay` (*) | `core` |
-| `@tiny-event-bus/devtools` (*) | `core` |
-| `@tiny-event-bus/react-devtools` (*) | `core` + `react` + `devtools` |
+| Package                               | Peer depends on               |
+| ------------------------------------- | ----------------------------- |
+| `@tiny-event-bus/core`                | — (no deps)                   |
+| `@tiny-event-bus/react`               | `core` + `react >=17`         |
+| `@tiny-event-bus/replay` (\*)         | `core`                        |
+| `@tiny-event-bus/devtools` (\*)       | `core`                        |
+| `@tiny-event-bus/react-devtools` (\*) | `core` + `react` + `devtools` |
 
-(*) = planned, not yet implemented
+(\*) = planned, not yet implemented

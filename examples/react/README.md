@@ -13,15 +13,15 @@ Same user action, two paths, zero coupling between them.
 
 ## When to Use What
 
-| Scenario | Use | Why |
-|----------|-----|-----|
-| Cart items, totals, quantities | React state (Context) | Data drives the UI — must trigger re-renders |
-| Toast notifications | Event bus | Ephemeral signal — producer doesn't know or care who shows it |
-| Analytics tracking | Event bus (onAny) | Catch-all listener logs every event — no explicit emit needed |
-| Search modal toggle (⌘K) | Event bus | DOM event → bus signal → any subscriber can respond |
-| Theme, user preferences | React state (Context) | Shared data consumed by many components for rendering |
+| Scenario                       | Use                   | Why                                                           |
+| ------------------------------ | --------------------- | ------------------------------------------------------------- |
+| Cart items, totals, quantities | React state (Context) | Data drives the UI — must trigger re-renders                  |
+| Toast notifications            | Event bus             | Ephemeral signal — producer doesn't know or care who shows it |
+| Analytics tracking             | Event bus (onAny)     | Catch-all listener logs every event — no explicit emit needed |
+| Search modal toggle (⌘K)       | Event bus             | DOM event → bus signal → any subscriber can respond           |
+| Theme, user preferences        | React state (Context) | Shared data consumed by many components for rendering         |
 
-**Rule of thumb**: if a component needs to *render* data, use React state. If something needs to *react to a signal*, use the event bus.
+**Rule of thumb**: if a component needs to _render_ data, use React state. If something needs to _react to a signal_, use the event bus.
 
 ## Architecture
 
@@ -53,15 +53,15 @@ Same user action, two paths, zero coupling between them.
 
 ## Component Breakdown
 
-| Component | State | Bus | Role |
-|-----------|-------|-----|------|
-| **CartContext** | ✓ | — | Manages cart items via `useState`. Pure React state. |
-| **ProductCatalog** | ✓ | ✓ | Calls `addItem()` (state) + emits `toast:show` (bus) via `useShopEventBus()` |
-| **CartSidebar** | ✓ | ✓ | Reads cart from context (state) + emits on remove/checkout (bus) via `useShopEventBus()` |
-| **ToastContainer** | — | ✓ | Listens to `toast:show` via `useShopEvent`. Pure bus consumer. |
-| **AnalyticsLogger** | — | ✓ | Listens to **all events** via `useShopAnyEvent`. Logs every bus event with timestamp and payload. |
-| **SearchModal** | — | ✓ | Listens to `shortcut:search` via `useShopEvent`. DOM → bus → UI. |
-| **BusInspector** | — | ✓ | Receives `bus` as prop. Calls `bus.eventNames()`, `bus.listenerCount()`, `bus.hasListeners()` directly. Demonstrates introspection API. |
+| Component           | State | Bus | Role                                                                                                                                    |
+| ------------------- | ----- | --- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| **CartContext**     | ✓     | —   | Manages cart items via `useState`. Pure React state.                                                                                    |
+| **ProductCatalog**  | ✓     | ✓   | Calls `addItem()` (state) + emits `toast:show` (bus) via `useShopEventBus()`                                                            |
+| **CartSidebar**     | ✓     | ✓   | Reads cart from context (state) + emits on remove/checkout (bus) via `useShopEventBus()`                                                |
+| **ToastContainer**  | —     | ✓   | Listens to `toast:show` via `useShopEvent`. Pure bus consumer.                                                                          |
+| **AnalyticsLogger** | —     | ✓   | Listens to **all events** via `useShopAnyEvent`. Logs every bus event with timestamp and payload.                                       |
+| **SearchModal**     | —     | ✓   | Listens to `shortcut:search` via `useShopEvent`. DOM → bus → UI.                                                                        |
+| **BusInspector**    | —     | ✓   | Receives `bus` as prop. Calls `bus.eventNames()`, `bus.listenerCount()`, `bus.hasListeners()` directly. Demonstrates introspection API. |
 
 ## Setup
 

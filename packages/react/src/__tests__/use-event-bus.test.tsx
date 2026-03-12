@@ -71,7 +71,7 @@ describe('useEventBus', () => {
     expect(bus.listenerCount()).toBe(0);
   });
 
-  it('clear(event) removes only that event\'s listeners', () => {
+  it("clear(event) removes only that event's listeners", () => {
     const bus = createEventBus<TestEvents>();
     const msgHandler = vi.fn();
     const pingHandler = vi.fn();

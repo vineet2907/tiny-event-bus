@@ -34,17 +34,17 @@ unsub();
 
 ## API
 
-| Method | Description |
-|--------|-------------|
-| `createEventBus<T>()` | Factory — returns a new `EventBus<T>` instance |
-| `bus.on(event, handler)` | Subscribe. Returns an `Unsubscribe` function |
-| `bus.once(event, handler)` | Subscribe for a single emit, then auto-unsubscribe |
-| `bus.emit(event, data)` | Fire event to all current subscribers |
-| `bus.clear(event?)` | Remove listeners for one event, or all |
-| `bus.hasListeners(event)` | Returns `true` if `event` has at least one subscriber |
-| `bus.listenerCount(event?)` | Number of handlers for `event`, or total across all events if omitted |
-| `bus.eventNames()` | Array of event keys that currently have listeners |
-| `bus.onAny(handler)` | Subscribe to all events. Handler receives `(event, data)`. Returns `Unsubscribe`. |
+| Method                      | Description                                                                       |
+| --------------------------- | --------------------------------------------------------------------------------- |
+| `createEventBus<T>()`       | Factory — returns a new `EventBus<T>` instance                                    |
+| `bus.on(event, handler)`    | Subscribe. Returns an `Unsubscribe` function                                      |
+| `bus.once(event, handler)`  | Subscribe for a single emit, then auto-unsubscribe                                |
+| `bus.emit(event, data)`     | Fire event to all current subscribers                                             |
+| `bus.clear(event?)`         | Remove listeners for one event, or all                                            |
+| `bus.hasListeners(event)`   | Returns `true` if `event` has at least one subscriber                             |
+| `bus.listenerCount(event?)` | Number of handlers for `event`, or total across all events if omitted             |
+| `bus.eventNames()`          | Array of event keys that currently have listeners                                 |
+| `bus.onAny(handler)`        | Subscribe to all events. Handler receives `(event, data)`. Returns `Unsubscribe`. |
 
 ### `once` — one-time subscription
 
@@ -67,15 +67,15 @@ const unsub = bus.onAny((event, data) => {
 ```ts
 bus.hasListeners('toast:show'); // true/false
 bus.listenerCount('toast:show'); // number of handlers for this event
-bus.listenerCount();             // total across all events (includes onAny)
-bus.eventNames();                // ['toast:show', ...]
+bus.listenerCount(); // total across all events (includes onAny)
+bus.eventNames(); // ['toast:show', ...]
 ```
 
 ### `clear` — remove listeners
 
 ```ts
 bus.clear('toast:show'); // remove all handlers for one event
-bus.clear();             // remove all handlers for all events + onAny
+bus.clear(); // remove all handlers for all events + onAny
 ```
 
 ## Design Notes

@@ -7,6 +7,8 @@ export function useEvent<T extends EventMap, K extends keyof T & string>(
   bus: IEventBus<T>,
 ): void {
   const handlerRef = useRef<EventHandler<T[K]>>(handler);
+  // Assign during render to avoid stale closure between render and effect.
+  // eslint-disable-next-line react-hooks/refs
   handlerRef.current = handler;
 
   useEffect(() => {

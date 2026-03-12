@@ -23,34 +23,48 @@ type AppEvents = {
 const bus = createEventBus<AppEvents>();
 
 function ToastListener() {
-  useEvent('toast:show', (data) => {
-    console.log(data.message); // fully typed, auto-cleanup on unmount
-  }, bus);
+  useEvent(
+    'toast:show',
+    (data) => {
+      console.log(data.message); // fully typed, auto-cleanup on unmount
+    },
+    bus,
+  );
   return null;
 }
 
 function EmitButton() {
   const { emit } = useEventBus(bus);
-  return <button onClick={() => emit('toast:show', { message: 'Hi!', severity: 'info' })}>Show Toast</button>;
+  return (
+    <button
+      onClick={() => emit('toast:show', { message: 'Hi!', severity: 'info' })}
+    >
+      Show Toast
+    </button>
+  );
 }
 ```
 
 ## API
 
-| Hook | Description |
-|------|-------------|
-| `useEvent(event, handler, bus)` | Subscribe with auto-cleanup on unmount. Uses `useRef` internally so handler updates never cause re-subscription. |
-| `useEventBus(bus)` | Returns `{ emit, on, once, clear }` with stable refs via `useCallback`. Safe to pass as props or use in dependency arrays. |
-| `useAnyEvent(handler, bus)` | Subscribe to all events with auto-cleanup. Uses `useRef` for handler stability. |
-| `createBusContext<T>()` | Factory — returns `{ Provider, useEvent, useEventBus, useAnyEvent }`. Hooks read bus from context (no bus arg needed). |
+| Hook                            | Description                                                                                                                |
+| ------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `useEvent(event, handler, bus)` | Subscribe with auto-cleanup on unmount. Uses `useRef` internally so handler updates never cause re-subscription.           |
+| `useEventBus(bus)`              | Returns `{ emit, on, once, clear }` with stable refs via `useCallback`. Safe to pass as props or use in dependency arrays. |
+| `useAnyEvent(handler, bus)`     | Subscribe to all events with auto-cleanup. Uses `useRef` for handler stability.                                            |
+| `createBusContext<T>()`         | Factory — returns `{ Provider, useEvent, useEventBus, useAnyEvent }`. Hooks read bus from context (no bus arg needed).     |
 
 ### `useEvent` — subscribe to a single event
 
 ```tsx
 function ToastListener() {
-  useEvent('toast:show', (data) => {
-    showToast(data.message);
-  }, bus);
+  useEvent(
+    'toast:show',
+    (data) => {
+      showToast(data.message);
+    },
+    bus,
+  );
   return null;
 }
 ```
@@ -63,7 +77,13 @@ Handler is stored in a `useRef` — updating the handler function doesn't cause 
 function ActionBar() {
   const { emit, on, once, clear } = useEventBus(bus);
 
-  return <button onClick={() => emit('toast:show', { message: 'Hi!', severity: 'info' })}>Toast</button>;
+  return (
+    <button
+      onClick={() => emit('toast:show', { message: 'Hi!', severity: 'info' })}
+    >
+      Toast
+    </button>
+  );
 }
 ```
 
@@ -88,17 +108,17 @@ import { createBusContext } from '@tiny-event-bus/react';
 
 type ChatEvents = { 'message:new': { text: string } };
 
-const {
-  Provider,
-  useEvent,
-  useEventBus,
-  useAnyEvent,
-} = createBusContext<ChatEvents>();
+const { Provider, useEvent, useEventBus, useAnyEvent } =
+  createBusContext<ChatEvents>();
 
 // Provide a bus instance at the top
 function ChatRoot() {
   const bus = createEventBus<ChatEvents>();
-  return <Provider bus={bus}><ChatMessages /></Provider>;
+  return (
+    <Provider bus={bus}>
+      <ChatMessages />
+    </Provider>
+  );
 }
 
 // Hooks read bus from context — no bus arg needed
@@ -112,13 +132,13 @@ Throws if hooks are used outside a `<Provider>`. Each `createBusContext()` call 
 
 ## When to Use (vs React State)
 
-| Use event bus | Use React state |
-|---------------|-----------------|
+| Use event bus                                          | Use React state               |
+| ------------------------------------------------------ | ----------------------------- |
 | Fire-and-forget signals (toasts, analytics, shortcuts) | UI data that drives rendering |
-| Cross-module notifications | Component-local data |
-| No re-renders needed | Must trigger re-render |
+| Cross-module notifications                             | Component-local data          |
+| No re-renders needed                                   | Must trigger re-render        |
 
-**Rule of thumb**: if a component needs to *render* data, use React state. If something needs to *react to a signal*, use the event bus.
+**Rule of thumb**: if a component needs to _render_ data, use React state. If something needs to _react to a signal_, use the event bus.
 
 ## License
 

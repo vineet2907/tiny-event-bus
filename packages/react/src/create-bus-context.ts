@@ -1,5 +1,10 @@
 import React, { createContext, useContext } from 'react';
-import type { EventMap, EventHandler, AnyEventHandler, IEventBus } from '@tiny-event-bus/core';
+import type {
+  EventMap,
+  EventHandler,
+  AnyEventHandler,
+  IEventBus,
+} from '@tiny-event-bus/core';
 import { useEvent as useEventBase } from './use-event.js';
 import { useEventBus as useEventBusBase } from './use-event-bus.js';
 import { useAnyEvent as useAnyEventBase } from './use-any-event.js';
@@ -15,11 +20,20 @@ export function createBusContext<T extends EventMap>() {
     return bus;
   }
 
-  function Provider({ bus, children }: { bus: IEventBus<T>; children: React.ReactNode }) {
+  function Provider({
+    bus,
+    children,
+  }: {
+    bus: IEventBus<T>;
+    children: React.ReactNode;
+  }) {
     return React.createElement(Ctx.Provider, { value: bus }, children);
   }
 
-  function useEvent<K extends keyof T & string>(event: K, handler: EventHandler<T[K]>) {
+  function useEvent<K extends keyof T & string>(
+    event: K,
+    handler: EventHandler<T[K]>,
+  ) {
     return useEventBase(event, handler, useBus());
   }
 

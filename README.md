@@ -4,10 +4,10 @@ Zero-dependency, TypeScript-first event bus.
 
 ## Packages
 
-| Package | Description |
-|---------|-------------|
-| [`@tiny-event-bus/core`](packages/core/README.md) | Framework-agnostic event bus — type-safe, zero deps, fault-isolated, `on`/`once`/`emit`/`onAny`/introspection |
-| [`@tiny-event-bus/react`](packages/react/README.md) | React hooks plugin — `useEvent`, `useEventBus`, `useAnyEvent`, `createBusContext` with auto-cleanup |
+| Package                                             | Description                                                                                                   |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| [`@tiny-event-bus/core`](packages/core/README.md)   | Framework-agnostic event bus — type-safe, zero deps, fault-isolated, `on`/`once`/`emit`/`onAny`/introspection |
+| [`@tiny-event-bus/react`](packages/react/README.md) | React hooks plugin — `useEvent`, `useEventBus`, `useAnyEvent`, `createBusContext` with auto-cleanup           |
 
 Install only what you need. See each package README for install, API, and examples.
 

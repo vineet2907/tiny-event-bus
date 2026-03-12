@@ -9,10 +9,13 @@ export default function SearchModal() {
   const { addItem } = useCart();
   const { emit } = useShopEventBus();
 
-  useShopEvent('shortcut:search', useCallback(() => {
-    setOpen((prev) => !prev);
-    setQuery('');
-  }, []));
+  useShopEvent(
+    'shortcut:search',
+    useCallback(() => {
+      setOpen((prev) => !prev);
+      setQuery('');
+    }, []),
+  );
 
   useEffect(() => {
     if (!open) return;
@@ -25,7 +28,10 @@ export default function SearchModal() {
 
   function handleAdd(product: Product) {
     addItem(product);
-    emit('toast:show', { message: `${product.name} added to cart!`, severity: 'success' });
+    emit('toast:show', {
+      message: `${product.name} added to cart!`,
+      severity: 'success',
+    });
     setOpen(false);
   }
 
@@ -36,25 +42,74 @@ export default function SearchModal() {
     : products;
 
   return (
-    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingTop: '20vh', zIndex: 2000 }} onClick={() => setOpen(false)}>
-      <div style={{ background: '#fff', borderRadius: 12, padding: '1.5rem', width: 400, boxShadow: '0 8px 32px rgba(0,0,0,0.2)' }} onClick={(e) => e.stopPropagation()}>
+    <div
+      style={{
+        position: 'fixed',
+        inset: 0,
+        background: 'rgba(0,0,0,0.5)',
+        display: 'flex',
+        alignItems: 'flex-start',
+        justifyContent: 'center',
+        paddingTop: '20vh',
+        zIndex: 2000,
+      }}
+      onClick={() => setOpen(false)}
+    >
+      <div
+        style={{
+          background: '#fff',
+          borderRadius: 12,
+          padding: '1.5rem',
+          width: 400,
+          boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
         <input
           autoFocus
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search products..."
-          style={{ width: '100%', padding: '0.75rem', fontSize: 16, border: '1px solid #ddd', borderRadius: 8, boxSizing: 'border-box' }}
+          style={{
+            width: '100%',
+            padding: '0.75rem',
+            fontSize: 16,
+            border: '1px solid #ddd',
+            borderRadius: 8,
+            boxSizing: 'border-box',
+          }}
         />
         <ul style={{ listStyle: 'none', padding: 0, margin: '0.75rem 0 0' }}>
           {results.map((product) => (
-            <li key={product.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem 0', borderBottom: '1px solid #eee' }}>
-              <span>{product.name} <span style={{ color: '#999' }}>${product.price.toFixed(2)}</span></span>
-              <button onClick={() => handleAdd(product)} style={{ fontSize: 13 }}>Add</button>
+            <li
+              key={product.id}
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '0.5rem 0',
+                borderBottom: '1px solid #eee',
+              }}
+            >
+              <span>
+                {product.name}{' '}
+                <span style={{ color: '#999' }}>
+                  ${product.price.toFixed(2)}
+                </span>
+              </span>
+              <button
+                onClick={() => handleAdd(product)}
+                style={{ fontSize: 13 }}
+              >
+                Add
+              </button>
             </li>
           ))}
           {results.length === 0 && (
-            <li style={{ color: '#999', padding: '0.5rem 0' }}>No products found</li>
+            <li style={{ color: '#999', padding: '0.5rem 0' }}>
+              No products found
+            </li>
           )}
         </ul>
         <p style={{ color: '#999', fontSize: 13, marginTop: '0.5rem' }}>

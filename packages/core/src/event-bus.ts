@@ -1,4 +1,10 @@
-import type { EventMap, EventHandler, AnyEventHandler, Unsubscribe, IEventBus } from './types.js';
+import type {
+  EventMap,
+  EventHandler,
+  AnyEventHandler,
+  Unsubscribe,
+  IEventBus,
+} from './types.js';
 
 export class EventBus<T extends EventMap> implements IEventBus<T> {
   private listeners = new Map<keyof T, Set<EventHandler>>();

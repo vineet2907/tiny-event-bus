@@ -64,7 +64,9 @@ describe('onAny', () => {
 
   it('onAny handler error does not break other handlers', () => {
     const bus = new EventBus<TestEvents>();
-    const badHandler = vi.fn(() => { throw new Error('boom'); });
+    const badHandler = vi.fn(() => {
+      throw new Error('boom');
+    });
     const goodHandler = vi.fn();
 
     bus.onAny(badHandler);
@@ -77,7 +79,9 @@ describe('onAny', () => {
 
   it('onAny handler error does not break event-specific handlers', () => {
     const bus = new EventBus<TestEvents>();
-    const anyHandler = vi.fn(() => { throw new Error('boom'); });
+    const anyHandler = vi.fn(() => {
+      throw new Error('boom');
+    });
     const specificHandler = vi.fn();
 
     bus.on('message', specificHandler);

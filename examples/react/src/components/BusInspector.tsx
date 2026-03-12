@@ -8,14 +8,34 @@ export default function BusInspector({ bus }: { bus: EventBus<ShopEvents> }) {
 
   const names = bus.eventNames();
   const totalCount = bus.listenerCount();
-  const perEventCount = names.reduce((sum, name) => sum + bus.listenerCount(name), 0);
+  const perEventCount = names.reduce(
+    (sum, name) => sum + bus.listenerCount(name),
+    0,
+  );
   const anyCount = totalCount - perEventCount;
 
   return (
-    <section style={{ marginTop: '2rem', padding: '1rem', background: '#f5f5f5', borderRadius: 8, fontSize: 14 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+    <section
+      style={{
+        marginTop: '2rem',
+        padding: '1rem',
+        background: '#f5f5f5',
+        borderRadius: 8,
+        fontSize: 14,
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '0.75rem',
+        }}
+      >
         <h2 style={{ margin: 0 }}>Bus Inspector</h2>
-        <button onClick={refresh} style={{ fontSize: 13 }}>Refresh</button>
+        <button onClick={refresh} style={{ fontSize: 13 }}>
+          Refresh
+        </button>
       </div>
       <table style={{ width: '100%', borderCollapse: 'collapse' }}>
         <thead>
@@ -28,19 +48,35 @@ export default function BusInspector({ bus }: { bus: EventBus<ShopEvents> }) {
         <tbody>
           {names.map((name) => (
             <tr key={String(name)} style={{ borderBottom: '1px solid #eee' }}>
-              <td style={{ padding: '4px 8px', fontFamily: 'monospace' }}>{String(name)}</td>
+              <td style={{ padding: '4px 8px', fontFamily: 'monospace' }}>
+                {String(name)}
+              </td>
               <td style={{ padding: '4px 8px' }}>{bus.listenerCount(name)}</td>
-              <td style={{ padding: '4px 8px' }}>{bus.hasListeners(name) ? '✓' : '✗'}</td>
+              <td style={{ padding: '4px 8px' }}>
+                {bus.hasListeners(name) ? '✓' : '✗'}
+              </td>
             </tr>
           ))}
           {names.length === 0 && anyCount === 0 && (
             <tr>
-              <td colSpan={3} style={{ padding: '4px 8px', color: '#999' }}>No active listeners</td>
+              <td colSpan={3} style={{ padding: '4px 8px', color: '#999' }}>
+                No active listeners
+              </td>
             </tr>
           )}
           {anyCount > 0 && (
-            <tr style={{ borderBottom: '1px solid #eee', background: '#ede7f6' }}>
-              <td style={{ padding: '4px 8px', fontFamily: 'monospace', fontStyle: 'italic' }}>* (onAny)</td>
+            <tr
+              style={{ borderBottom: '1px solid #eee', background: '#ede7f6' }}
+            >
+              <td
+                style={{
+                  padding: '4px 8px',
+                  fontFamily: 'monospace',
+                  fontStyle: 'italic',
+                }}
+              >
+                * (onAny)
+              </td>
               <td style={{ padding: '4px 8px' }}>{anyCount}</td>
               <td style={{ padding: '4px 8px' }}>✓</td>
             </tr>

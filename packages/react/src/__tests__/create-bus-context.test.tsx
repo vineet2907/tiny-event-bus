@@ -31,8 +31,12 @@ describe('createBusContext', () => {
     });
 
     const handler = vi.fn();
-    act(() => { result.current.on('count', handler); });
-    act(() => { result.current.emit('count', 42); });
+    act(() => {
+      result.current.on('count', handler);
+    });
+    act(() => {
+      result.current.emit('count', 42);
+    });
     expect(handler).toHaveBeenCalledWith(42);
   });
 

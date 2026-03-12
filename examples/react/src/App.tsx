@@ -30,14 +30,27 @@ export default function App() {
     <ShopBusProvider bus={bus}>
       <CartProvider>
         <KeyboardShortcuts />
-        <div style={{ maxWidth: 900, margin: '0 auto', padding: '1rem', fontFamily: 'system-ui, sans-serif' }}>
+        <div
+          style={{
+            maxWidth: 900,
+            margin: '0 auto',
+            padding: '1rem',
+            fontFamily: 'system-ui, sans-serif',
+          }}
+        >
           <h1>tiny-event-bus — Shopping Cart Demo</h1>
           <p style={{ color: '#666', marginBottom: '2rem' }}>
-            State vs Event Bus, side by side. Click "Add to Cart" — the cart updates via React state,
-            while toasts and analytics fire via the event bus.
-            Press <kbd>⌘K</kbd> to open search via the event bus.
+            State vs Event Bus, side by side. Click "Add to Cart" — the cart
+            updates via React state, while toasts and analytics fire via the
+            event bus. Press <kbd>⌘K</kbd> to open search via the event bus.
           </p>
-          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '2rem' }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '2fr 1fr',
+              gap: '2rem',
+            }}
+          >
             <ProductCatalog />
             <CartSidebar />
           </div>

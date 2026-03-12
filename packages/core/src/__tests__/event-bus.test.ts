@@ -148,7 +148,9 @@ describe('EventBus', () => {
 
   it('throwing handler does not prevent other handlers from firing', () => {
     const bus = new EventBus<TestEvents>();
-    const badHandler = vi.fn(() => { throw new Error('boom'); });
+    const badHandler = vi.fn(() => {
+      throw new Error('boom');
+    });
     const goodHandler = vi.fn();
 
     bus.on('ping', badHandler);
@@ -161,7 +163,9 @@ describe('EventBus', () => {
 
   it('emit does not throw even when a handler throws', () => {
     const bus = new EventBus<TestEvents>();
-    bus.on('ping', () => { throw new Error('boom'); });
+    bus.on('ping', () => {
+      throw new Error('boom');
+    });
 
     expect(() => bus.emit('ping', undefined as void)).not.toThrow();
   });

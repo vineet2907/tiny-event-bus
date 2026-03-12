@@ -1,8 +1,13 @@
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type EventMap = Record<string, any>;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type EventHandler<T = any> = (data: T) => void;
 
-export type AnyEventHandler<T extends EventMap> = (event: keyof T, data: T[keyof T]) => void;
+export type AnyEventHandler<T extends EventMap> = (
+  event: keyof T,
+  data: T[keyof T],
+) => void;
 
 export type Unsubscribe = () => void;
 
