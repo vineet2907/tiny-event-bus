@@ -126,7 +126,7 @@ tiny-event-bus/                    # pnpm workspace root (private)
 
 - **Monorepo**: pnpm workspaces for strict dep isolation, faster installs, industry standard for TS lib monorepos. No Turborepo — overkill for 2-3 packages.
 - **Scoped naming**: `@tiny-event-bus/core` + `@tiny-event-bus/react`. Consistent, scales to future plugins.
-- **Plugin model**: peer dependency — plugins import core types/classes directly. No `bus.use()` registry. React hooks accept `IEventBus<T>` interface (not concrete class) to enable decorator-pattern feature plugins. See [docs/PLUGIN_ARCHITECTURE.md](PLUGIN_ARCHITECTURE.md) for full design.
+- **Plugin model**: peer dependency — plugins import core types/classes directly. No `bus.use()` registry. React hooks accept `IEventBus<T>` interface (not concrete class) to enable decorator-pattern feature plugins. See [PLUGIN_ARCHITECTURE.md](docs/PLUGIN_ARCHITECTURE.md) for full design.
 - **Plugin composition**: decorator pattern — feature plugins export `withX(bus)` factories that accept `IEventBus<T>` and return enhanced bus. Framework plugins and feature plugins are independent axes, composed at the consumer level.
 - **Build tool**: plain tsc, no bundler. Library is under 1KB; consumer bundler handles tree-shaking and minification.
 - **Test runner**: Vitest 3.x. Fast watch mode for TDD, built-in expectTypeOf, jsdom support.
@@ -138,7 +138,7 @@ tiny-event-bus/                    # pnpm workspace root (private)
 
 ## Milestones
 
-See [docs/MILESTONES.md](MILESTONES.md) for milestone status and future extensions.
+See [MILESTONES.md](docs/MILESTONES.md) for milestone status and future extensions.
 
 
 ## Code Style
