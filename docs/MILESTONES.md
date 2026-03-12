@@ -1,6 +1,6 @@
 # Milestones
 
-See [ARCHIVE.md](archive) for older milestones.
+See [ARCHIVE.md](ARCHIVE.md) for older milestones.
 
 ## v0.4.0 Milestones
 
