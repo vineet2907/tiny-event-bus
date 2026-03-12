@@ -47,6 +47,7 @@ Framework-agnostic core + thin React hook layer.
 | Editor config   | EditorConfig                               | Consistent formatting across editors and contributors                                       |
 | Linting         | ESLint 10 + typescript-eslint              | Flat config, recommended rules, react-hooks plugin for React package, gates build           |
 | Formatting      | Prettier                                   | Consistent code style, integrated with ESLint via eslint-config-prettier                    |
+| Test coverage   | @vitest/coverage-v8                        | v8 provider, 90% thresholds enforced, lcov reporter for future Codecov integration          |
 
 **Bundle size** (ESM JS, gzipped): Core ~613 B, React ~623 B, Core + React ~1.2 KB. Keep updated after code changes.
 

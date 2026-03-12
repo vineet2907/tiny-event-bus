@@ -12,7 +12,7 @@ See [ARCHIVE.md](ARCHIVE.md) for older milestones.
 
 30. ✅ EditorConfig — `.editorconfig` at workspace root codifying existing conventions (2-space indent, UTF-8, LF, trim trailing whitespace, final newline), MD override for trailing whitespace, update AGENTS.md
 31. ✅ ESLint 9 + Prettier — flat config with `typescript-eslint` + `eslint-config-prettier` + `react-hooks` plugin, `.prettierrc` + `.prettierignore`, root scripts (`lint`, `lint:fix`, `format`, `format:check`), lint gates build, fix all existing violations, update AGENTS.md
-32. ⬜ Test coverage — `@vitest/coverage-v8`, 90% thresholds (lines/branches/functions/statements), `lcov` reporter for future Codecov, `test:coverage` scripts, `coverage/` in `.gitignore`, verify thresholds met, update AGENTS.md + README
+32. ✅ Test coverage — `@vitest/coverage-v8`, 90% thresholds (lines/branches/functions/statements), `lcov` reporter for future Codecov, `test:coverage` scripts, `coverage/` in `.gitignore`, 100% coverage across both packages, update AGENTS.md
 
 ## Future backlog
 

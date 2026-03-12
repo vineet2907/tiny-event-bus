@@ -11,6 +11,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "pnpm -r run test",
+    "test:coverage": "pnpm -r run test:coverage",
     "test:watch": "pnpm -r run test:watch",
     "typecheck": "pnpm -r run typecheck",
     "example": "pnpm --filter tiny-event-bus-react-demo run dev"
@@ -20,6 +21,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@vitest/coverage-v8": "^3.2.4",
     "eslint": "^10.0.3",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-react-hooks": "^7.0.1",

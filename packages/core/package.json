@@ -27,6 +27,7 @@
     "build:cjs": "tsc -p tsconfig.cjs.json",
     "build": "rm -rf dist && pnpm run build:esm && pnpm run build:cjs",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "test:watch": "vitest --watch",
     "typecheck": "tsc --noEmit"
   },
