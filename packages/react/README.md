@@ -40,7 +40,7 @@ function EmitButton() {
 | Hook | Description |
 |------|-------------|
 | `useEvent(event, handler, bus)` | Subscribe with auto-cleanup on unmount. Uses `useRef` internally so handler updates never cause re-subscription. |
-| `useEventBus(bus)` | Returns `{ emit, on, once }` with stable refs via `useCallback`. Safe to pass as props or use in dependency arrays. |
+| `useEventBus(bus)` | Returns `{ emit, on, once, clear }` with stable refs via `useCallback`. Safe to pass as props or use in dependency arrays. |
 | `useAnyEvent(handler, bus)` | Subscribe to all events with auto-cleanup. Uses `useRef` for handler stability. |
 | `createBusContext<T>()` | Factory — returns `{ Provider, useEvent, useEventBus, useAnyEvent }`. Hooks read bus from context (no bus arg needed). |
 
@@ -57,15 +57,17 @@ function ToastListener() {
 
 Handler is stored in a `useRef` — updating the handler function doesn't cause re-subscription. Cleanup runs automatically on unmount.
 
-### `useEventBus` — emit and subscribe with stable refs
+### `useEventBus` — emit, subscribe, and clear with stable refs
 
 ```tsx
 function ActionBar() {
-  const { emit, on, once } = useEventBus(bus);
+  const { emit, on, once, clear } = useEventBus(bus);
 
   return <button onClick={() => emit('toast:show', { message: 'Hi!', severity: 'info' })}>Toast</button>;
 }
 ```
+
+`clear()` removes all listeners. `clear(event)` removes only that event's listeners.
 
 ### `useAnyEvent` — catch-all hook
 

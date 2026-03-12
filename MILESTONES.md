@@ -1,26 +1,6 @@
 # Milestones
 
-## v0.1.0 Milestones
-
-1. ✅ Scaffold — package.json, tsconfig, vitest config, folders, README with full vision and TODOs, example skeleton
-2. ✅ Core types — types.ts with IEventBus interface, update README
-3. ✅ on + emit (TDD) — 5 tests, EventBus class, createEventBus factory
-4. ✅ off, once, clear (TDD) — 7 tests, complete core API
-5. ✅ Error isolation (TDD) — 5 tests, try/catch, safe iteration, re-entrancy
-6. ⏭️ Type safety tests — skipped, handled via tsc --noEmit during lint
-7. ✅ useEvent hook (TDD) — 4 tests, subscribe/cleanup/stable handler
-8. ✅ useEventBus hook (TDD) — 4 tests, convenience hook
-9. ✅ Integration tests — 8 tests, multi-component scenarios, lifecycle, isolation
-10. ✅ Performance benchmarks — 4 tests, regression guards
-11. ✅ Build + polish — tsc build, package exports, size check, README finalized
-
-## v0.2.0 Milestones
-
-12. ✅ Introspection (TDD) — 11 tests, `hasListeners`, `listenerCount`, `eventNames` on `IEventBus` interface + `EventBus` class, empty-Set cleanup on unsubscribe, update README + docs
-13. ✅ React demo scaffold — `examples/react/` with Vite + React 19 + TS, event map, blank shell renders, `npm run example` script
-14. ✅ State-driven components — `CartContext`, `ProductCatalog`, `CartSidebar`, Add to Cart updates cart via state + emits bus events
-15. ✅ Bus-driven components — `ToastContainer`, `AnalyticsLogger`, `SearchModal`, keyboard shortcuts, toast + analytics + search all wired
-16. ✅ Bus Inspector + docs — `BusInspector` panel using introspection API, `examples/react/README.md` with decision table + architecture, update root README + MILESTONES + PROJECT_CONTEXT
+See [ARCHIVE.md](archive) for older milestones.
 
 ## v0.3.0 Milestones
 
@@ -38,14 +18,19 @@
 25. ✅ Example app migration — updated `examples/react/` deps to `@tiny-event-bus/core` + `@tiny-event-bus/react` (workspace:*), updated 3 imports across 2 files, `pnpm -r run build` all green (including Vite build), dev server verified, example README updated to pnpm, update AGENTS.md
 26. ✅ Docs + plugin guide — rewrote root README.md (packages table, separate install paths, plugin architecture section, monorepo dev commands), verified AGENTS.md up to date, zero stale TODOs, update MILESTONES.md + backlog
 
+## v0.5.0 Milestones
+
+27. ✅ Widen React hooks to `IEventBus<T>` — changed all hook/context parameter types from concrete `EventBus<T>` to `IEventBus<T>` interface across 4 source files (`use-event.ts`, `use-event-bus.ts`, `use-any-event.ts`, `create-bus-context.ts`), non-breaking change, enables decorator-pattern feature plugins, all 27 existing tests pass unchanged
+28. ✅ `useEventBus` returns `clear` (TDD) — 2 tests, added `clear` to `BusActions<T>` interface and return value, `useCallback`-wrapped expression body, verified `clear()` removes all listeners and `clear(event)` removes only that event's listeners, refactored all callbacks to consistent expression-body style
+29. ✅ Plugin architecture design — created PLUGIN_ARCHITECTURE.md documenting decorator pattern (`withReplay(bus)`), two independent axes (framework vs feature plugins), composition conventions, consumer wiring examples, plugin authoring conventions, peer dependency map, future generic `useEventBus` design, updated AGENTS.md
+
 ## Future backlog
 
 - event replay support as plugin
 - integrate renovate to auto update dependencies
 - semver and CI pipeline
-- have a milestone archive, only have recent two milestones in this file, move older ones to archive
 - Debug/DevTools mode
-- `useEventBus` returning `clear` for completeness
+- generic `useEventBus` — dynamically return stable refs for all methods on any bus type (queued for first feature plugin)
 - `onceAny` — fire catch-all handler only once then auto-unsubscribe
 
 Architecture supports all without breaking changes.

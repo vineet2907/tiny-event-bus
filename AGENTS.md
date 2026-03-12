@@ -87,6 +87,7 @@ tiny-event-bus/                    # pnpm workspace root (private)
 │       └── README.md              # State vs bus decision guide
 ├── README.md                      # Living docs, updated every milestone
 ├── MILESTONES.md                  # Living docs, version wise milestone implementation status
+├── PLUGIN_ARCHITECTURE.md         # Plugin system design (decorator pattern, composition conventions)
 └── AGENTS.md                      # This file
 ```
 
@@ -110,10 +111,10 @@ tiny-event-bus/                    # pnpm workspace root (private)
 
 ## React Plugin
 
-- `useEvent(event, handler, bus)` — subscribes in useEffect, cleans up on unmount, uses useRef for handler to prevent stale closures and re-subscription on re-render. Imports types from `@tiny-event-bus/core`.
-- `useAnyEvent(handler, bus)` — subscribes to all events via `bus.onAny`, same useRef + useEffect pattern, auto-cleanup on unmount
-- `useEventBus(bus)` — returns `{ emit, on, once }` with stable references
-- `createBusContext<T>()` — factory returns `{ Provider, useEvent, useEventBus, useAnyEvent }`, internally wraps `React.createContext<EventBus<T> | null>`. Provider accepts `bus` prop. Returned hooks are pre-typed to `T` and read bus from context (no bus arg). Throws if used outside Provider.
+- `useEvent(event, handler, bus)` — subscribes in useEffect, cleans up on unmount, uses useRef for handler to prevent stale closures and re-subscription on re-render. Imports types from `@tiny-event-bus/core`. Accepts `IEventBus<T>` (interface, not concrete class) to support decorator-pattern plugins.
+- `useAnyEvent(handler, bus)` — subscribes to all events via `bus.onAny`, same useRef + useEffect pattern, auto-cleanup on unmount. Accepts `IEventBus<T>`.
+- `useEventBus(bus)` — returns `{ emit, on, once, clear }` with stable references. Accepts `IEventBus<T>`.
+- `createBusContext<T>()` — factory returns `{ Provider, useEvent, useEventBus, useAnyEvent }`, internally wraps `React.createContext<IEventBus<T> | null>`. Provider accepts `bus` prop typed as `IEventBus<T>`. Returned hooks are pre-typed to `T` and read bus from context (no bus arg). Throws if used outside Provider.
 
 ## Package Entrypoints
 
@@ -125,7 +126,8 @@ tiny-event-bus/                    # pnpm workspace root (private)
 
 - **Monorepo**: pnpm workspaces for strict dep isolation, faster installs, industry standard for TS lib monorepos. No Turborepo — overkill for 2-3 packages.
 - **Scoped naming**: `@tiny-event-bus/core` + `@tiny-event-bus/react`. Consistent, scales to future plugins.
-- **Plugin model**: peer dependency — plugins import core types/classes directly. No `bus.use()` registry yet (deferred to behavior-modifying plugins like replay/middleware).
+- **Plugin model**: peer dependency — plugins import core types/classes directly. No `bus.use()` registry. React hooks accept `IEventBus<T>` interface (not concrete class) to enable decorator-pattern feature plugins. See [PLUGIN_ARCHITECTURE.md](PLUGIN_ARCHITECTURE.md) for full design.
+- **Plugin composition**: decorator pattern — feature plugins export `withX(bus)` factories that accept `IEventBus<T>` and return enhanced bus. Framework plugins and feature plugins are independent axes, composed at the consumer level.
 - **Build tool**: plain tsc, no bundler. Library is under 1KB; consumer bundler handles tree-shaking and minification.
 - **Test runner**: Vitest 3.x. Fast watch mode for TDD, built-in expectTypeOf, jsdom support.
 - **Subscriber storage**: Map + Set. O(1) subscribe/unsubscribe, Set prevents duplicate handlers.

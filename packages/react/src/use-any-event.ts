@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react';
-import type { EventMap, AnyEventHandler, EventBus } from '@tiny-event-bus/core';
+import type { EventMap, AnyEventHandler, IEventBus } from '@tiny-event-bus/core';
 
 export function useAnyEvent<T extends EventMap>(
   handler: AnyEventHandler<T>,
-  bus: EventBus<T>,
+  bus: IEventBus<T>,
 ): void {
   const handlerRef = useRef<AnyEventHandler<T>>(handler);
   handlerRef.current = handler;

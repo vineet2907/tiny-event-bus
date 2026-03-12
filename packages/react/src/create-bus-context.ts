@@ -1,13 +1,13 @@
 import React, { createContext, useContext } from 'react';
-import type { EventMap, EventHandler, AnyEventHandler, EventBus } from '@tiny-event-bus/core';
+import type { EventMap, EventHandler, AnyEventHandler, IEventBus } from '@tiny-event-bus/core';
 import { useEvent as useEventBase } from './use-event.js';
 import { useEventBus as useEventBusBase } from './use-event-bus.js';
 import { useAnyEvent as useAnyEventBase } from './use-any-event.js';
 
 export function createBusContext<T extends EventMap>() {
-  const Ctx = createContext<EventBus<T> | null>(null);
+  const Ctx = createContext<IEventBus<T> | null>(null);
 
-  function useBus(): EventBus<T> {
+  function useBus(): IEventBus<T> {
     const bus = useContext(Ctx);
     if (!bus) {
       throw new Error('useBus must be used within a <Provider>');
@@ -15,7 +15,7 @@ export function createBusContext<T extends EventMap>() {
     return bus;
   }
 
-  function Provider({ bus, children }: { bus: EventBus<T>; children: React.ReactNode }) {
+  function Provider({ bus, children }: { bus: IEventBus<T>; children: React.ReactNode }) {
     return React.createElement(Ctx.Provider, { value: bus }, children);
   }
 

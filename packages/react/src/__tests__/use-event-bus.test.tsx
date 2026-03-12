@@ -56,4 +56,35 @@ describe('useEventBus', () => {
     expect(second.on).toBe(first.on);
     expect(second.once).toBe(first.once);
   });
+
+  it('clear() removes all listeners from the bus', () => {
+    const bus = createEventBus<TestEvents>();
+    const handler = vi.fn();
+    bus.on('message', handler);
+    bus.on('ping', vi.fn());
+
+    const { result } = renderHook(() => useEventBus(bus));
+    result.current.clear();
+
+    bus.emit('message', 'after clear');
+    expect(handler).not.toHaveBeenCalled();
+    expect(bus.listenerCount()).toBe(0);
+  });
+
+  it('clear(event) removes only that event\'s listeners', () => {
+    const bus = createEventBus<TestEvents>();
+    const msgHandler = vi.fn();
+    const pingHandler = vi.fn();
+    bus.on('message', msgHandler);
+    bus.on('ping', pingHandler);
+
+    const { result } = renderHook(() => useEventBus(bus));
+    result.current.clear('message');
+
+    bus.emit('message', 'gone');
+    bus.emit('ping', undefined as void);
+
+    expect(msgHandler).not.toHaveBeenCalled();
+    expect(pingHandler).toHaveBeenCalledOnce();
+  });
 });
