@@ -126,7 +126,7 @@ tiny-event-bus/                    # pnpm workspace root (private)
 
 - **Monorepo**: pnpm workspaces for strict dep isolation, faster installs, industry standard for TS lib monorepos. No Turborepo — overkill for 2-3 packages.
 - **Scoped naming**: `@tiny-event-bus/core` + `@tiny-event-bus/react`. Consistent, scales to future plugins.
-- **Plugin model**: peer dependency — plugins import core types/classes directly. No `bus.use()` registry. React hooks accept `IEventBus<T>` interface (not concrete class) to enable decorator-pattern feature plugins. See [PLUGIN_ARCHITECTURE.md](PLUGIN_ARCHITECTURE.md) for full design.
+- **Plugin model**: peer dependency — plugins import core types/classes directly. No `bus.use()` registry. React hooks accept `IEventBus<T>` interface (not concrete class) to enable decorator-pattern feature plugins. See [docs/PLUGIN_ARCHITECTURE.md](PLUGIN_ARCHITECTURE.md) for full design.
 - **Plugin composition**: decorator pattern — feature plugins export `withX(bus)` factories that accept `IEventBus<T>` and return enhanced bus. Framework plugins and feature plugins are independent axes, composed at the consumer level.
 - **Build tool**: plain tsc, no bundler. Library is under 1KB; consumer bundler handles tree-shaking and minification.
 - **Test runner**: Vitest 3.x. Fast watch mode for TDD, built-in expectTypeOf, jsdom support.
@@ -138,22 +138,20 @@ tiny-event-bus/                    # pnpm workspace root (private)
 
 ## Milestones
 
-See [MILESTONES.md](MILESTONES.md) for milestone status and future extensions.
+See [docs/MILESTONES.md](MILESTONES.md) for milestone status and future extensions.
 
-## TDD Protocol
-
-- Run `vitest --watch` continuously
-- Write **one** failing test → implement minimum to pass → refactor → repeat. Never batch multiple failing tests at once.
-- Pause after each red-green-refactor cycle for user review before next test
 
 ## Code Style
 
 - **Milestone gate**: after completing each milestone, wait for user review and approval before proceeding to the next milestone
 - **Update MILESTONES.md before starting implementation** — add planned milestones with ⬜ status before writing any code for a new version
+- TDD - Write **one** failing test → implement minimum to pass → refactor → repeat. Never batch multiple failing tests at once.
+- TDD - Pause after each red-green-refactor cycle for human code review before next test
 - No JSDoc or inline comments that restate what the code already says
 - Comments only for: TODOs, non-obvious "why" decisions, workarounds
 - Let type signatures, function names, and tests document intent
 - AGENTS.md, MILESTONES.md, README and examples updated every milestone (check and update before marking complete)
 - Request human code review after every milestone implementation
+- Only two latest feature versions stay in MILESTONES.md file, move the older version milestones to ARCHIVE.md
 - TODOs in code and docs for pending features, removed when built
 - Run `grep -r "TODO" packages/ examples/ README.md` to see pending work at any point
