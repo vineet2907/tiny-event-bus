@@ -43,3 +43,8 @@ jobs:
 
       - name: Test with coverage
         run: pnpm run test:coverage
+
+      - name: Verify coverage badge is up to date
+        run: |
+          node scripts/generate-coverage-badge.mjs
+          git diff --exit-code badges/ || (echo "Coverage badge is out of date. Run 'pnpm run badge' and commit." && exit 1)

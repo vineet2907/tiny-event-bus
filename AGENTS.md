@@ -63,10 +63,20 @@ tiny-event-bus/                    # pnpm workspace root (private)
 ├── .npmrc                         # link-workspace-packages=true
 ├── .editorconfig                  # 2-space indent, UTF-8, LF, trim trailing whitespace
 ├── .prettierrc                    # singleQuote, semi, trailingComma: all
-├── .prettierignore                # dist, coverage, pnpm-lock.yaml
+├── .prettierignore                # dist, coverage, badges, pnpm-lock.yaml
 ├── eslint.config.mjs              # ESLint 10 flat config + typescript-eslint + prettier + react-hooks
 ├── .gitignore                     # node_modules, dist, coverage, tsbuildinfo
 ├── package.json                   # private, workspace scripts, shared devDeps
+├── hooks/
+│   └── pre-push                   # Aborts push if coverage badge is out of date
+├── scripts/
+│   ├── generate-coverage-badge.mjs # Runner: reads coverage JSON, writes badges/coverage.svg
+│   ├── vitest.config.ts           # Vitest config for script tests
+│   └── lib/
+│       ├── coverage-badge.mjs     # Pure functions: discover, parse, average, badge SVG
+│       └── __tests__/             # Unit tests for coverage badge lib
+├── badges/
+│   └── coverage.svg               # Auto-generated coverage badge (committed via pre-push hook)
 ├── packages/
 │   ├── core/                      # @tiny-event-bus/core — framework-agnostic event bus
 │   │   ├── package.json           # zero deps, dual ESM/CJS exports

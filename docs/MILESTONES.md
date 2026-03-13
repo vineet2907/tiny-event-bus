@@ -11,7 +11,7 @@ See [ARCHIVE.md](ARCHIVE.md) for older milestones.
 ## v0.7.0 Milestones
 
 33. ✅ GitHub Actions CI workflow — `.github/workflows/ci.yml`, triggers on push to `main` + PRs, Node 22, single job: lint, format check, typecheck, build packages + example, test with coverage (90% thresholds enforced), update AGENTS.md + README.md
-34. ⬜ Coverage badge generation — add `json-summary` reporter to vitest configs, `scripts/generate-coverage-badge.mjs` (zero-dep, reads coverage JSON, writes SVG), `badges/` directory, CI auto-commits badge on push to main (Node 22 only), update AGENTS.md + README.md
+34. ✅ Coverage badge generation — added `json-summary` reporter to vitest configs, `scripts/lib/coverage-badge.mjs` (pure functions: discover, parse, average, badge SVG, 17 unit tests), `scripts/generate-coverage-badge.mjs` runner, `badges/coverage.svg`, pre-push hook auto-commits badge, CI verifies badge is up to date, `prepare` script sets `core.hooksPath`, update AGENTS.md
 35. ⬜ README badges — add CI status + coverage badge images to README.md top, final AGENTS.md review, update MILESTONES.md
 
 ## Future backlog

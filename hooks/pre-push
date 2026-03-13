@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# Regenerate coverage badge from existing coverage data.
+# If the badge is out of date, abort push so the developer can commit the update.
+
+node scripts/generate-coverage-badge.mjs 2>/dev/null
+
+if ! git diff --quiet badges/; then
+  echo ""
+  echo "Coverage badge is out of date."
+  echo "Run 'pnpm run badge', commit the updated badge, then push again."
+  echo ""
+  git checkout -- badges/
+  exit 1
+fi

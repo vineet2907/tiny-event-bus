@@ -14,6 +14,8 @@
     "test:coverage": "pnpm -r run test:coverage",
     "test:watch": "pnpm -r run test:watch",
     "typecheck": "pnpm -r run typecheck",
+    "badge": "node scripts/generate-coverage-badge.mjs",
+    "prepare": "git config core.hooksPath hooks",
     "example": "pnpm --filter tiny-event-bus-react-demo run dev"
   },
   "engines": {
