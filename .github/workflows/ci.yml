@@ -32,11 +32,11 @@ jobs:
       - name: Format check
         run: pnpm run format:check
 
-      - name: Typecheck
-        run: pnpm run typecheck
-
       - name: Build packages
         run: pnpm -r run build
+
+      - name: Typecheck
+        run: pnpm run typecheck
 
       - name: Build example
         run: pnpm --filter tiny-event-bus-react-demo run build
