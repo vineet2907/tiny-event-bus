@@ -48,6 +48,7 @@ Framework-agnostic core + thin React hook layer.
 | Linting         | ESLint 10 + typescript-eslint              | Flat config, recommended rules, react-hooks plugin for React package, gates build           |
 | Formatting      | Prettier                                   | Consistent code style, integrated with ESLint via eslint-config-prettier                    |
 | Test coverage   | @vitest/coverage-v8                        | v8 provider, 90% thresholds enforced, lcov reporter for future Codecov integration          |
+| CI              | GitHub Actions                             | Node 22, lint + format + typecheck + build + test on push/PR to `main`                      |
 
 **Bundle size** (ESM JS, gzipped): Core ~613 B, React ~623 B, Core + React ~1.2 KB. Keep updated after code changes.
 
@@ -55,6 +56,9 @@ Framework-agnostic core + thin React hook layer.
 
 ```text
 tiny-event-bus/                    # pnpm workspace root (private)
+├── .github/
+│   └── workflows/
+│       └── ci.yml                 # GitHub Actions CI — lint, format, typecheck, build, test
 ├── pnpm-workspace.yaml            # workspace: packages/* + examples/*
 ├── .npmrc                         # link-workspace-packages=true
 ├── .editorconfig                  # 2-space indent, UTF-8, LF, trim trailing whitespace

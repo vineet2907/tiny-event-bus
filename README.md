@@ -55,7 +55,10 @@ This is a pnpm workspace monorepo.
 pnpm install              # install all deps (workspace linking)
 pnpm -r run build         # build all packages (ESM + CJS)
 pnpm -r run test          # run all tests (74 tests across core + react)
+pnpm run test:coverage    # run tests with v8 coverage (90% thresholds)
 pnpm -r run typecheck     # type-check all packages
+pnpm run lint             # ESLint
+pnpm run format:check     # Prettier check
 pnpm run example          # start the demo app (Vite dev server)
 ```
 
