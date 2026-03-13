@@ -154,15 +154,18 @@ See [MILESTONES.md](docs/MILESTONES.md) for milestone status and future extensio
 
 ## Code Style
 
-- **Milestone gate**: after completing each milestone, wait for user review and approval before proceeding to the next milestone
+- Each milestone is small enough to review in one sitting and leaves the code in stable and shippable state
 - **Update MILESTONES.md before starting implementation** — add planned milestones with ⬜ status before writing any code for a new version
 - TDD - Write **one** failing test → implement minimum to pass → refactor → repeat. Never batch multiple failing tests at once.
-- TDD - Pause after each red-green-refactor cycle for human code review before next test
 - No JSDoc or inline comments that restate what the code already says
 - Comments only for: TODOs, non-obvious "why" decisions, workarounds
 - Let type signatures, function names, and tests document intent
 - AGENTS.md, MILESTONES.md, README and examples updated every milestone (check and update before marking complete)
-- Request human code review after every milestone implementation
 - Only two latest feature versions stay in MILESTONES.md file, move the older version milestones to ARCHIVE.md
 - TODOs in code and docs for pending features, removed when built
 - Run `grep -r "TODO" packages/ examples/ README.md` to see pending work at any point
+
+### Code Review Gates
+
+- **Outer gate**: after completing each milestone, wait for user review and approval before proceeding to the next milestone.
+- **Inner gate**: pause after each red-green-refactor TDD cycle for user review and approval before proceeding to next test.
