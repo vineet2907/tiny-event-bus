@@ -1,5 +1,8 @@
 # tiny-event-bus
 
+![CI](https://github.com/vineet2907/tiny-event-bus/actions/workflows/ci.yml/badge.svg)
+![Coverage](./badges/coverage.svg)
+
 Zero-dependency, TypeScript-first event bus.
 
 ## Packages

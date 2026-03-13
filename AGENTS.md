@@ -32,23 +32,23 @@ Framework-agnostic core + thin React hook layer.
 
 ## Tech Stack
 
-| Category        | Choice                                     | Why                                                                                         |
-| --------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------- |
-| Language        | TypeScript 5.7+ (strict)                   | Full generic type safety, catch errors at compile time                                      |
-| Target          | ES2020                                     | Supports Map/Set natively, covers Node 20+ and modern browsers                              |
-| Package manager | pnpm 10.x (via corepack)                   | Strict dep isolation, industry standard for TS lib monorepos (Vue/Vite/Vitest)              |
-| Monorepo        | pnpm workspaces                            | `packages/*` + `examples/*`, shared lockfile, workspace protocol for inter-package deps     |
-| Build           | plain tsc (two passes per package)         | Under 1KB — no bundler needed; ESM → `dist/esm`, CJS → `dist/cjs`                           |
-| Tests           | Vitest 3.x                                 | Fast watch mode for TDD, built-in type assertions; core uses `node` env, react uses `jsdom` |
-| React testing   | @testing-library/react 16                  | Industry standard for hook/component testing                                                |
-| React           | >=17 (peer dep of `@tiny-event-bus/react`) | Supports hooks API; tested with React 19                                                    |
-| Node            | >=20                                       | LTS target                                                                                  |
-| Module system   | Dual ESM/CJS                               | `"type": "module"` with CJS fallback via package exports map                                |
-| Editor config   | EditorConfig                               | Consistent formatting across editors and contributors                                       |
-| Linting         | ESLint 10 + typescript-eslint              | Flat config, recommended rules, react-hooks plugin for React package, gates build           |
-| Formatting      | Prettier                                   | Consistent code style, integrated with ESLint via eslint-config-prettier                    |
-| Test coverage   | @vitest/coverage-v8                        | v8 provider, 90% thresholds enforced, lcov reporter for future Codecov integration          |
-| CI              | GitHub Actions                             | Node 22, lint + format + typecheck + build + test on push/PR to `main`                      |
+| Category        | Choice                                     | Why                                                                                          |
+| --------------- | ------------------------------------------ | -------------------------------------------------------------------------------------------- |
+| Language        | TypeScript 5.7+ (strict)                   | Full generic type safety, catch errors at compile time                                       |
+| Target          | ES2020                                     | Supports Map/Set natively, covers Node 20+ and modern browsers                               |
+| Package manager | pnpm 10.x (via corepack)                   | Strict dep isolation, industry standard for TS lib monorepos (Vue/Vite/Vitest)               |
+| Monorepo        | pnpm workspaces                            | `packages/*` + `examples/*`, shared lockfile, workspace protocol for inter-package deps      |
+| Build           | plain tsc (two passes per package)         | Under 1KB — no bundler needed; ESM → `dist/esm`, CJS → `dist/cjs`                            |
+| Tests           | Vitest 3.x                                 | Fast watch mode for TDD, built-in type assertions; core uses `node` env, react uses `jsdom`  |
+| React testing   | @testing-library/react 16                  | Industry standard for hook/component testing                                                 |
+| React           | >=17 (peer dep of `@tiny-event-bus/react`) | Supports hooks API; tested with React 19                                                     |
+| Node            | >=20                                       | LTS target                                                                                   |
+| Module system   | Dual ESM/CJS                               | `"type": "module"` with CJS fallback via package exports map                                 |
+| Editor config   | EditorConfig                               | Consistent formatting across editors and contributors                                        |
+| Linting         | ESLint 10 + typescript-eslint              | Flat config, recommended rules, react-hooks plugin for React package, gates build            |
+| Formatting      | Prettier                                   | Consistent code style, integrated with ESLint via eslint-config-prettier                     |
+| Test coverage   | @vitest/coverage-v8                        | v8 provider, 90% thresholds enforced, json-summary + lcov reporters, badge via pre-push hook |
+| CI              | GitHub Actions                             | Node 22, lint + format + typecheck + build + test on push/PR to `main`                       |
 
 **Bundle size** (ESM JS, gzipped): Core ~613 B, React ~623 B, Core + React ~1.2 KB. Keep updated after code changes.
 
