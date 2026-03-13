@@ -10,6 +10,7 @@ export default tseslint.config(
       '**/coverage/',
       '**/node_modules/',
       'examples/',
+      'scripts/',
       '**/__tests__/',
     ],
   },
