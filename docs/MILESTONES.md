@@ -10,9 +10,9 @@ See [ARCHIVE.md](ARCHIVE.md) for older milestones.
 
 ## v0.8.0 Milestones
 
-36. ⬜ Dependabot configuration — `.github/dependabot.yml` with `npm` ecosystem entries for all workspace directories + `github-actions` ecosystem, weekly schedule, grouping for reduced PR noise, `.github/workflows/dependabot-automerge.yml` for auto-approving + squash-merging patch/minor updates after CI passes, update AGENTS.md
-37. ⬜ Gitleaks secret scanning — `.gitleaks.toml` config, `hooks/pre-commit` shell script runs gitleaks on staged changes, `gitleaks-action` CI step in `.github/workflows/ci.yml`, document local setup (`brew install gitleaks`) in README.md, update AGENTS.md
-38. ⬜ Harden .gitignore + final docs — add `.env*`, `*.pem`, `*.key`, `.secrets` patterns to `.gitignore`, final AGENTS.md review (Tech Stack table, Project Structure, CI description), update MILESTONES.md
+36. ✅ Dependabot configuration — `.github/dependabot.yml` with `npm` ecosystem entries for all workspace directories + `github-actions` ecosystem, weekly Wednesday schedule, grouping for reduced PR noise, `.github/workflows/dependabot-automerge.yml` for auto-approving + squash-merging patch/minor updates after CI passes, update AGENTS.md
+37. ✅ Gitleaks secret scanning — `.gitleaks.toml` config, `hooks/pre-commit` shell script runs gitleaks on staged changes, `gitleaks-action` CI step in `.github/workflows/ci.yml`, document local setup (`brew install gitleaks`) in README.md, update AGENTS.md
+38. ✅ Harden .gitignore + final docs — added `.env*`, `*.pem`, `*.key`, `.secrets` patterns to `.gitignore`, final AGENTS.md review (Tech Stack table, Project Structure, CI description), update MILESTONES.md
 
 ## Future backlog
 

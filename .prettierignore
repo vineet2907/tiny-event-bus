@@ -2,3 +2,4 @@ dist/
 coverage/
 badges/
 pnpm-lock.yaml
+results.sarif

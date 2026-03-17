@@ -48,8 +48,9 @@ Framework-agnostic core + thin React hook layer.
 | Linting         | ESLint 10 + typescript-eslint              | Flat config, recommended rules, react-hooks plugin for React package, gates build            |
 | Formatting      | Prettier                                   | Consistent code style, integrated with ESLint via eslint-config-prettier                     |
 | Test coverage   | @vitest/coverage-v8                        | v8 provider, 90% thresholds enforced, json-summary + lcov reporters, badge via pre-push hook |
-| CI              | GitHub Actions                             | Node 22, lint + format + typecheck + build + test on push/PR to `main`                       |
+| CI              | GitHub Actions                             | Node 22, gitleaks secret scan, lint + format + typecheck + build + test on push/PR to `main` |
 | Dep updates     | Dependabot                                 | Weekly PRs, grouped patch+minor, auto-merge via companion workflow, github-actions ecosystem |
+| Secret scanning | gitleaks                                   | Pre-commit hook for local scanning, gitleaks-action in CI, `.gitleaks.toml` config           |
 
 **Bundle size** (ESM JS, gzipped): Core ~613 B, React ~623 B, Core + React ~1.2 KB. Keep updated after code changes.
 
@@ -60,17 +61,19 @@ tiny-event-bus/                    # pnpm workspace root (private)
 ├── .github/
 │   ├── dependabot.yml             # Dependabot config — npm + github-actions ecosystems, weekly
 │   └── workflows/
-│       ├── ci.yml                 # GitHub Actions CI — lint, format, typecheck, build, test
+│       ├── ci.yml                 # GitHub Actions CI — gitleaks, lint, format, typecheck, build, test
 │       └── dependabot-automerge.yml # Auto-approve + squash-merge patch/minor Dependabot PRs
 ├── pnpm-workspace.yaml            # workspace: packages/* + examples/*
 ├── .npmrc                         # link-workspace-packages=true
+├── .gitleaks.toml                 # Gitleaks config — extends default ruleset, allowlisted paths
 ├── .editorconfig                  # 2-space indent, UTF-8, LF, trim trailing whitespace
 ├── .prettierrc                    # singleQuote, semi, trailingComma: all
 ├── .prettierignore                # dist, coverage, badges, pnpm-lock.yaml
 ├── eslint.config.mjs              # ESLint 10 flat config + typescript-eslint + prettier + react-hooks
-├── .gitignore                     # node_modules, dist, coverage, tsbuildinfo
+├── .gitignore                     # node_modules, dist, coverage, tsbuildinfo, .env*, *.pem, *.key
 ├── package.json                   # private, workspace scripts, shared devDeps
 ├── hooks/
+│   ├── pre-commit                 # Gitleaks secret scan on staged changes
 │   └── pre-push                   # Aborts push if coverage badge is out of date
 ├── scripts/
 │   ├── generate-coverage-badge.mjs # Runner: reads coverage JSON, writes badges/coverage.svg
@@ -173,6 +176,7 @@ See [MILESTONES.md](docs/MILESTONES.md) for milestone status and future extensio
 
 - Each milestone is small enough to review in one sitting and leaves the code in stable and shippable state
 - **Update MILESTONES.md before starting implementation** — add planned milestones with ⬜ status before writing any code for a new version
+- **Mark each milestone ✅ in MILESTONES.md immediately after completing it** — do not batch status updates across milestones
 - TDD - Write **one** failing test → implement minimum to pass → refactor → repeat. Never batch multiple failing tests at once.
 - No JSDoc or inline comments that restate what the code already says
 - Comments only for: TODOs, non-obvious "why" decisions, workarounds
