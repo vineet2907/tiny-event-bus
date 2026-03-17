@@ -54,6 +54,16 @@ See [examples/react/README.md](examples/react/README.md) for architecture and de
 
 This is a pnpm workspace monorepo.
 
+### Prerequisites
+
+- **Node.js** >= 20
+- **pnpm** >= 10 (via corepack: `corepack enable`)
+- **gitleaks** for local secret scanning: `brew install gitleaks`
+
+`pnpm install` auto-configures Git hooks (pre-commit for secret scanning, pre-push for coverage badge).
+
+### Commands
+
 ```bash
 pnpm install              # install all deps (workspace linking)
 pnpm -r run build         # build all packages (ESM + CJS)
