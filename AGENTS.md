@@ -94,7 +94,7 @@ tiny-event-bus/                    # pnpm workspace root (private)
 │   │       ├── types.ts           # EventMap, EventHandler, AnyEventHandler, Unsubscribe, IEventBus
 │   │       ├── event-bus.ts       # EventBus class + createEventBus factory
 │   │       ├── index.ts           # Public API
-│   │       └── __tests__/         # event-bus, introspection, on-any, performance tests
+│   │       └── __tests__/         # event-bus, introspection, on-any tests
 │   └── react/                     # @tiny-event-bus/react — React hooks plugin
 │       ├── package.json           # peerDeps: @tiny-event-bus/core + react >=17
 │       ├── tsconfig.json          # ES2020, strict, jsx: react-jsx
