@@ -1,0 +1,67 @@
+version: 2
+
+updates:
+  # Root workspace dependencies (shared devDeps)
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'wednesday'
+    open-pull-requests-limit: 10
+    groups:
+      minor-and-patch:
+        update-types:
+          - 'minor'
+          - 'patch'
+
+  # @tiny-event-bus/core
+  - package-ecosystem: 'npm'
+    directory: '/packages/core'
+    schedule:
+      interval: 'weekly'
+      day: 'wednesday'
+    open-pull-requests-limit: 10
+    groups:
+      minor-and-patch:
+        update-types:
+          - 'minor'
+          - 'patch'
+
+  # @tiny-event-bus/react
+  - package-ecosystem: 'npm'
+    directory: '/packages/react'
+    schedule:
+      interval: 'weekly'
+      day: 'wednesday'
+    open-pull-requests-limit: 10
+    groups:
+      minor-and-patch:
+        update-types:
+          - 'minor'
+          - 'patch'
+
+  # React example app
+  - package-ecosystem: 'npm'
+    directory: '/examples/react'
+    schedule:
+      interval: 'weekly'
+      day: 'wednesday'
+    open-pull-requests-limit: 10
+    groups:
+      minor-and-patch:
+        update-types:
+          - 'minor'
+          - 'patch'
+
+  # Keep GitHub Actions up to date
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'wednesday'
+    open-pull-requests-limit: 5
+    groups:
+      actions:
+        update-types:
+          - 'minor'
+          - 'patch'

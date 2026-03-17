@@ -49,6 +49,7 @@ Framework-agnostic core + thin React hook layer.
 | Formatting      | Prettier                                   | Consistent code style, integrated with ESLint via eslint-config-prettier                     |
 | Test coverage   | @vitest/coverage-v8                        | v8 provider, 90% thresholds enforced, json-summary + lcov reporters, badge via pre-push hook |
 | CI              | GitHub Actions                             | Node 22, lint + format + typecheck + build + test on push/PR to `main`                       |
+| Dep updates     | Dependabot                                 | Weekly PRs, grouped patch+minor, auto-merge via companion workflow, github-actions ecosystem |
 
 **Bundle size** (ESM JS, gzipped): Core ~613 B, React ~623 B, Core + React ~1.2 KB. Keep updated after code changes.
 
@@ -57,8 +58,10 @@ Framework-agnostic core + thin React hook layer.
 ```text
 tiny-event-bus/                    # pnpm workspace root (private)
 ├── .github/
+│   ├── dependabot.yml             # Dependabot config — npm + github-actions ecosystems, weekly
 │   └── workflows/
-│       └── ci.yml                 # GitHub Actions CI — lint, format, typecheck, build, test
+│       ├── ci.yml                 # GitHub Actions CI — lint, format, typecheck, build, test
+│       └── dependabot-automerge.yml # Auto-approve + squash-merge patch/minor Dependabot PRs
 ├── pnpm-workspace.yaml            # workspace: packages/* + examples/*
 ├── .npmrc                         # link-workspace-packages=true
 ├── .editorconfig                  # 2-space indent, UTF-8, LF, trim trailing whitespace
