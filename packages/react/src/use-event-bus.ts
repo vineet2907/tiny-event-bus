@@ -1,48 +1,23 @@
-import { useCallback } from 'react';
-import type {
-  EventMap,
-  EventHandler,
-  Unsubscribe,
-  IEventBus,
-} from '@tiny-event-bus/core';
+import { useMemo } from 'react';
+import type { IEventBus } from '@tiny-event-bus/core';
 
-export interface BusActions<T extends EventMap> {
-  emit: <K extends keyof T & string>(event: K, data: T[K]) => void;
-  on: <K extends keyof T & string>(
-    event: K,
-    handler: EventHandler<T[K]>,
-  ) => Unsubscribe;
-  once: <K extends keyof T & string>(
-    event: K,
-    handler: EventHandler<T[K]>,
-  ) => Unsubscribe;
-  clear: <K extends keyof T & string>(event?: K) => void;
-}
+export type BusMethods<B> = {
+  [K in keyof B as B[K] extends (...args: any[]) => any ? K : never]: B[K];
+};
 
-export function useEventBus<T extends EventMap>(
-  bus: IEventBus<T>,
-): BusActions<T> {
-  const emit = useCallback(
-    <K extends keyof T & string>(event: K, data: T[K]) => bus.emit(event, data),
-    [bus],
-  );
+export function useEventBus<B extends IEventBus<any>>(bus: B): BusMethods<B> {
+  return useMemo(() => {
+    const source = bus as Record<string, unknown>;
+    const methods: Record<string, unknown> = {};
 
-  const on = useCallback(
-    <K extends keyof T & string>(event: K, handler: EventHandler<T[K]>) =>
-      bus.on(event, handler),
-    [bus],
-  );
+    for (const key of Object.keys(source)) {
+      const fn = source[key];
+      if (typeof fn === 'function') {
+        methods[key] = (...args: unknown[]) =>
+          (fn as Function).apply(bus, args);
+      }
+    }
 
-  const once = useCallback(
-    <K extends keyof T & string>(event: K, handler: EventHandler<T[K]>) =>
-      bus.once(event, handler),
-    [bus],
-  );
-
-  const clear = useCallback(
-    <K extends keyof T & string>(event?: K) => bus.clear(event),
-    [bus],
-  );
-
-  return { emit, on, once, clear };
+    return methods as BusMethods<B>;
+  }, [bus]);
 }
