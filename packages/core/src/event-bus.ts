@@ -1,5 +1,6 @@
 import type {
   EventMap,
+  EventKey,
   EventHandler,
   AnyEventHandler,
   Unsubscribe,
@@ -7,11 +8,14 @@ import type {
 } from './types.js';
 
 export function createEventBus<T extends EventMap>(): IEventBus<T> {
-  const listeners = new Map<keyof T, Set<EventHandler>>();
+  const listeners = new Map<EventKey<T>, Set<EventHandler>>();
   const anyListeners = new Set<AnyEventHandler<T>>();
 
   const bus: IEventBus<T> = {
-    on<K extends keyof T>(event: K, handler: EventHandler<T[K]>): Unsubscribe {
+    on<K extends EventKey<T>>(
+      event: K,
+      handler: EventHandler<T[K]>,
+    ): Unsubscribe {
       if (!listeners.has(event)) {
         listeners.set(event, new Set());
       }
@@ -24,7 +28,7 @@ export function createEventBus<T extends EventMap>(): IEventBus<T> {
       };
     },
 
-    once<K extends keyof T>(
+    once<K extends EventKey<T>>(
       event: K,
       handler: EventHandler<T[K]>,
     ): Unsubscribe {
@@ -35,7 +39,7 @@ export function createEventBus<T extends EventMap>(): IEventBus<T> {
       return unsub;
     },
 
-    emit<K extends keyof T>(event: K, data: T[K]): void {
+    emit<K extends EventKey<T>>(event: K, data: T[K]): void {
       const handlers = listeners.get(event);
       if (handlers) {
         for (const handler of [...handlers]) {
@@ -55,7 +59,7 @@ export function createEventBus<T extends EventMap>(): IEventBus<T> {
       }
     },
 
-    clear<K extends keyof T>(event?: K): void {
+    clear<K extends EventKey<T>>(event?: K): void {
       if (event !== undefined) {
         listeners.delete(event);
       } else {
@@ -64,11 +68,11 @@ export function createEventBus<T extends EventMap>(): IEventBus<T> {
       }
     },
 
-    hasListeners<K extends keyof T>(event: K): boolean {
+    hasListeners<K extends EventKey<T>>(event: K): boolean {
       return (listeners.get(event)?.size ?? 0) > 0;
     },
 
-    listenerCount<K extends keyof T>(event?: K): number {
+    listenerCount<K extends EventKey<T>>(event?: K): number {
       if (event !== undefined) {
         return listeners.get(event)?.size ?? 0;
       }
@@ -79,7 +83,7 @@ export function createEventBus<T extends EventMap>(): IEventBus<T> {
       return total;
     },
 
-    eventNames(): (keyof T)[] {
+    eventNames(): EventKey<T>[] {
       return [...listeners.keys()];
     },
 

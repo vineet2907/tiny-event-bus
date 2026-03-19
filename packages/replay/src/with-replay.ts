@@ -1,5 +1,6 @@
 import type {
   EventMap,
+  EventKey,
   EventHandler,
   AnyEventHandler,
   Unsubscribe,
@@ -19,7 +20,10 @@ export function withReplay<T extends EventMap>(
   const buffer: ReplayEntry<T>[] = [];
 
   return {
-    on<K extends keyof T>(event: K, handler: EventHandler<T[K]>): Unsubscribe {
+    on<K extends EventKey<T>>(
+      event: K,
+      handler: EventHandler<T[K]>,
+    ): Unsubscribe {
       if (autoReplay) {
         for (const entry of buffer) {
           if (entry.event === event) {
@@ -33,7 +37,7 @@ export function withReplay<T extends EventMap>(
       }
       return bus.on(event, handler);
     },
-    once<K extends keyof T>(
+    once<K extends EventKey<T>>(
       event: K,
       handler: EventHandler<T[K]>,
     ): Unsubscribe {
@@ -51,21 +55,21 @@ export function withReplay<T extends EventMap>(
       }
       return bus.once(event, handler);
     },
-    emit<K extends keyof T>(event: K, data: T[K]): void {
+    emit<K extends EventKey<T>>(event: K, data: T[K]): void {
       buffer.push({ event, data, timestamp: Date.now() });
       if (buffer.length > maxSize) buffer.shift();
       bus.emit(event, data);
     },
-    clear<K extends keyof T>(event?: K): void {
+    clear<K extends EventKey<T>>(event?: K): void {
       bus.clear(event);
     },
-    hasListeners<K extends keyof T>(event: K): boolean {
+    hasListeners<K extends EventKey<T>>(event: K): boolean {
       return bus.hasListeners(event);
     },
-    listenerCount<K extends keyof T>(event?: K): number {
+    listenerCount<K extends EventKey<T>>(event?: K): number {
       return bus.listenerCount(event);
     },
-    eventNames(): (keyof T)[] {
+    eventNames(): EventKey<T>[] {
       return bus.eventNames();
     },
     onAny(handler: AnyEventHandler<T>): Unsubscribe {
@@ -80,13 +84,13 @@ export function withReplay<T extends EventMap>(
       }
       return bus.onAny(handler);
     },
-    getHistory<K extends keyof T>(event?: K): ReplayEntry<T>[] {
+    getHistory<K extends EventKey<T>>(event?: K): ReplayEntry<T>[] {
       if (event !== undefined) {
         return buffer.filter((entry) => entry.event === event);
       }
       return [...buffer];
     },
-    clearHistory<K extends keyof T>(event?: K): void {
+    clearHistory<K extends EventKey<T>>(event?: K): void {
       if (event !== undefined) {
         for (let i = buffer.length - 1; i >= 0; i--) {
           if (buffer[i].event === event) buffer.splice(i, 1);

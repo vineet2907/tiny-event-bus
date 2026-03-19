@@ -1,8 +1,8 @@
-import type { EventMap, IEventBus } from '@tiny-event-bus/core';
+import type { EventMap, EventKey, IEventBus } from '@tiny-event-bus/core';
 
 export interface ReplayEntry<T extends EventMap> {
-  event: keyof T;
-  data: T[keyof T];
+  event: EventKey<T>;
+  data: T[EventKey<T>];
   timestamp: number;
 }
 
@@ -12,6 +12,6 @@ export interface ReplayOptions {
 }
 
 export interface ReplayBus<T extends EventMap> extends IEventBus<T> {
-  getHistory<K extends keyof T>(event?: K): ReplayEntry<T>[];
-  clearHistory<K extends keyof T>(event?: K): void;
+  getHistory<K extends EventKey<T>>(event?: K): ReplayEntry<T>[];
+  clearHistory<K extends EventKey<T>>(event?: K): void;
 }
