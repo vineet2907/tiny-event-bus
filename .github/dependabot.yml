@@ -40,6 +40,19 @@ updates:
           - 'minor'
           - 'patch'
 
+  # @tiny-event-bus/replay
+  - package-ecosystem: 'npm'
+    directory: '/packages/replay'
+    schedule:
+      interval: 'weekly'
+      day: 'wednesday'
+    open-pull-requests-limit: 10
+    groups:
+      minor-and-patch:
+        update-types:
+          - 'minor'
+          - 'patch'
+
   # Keep GitHub Actions up to date
   - package-ecosystem: 'github-actions'
     directory: '/'

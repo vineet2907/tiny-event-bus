@@ -47,12 +47,12 @@ function EmitButton() {
 
 ## API
 
-| Hook                            | Description                                                                                                                |
-| ------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| `useEvent(event, handler, bus)` | Subscribe with auto-cleanup on unmount. Uses `useRef` internally so handler updates never cause re-subscription.           |
-| `useEventBus(bus)`              | Returns `{ emit, on, once, clear }` with stable refs via `useCallback`. Safe to pass as props or use in dependency arrays. |
-| `useAnyEvent(handler, bus)`     | Subscribe to all events with auto-cleanup. Uses `useRef` for handler stability.                                            |
-| `createBusContext<T>()`         | Factory — returns `{ Provider, useEvent, useEventBus, useAnyEvent }`. Hooks read bus from context (no bus arg needed).     |
+| Hook                            | Description                                                                                                                    |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `useEvent(event, handler, bus)` | Subscribe with auto-cleanup on unmount. Uses `useRef` internally so handler updates never cause re-subscription.               |
+| `useEventBus(bus)`              | Returns `BusMethods<B>` — all function-valued properties of the bus with stable refs via `useMemo`. Works with any bus object. |
+| `useAnyEvent(handler, bus)`     | Subscribe to all events with auto-cleanup. Uses `useRef` for handler stability.                                                |
+| `createBusContext<T>()`         | Factory — returns `{ Provider, useEvent, useEventBus, useAnyEvent }`. Hooks read bus from context (no bus arg needed).         |
 
 ### `useEvent` — subscribe to a single event
 
@@ -84,6 +84,19 @@ function ActionBar() {
       Toast
     </button>
   );
+}
+```
+
+Returns `BusMethods<B>` — a mapped type that exposes every function-valued property on the bus object. This means it works with plain buses _and_ decorated buses like `ReplayBus`:
+
+```tsx
+import { withReplay } from '@tiny-event-bus/replay';
+
+const replayBus = withReplay(createEventBus<AppEvents>());
+
+function Component() {
+  // getHistory and clearHistory are also available
+  const { emit, getHistory, clearHistory } = useEventBus(replayBus);
 }
 ```
 
@@ -129,6 +142,66 @@ function ChatMessages() {
 ```
 
 Throws if hooks are used outside a `<Provider>`. Each `createBusContext()` call produces an isolated context — multiple scopes can coexist.
+
+## Using with `@tiny-event-bus/replay`
+
+All hooks work seamlessly with `withReplay` decorated buses. Install the replay plugin alongside:
+
+```bash
+npm install @tiny-event-bus/replay
+```
+
+Wrap your bus with `withReplay` and pass it to hooks as usual:
+
+```tsx
+import { createEventBus } from '@tiny-event-bus/core';
+import { withReplay } from '@tiny-event-bus/replay';
+import { createBusContext } from '@tiny-event-bus/react';
+
+type ActivityEvents = {
+  'activity:log': { action: string; timestamp: number };
+};
+
+const activityBus = withReplay(createEventBus<ActivityEvents>(), {
+  maxSize: 50,
+});
+
+const { Provider, useEvent, useEventBus, useAnyEvent } =
+  createBusContext<ActivityEvents>();
+```
+
+Late-mounting components can replay buffered events on mount:
+
+```tsx
+function ActivityFeed() {
+  const { getHistory } = useEventBus(activityBus);
+  const [entries, setEntries] = useState<string[]>([]);
+
+  useEffect(() => {
+    // Seed from replay buffer
+    setEntries(getHistory().map((e) => e.data.action));
+  }, [getHistory]);
+
+  // Live updates going forward
+  useEvent(
+    'activity:log',
+    (data) => {
+      setEntries((prev) => [...prev, data.action]);
+    },
+    activityBus,
+  );
+
+  return (
+    <ul>
+      {entries.map((e, i) => (
+        <li key={i}>{e}</li>
+      ))}
+    </ul>
+  );
+}
+```
+
+`useEventBus` automatically discovers `getHistory` and `clearHistory` from the replay bus — no extra configuration needed.
 
 ## When to Use (vs React State)
 
