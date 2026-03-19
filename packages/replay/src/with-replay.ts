@@ -7,10 +7,15 @@ import type {
 } from '@tiny-event-bus/core';
 import type { ReplayBus, ReplayOptions, ReplayEntry } from './types.js';
 
+const DEFAULT_MAX_SIZE = 50;
+
 export function withReplay<T extends EventMap>(
   bus: IEventBus<T>,
-  _options?: ReplayOptions,
+  options?: ReplayOptions,
 ): ReplayBus<T> {
+  const maxSize = options?.maxSize ?? DEFAULT_MAX_SIZE;
+  const buffer: ReplayEntry<T>[] = [];
+
   return {
     on<K extends keyof T>(
       event: K,
@@ -25,6 +30,8 @@ export function withReplay<T extends EventMap>(
       return bus.once(event, handler);
     },
     emit<K extends keyof T>(event: K, data: T[K]): void {
+      buffer.push({ event, data, timestamp: Date.now() });
+      if (buffer.length > maxSize) buffer.shift();
       bus.emit(event, data);
     },
     clear<K extends keyof T>(event?: K): void {
@@ -43,10 +50,10 @@ export function withReplay<T extends EventMap>(
       return bus.onAny(handler);
     },
     getHistory(): ReplayEntry<T>[] {
-      return [];
+      return [...buffer];
     },
     clearHistory(): void {
-      // stub — buffering implemented in milestone 40
+      buffer.length = 0;
     },
   };
 }
