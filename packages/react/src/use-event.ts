@@ -1,7 +1,12 @@
 import { useEffect, useRef } from 'react';
-import type { EventMap, EventHandler, IEventBus } from '@tiny-event-bus/core';
+import type {
+  EventMap,
+  EventKey,
+  EventHandler,
+  IEventBus,
+} from '@tiny-event-bus/core';
 
-export function useEvent<T extends EventMap, K extends keyof T & string>(
+export function useEvent<T extends EventMap, K extends EventKey<T>>(
   event: K,
   handler: EventHandler<T[K]>,
   bus: IEventBus<T>,

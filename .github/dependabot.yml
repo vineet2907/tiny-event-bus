@@ -40,9 +40,9 @@ updates:
           - 'minor'
           - 'patch'
 
-  # React example app
+  # @tiny-event-bus/replay
   - package-ecosystem: 'npm'
-    directory: '/examples/react'
+    directory: '/packages/replay'
     schedule:
       interval: 'weekly'
       day: 'wednesday'

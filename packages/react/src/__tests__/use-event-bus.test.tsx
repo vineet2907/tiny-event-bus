@@ -87,4 +87,29 @@ describe('useEventBus', () => {
     expect(msgHandler).not.toHaveBeenCalled();
     expect(pingHandler).toHaveBeenCalledOnce();
   });
+
+  it('getHistory() returns event history from decorated bus', () => {
+    const bus = createEventBus<TestEvents>();
+    const history = [{ event: 'foo', data: 'bar', timestamp: 123 }];
+    const extended = {
+      ...bus,
+      getHistory: vi.fn(() => history),
+    };
+    const { result } = renderHook(() => useEventBus(extended));
+
+    expect(result.current.getHistory()).toEqual(history);
+    expect(extended.getHistory).toHaveBeenCalled();
+  });
+
+  it('clearHistory() delegates to decorated bus', () => {
+    const bus = createEventBus<TestEvents>();
+    const extended = {
+      ...bus,
+      clearHistory: vi.fn(),
+    };
+    const { result } = renderHook(() => useEventBus(extended));
+
+    result.current.clearHistory();
+    expect(extended.clearHistory).toHaveBeenCalled();
+  });
 });

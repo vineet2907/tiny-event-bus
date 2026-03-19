@@ -1,14 +1,17 @@
 import { useState, useCallback } from 'react';
-import { useShopAnyEvent, type ShopEvents } from '../events';
+import { useActivityAnyEvent, type ActivityEvents } from '../events';
 
 type LogEntry = { timestamp: string; event: string; payload: unknown };
 
 export default function AnalyticsLogger() {
   const [logs, setLogs] = useState<LogEntry[]>([]);
 
-  useShopAnyEvent(
+  useActivityAnyEvent(
     useCallback(
-      (event: keyof ShopEvents, data: ShopEvents[keyof ShopEvents]) => {
+      (
+        event: keyof ActivityEvents,
+        data: ActivityEvents[keyof ActivityEvents],
+      ) => {
         setLogs((prev) =>
           [
             {
@@ -29,7 +32,7 @@ export default function AnalyticsLogger() {
       <h2>
         Analytics Log{' '}
         <span style={{ fontSize: 12, fontWeight: 'normal', color: '#888' }}>
-          (useAnyEvent — catches all events)
+          (ActivityBus — useAnyEvent catches all activity events)
         </span>
       </h2>
       <div

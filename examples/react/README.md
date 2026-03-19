@@ -29,39 +29,42 @@ Same user action, two paths, zero coupling between them.
 ┌──────────────────────────────────────────────────────────────────┐
 │  App                                                             │
 │                                                                  │
-│  <ShopBusProvider bus={bus}>   ← scoped context via              │
-│                                  createBusContext<ShopEvents>()  │
+│  <ShopBusProvider bus={shopBus}>                                 │
+│    <ActivityBusProvider bus={activityBus}>                       │
+│      activityBus = withReplay(createEventBus<ActivityEvents>())  │
 │                                                                  │
-│  ┌──── STATE PATH ────┐     ┌──── BUS PATH ─────────────────┐    │
-│  │                     │    │                               │    │
-│  │  CartContext         │   │  bus (createEventBus)         │    │
-│  │  ├─ items[]         │    │  ├─ toast:show                │    │
-│  │  ├─ addItem()       │    │  └─ shortcut:search           │    │
-│  │  └─ removeItem()    │    │                               │    │
-│  │                     │    │  Scoped hooks (no bus arg):   │    │
-│  └──────┬──────────────┘    │  useShopEvent, useShopEventBus│    │
-│         │                   │  useShopAnyEvent              │    │
-│         │                   └──────┬────────────────────────┘    │
-│  ┌──────▼──────────┐  ┌────────────▼──────────────────────┐      │
-│  │ ProductCatalog   │  │ ToastContainer (useShopEvent)     │     │
-│  │ (uses BOTH)      │  │ AnalyticsLogger (useShopAnyEvent) │     │
-│  │ CartSidebar      │  │ SearchModal (useShopEvent)        │     │
-│  │ (uses BOTH)      │  │ BusInspector (bus prop)           │     │
-│  └──────────────────┘  └─────────────────────────────────────┘   │
+│  ┌──── STATE PATH ────┐     ┌──── BUS PATH ────────────────┐    │
+│  │                     │    │                              │    │
+│  │  CartContext         │   │  shopBus (ShopEvents)        │    │
+│  │  ├─ items[]         │    │  ├─ toast:show               │    │
+│  │  ├─ addItem()       │    │  └─ shortcut:search          │    │
+│  │  └─ removeItem()    │    │                              │    │
+│  │                     │    │  activityBus (ActivityEvents) │    │
+│  │                     │    │  └─ activity:log (w/ replay)  │    │
+│  └──────┬──────────────┘    └──────┬───────────────────────┘    │
+│         │                          │                            │
+│  ┌──────▼──────────┐  ┌───────────▼──────────────────────┐      │
+│  │ ProductCatalog   │  │ ToastContainer (ShopBus)         │     │
+│  │ (uses BOTH)      │  │ AnalyticsLogger (ActivityBus)    │     │
+│  │ CartSidebar      │  │ SearchModal (ShopBus)            │     │
+│  │ (uses BOTH)      │  │ NotificationCenter (replay)      │     │
+│  └──────────────────┘  │ BusInspector (both buses)        │     │
+│                        └──────────────────────────────────┘     │
 └──────────────────────────────────────────────────────────────────┘
 ```
 
 ## Component Breakdown
 
-| Component           | State | Bus | Role                                                                                                                                    |
-| ------------------- | ----- | --- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| **CartContext**     | ✓     | —   | Manages cart items via `useState`. Pure React state.                                                                                    |
-| **ProductCatalog**  | ✓     | ✓   | Calls `addItem()` (state) + emits `toast:show` (bus) via `useShopEventBus()`                                                            |
-| **CartSidebar**     | ✓     | ✓   | Reads cart from context (state) + emits on remove/checkout (bus) via `useShopEventBus()`                                                |
-| **ToastContainer**  | —     | ✓   | Listens to `toast:show` via `useShopEvent`. Pure bus consumer.                                                                          |
-| **AnalyticsLogger** | —     | ✓   | Listens to **all events** via `useShopAnyEvent`. Logs every bus event with timestamp and payload.                                       |
-| **SearchModal**     | —     | ✓   | Listens to `shortcut:search` via `useShopEvent`. DOM → bus → UI.                                                                        |
-| **BusInspector**    | —     | ✓   | Receives `bus` as prop. Calls `bus.eventNames()`, `bus.listenerCount()`, `bus.hasListeners()` directly. Demonstrates introspection API. |
+| Component              | State | Bus | Role                                                                                                                |
+| ---------------------- | ----- | --- | ------------------------------------------------------------------------------------------------------------------- |
+| **CartContext**        | ✓     | —   | Manages cart items via `useState`. Pure React state.                                                                |
+| **ProductCatalog**     | ✓     | ✓   | Calls `addItem()` (state) + emits `toast:show` (ShopBus) + `activity:log` (ActivityBus) via scoped hooks            |
+| **CartSidebar**        | ✓     | ✓   | Reads cart from context (state) + emits on remove/checkout via both buses                                           |
+| **ToastContainer**     | —     | ✓   | Listens to `toast:show` via `useShopEvent`. Pure bus consumer.                                                      |
+| **AnalyticsLogger**    | —     | ✓   | Listens to **all activity events** via `useActivityAnyEvent`. Logs every ActivityBus event.                         |
+| **SearchModal**        | —     | ✓   | Listens to `shortcut:search` via `useShopEvent`. Emits `activity:log` on add.                                       |
+| **NotificationCenter** | —     | ✓   | Bell icon with badge. Replays activity history on mount via `getHistory()`. Live updates via `useActivityAnyEvent`. |
+| **BusInspector**       | —     | ✓   | Receives both buses as props. Shows listener tables for each + replay history from ActivityBus `getHistory()`.      |
 
 ## Setup
 
@@ -85,5 +88,6 @@ pnpm run dev
 1. **Add items to cart** — watch the cart sidebar update (state) while toasts appear and analytics log (bus)
 2. **Remove items** — same dual-path pattern
 3. **Press ⌘K / Ctrl+K** — search modal opens via bus event, add products from search
-4. **Click "Refresh" on Bus Inspector** — see live listener counts and active event names
-5. **Checkout** — toast fires, cart state unchanged (deliberate: no clear on checkout in this demo)
+4. **Click the 🔔 bell icon** — notification panel shows activity history replayed from `getHistory()`
+5. **Click "Refresh" on Bus Inspector** — see live listener counts for both ShopBus and ActivityBus, plus replay history
+6. **Checkout** — toast fires, activity logged, cart state unchanged (deliberate: no clear on checkout in this demo)

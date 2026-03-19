@@ -1,10 +1,11 @@
 import { useCart } from '../context/CartContext';
-import { useShopEventBus } from '../events';
+import { useShopEventBus, useActivityEventBus } from '../events';
 import { products, type Product } from '../data/products';
 
 export default function ProductCatalog() {
   const { addItem } = useCart();
   const { emit } = useShopEventBus();
+  const { emit: emitActivity } = useActivityEventBus();
 
   function handleAdd(product: Product) {
     // STATE path — updates cart UI, triggers re-render
@@ -14,6 +15,11 @@ export default function ProductCatalog() {
     emit('toast:show', {
       message: `${product.name} added to cart!`,
       severity: 'success',
+    });
+
+    emitActivity('activity:log', {
+      action: 'add-to-cart',
+      detail: product.name,
     });
   }
 

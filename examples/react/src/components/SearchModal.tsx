@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { useShopEvent, useShopEventBus } from '../events';
+import { useShopEvent, useShopEventBus, useActivityEventBus } from '../events';
 import { useCart } from '../context/CartContext';
 import { products, type Product } from '../data/products';
 
@@ -8,6 +8,7 @@ export default function SearchModal() {
   const [query, setQuery] = useState('');
   const { addItem } = useCart();
   const { emit } = useShopEventBus();
+  const { emit: emitActivity } = useActivityEventBus();
 
   useShopEvent(
     'shortcut:search',
@@ -31,6 +32,10 @@ export default function SearchModal() {
     emit('toast:show', {
       message: `${product.name} added to cart!`,
       severity: 'success',
+    });
+    emitActivity('activity:log', {
+      action: 'search-add-to-cart',
+      detail: product.name,
     });
     setOpen(false);
   }

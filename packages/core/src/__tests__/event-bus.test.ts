@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { EventBus, createEventBus } from '../event-bus.js';
+import { createEventBus } from '../event-bus.js';
 
 type TestEvents = {
   ping: void;
@@ -8,7 +8,7 @@ type TestEvents = {
 
 describe('EventBus', () => {
   it('calls handler when event is emitted', () => {
-    const bus = new EventBus<TestEvents>();
+    const bus = createEventBus<TestEvents>();
     const handler = vi.fn();
 
     bus.on('ping', handler);
@@ -18,7 +18,7 @@ describe('EventBus', () => {
   });
 
   it('passes correct data to handler', () => {
-    const bus = new EventBus<TestEvents>();
+    const bus = createEventBus<TestEvents>();
     const handler = vi.fn();
 
     bus.on('message', handler);
@@ -28,7 +28,7 @@ describe('EventBus', () => {
   });
 
   it('calls all handlers for the same event', () => {
-    const bus = new EventBus<TestEvents>();
+    const bus = createEventBus<TestEvents>();
     const handler1 = vi.fn();
     const handler2 = vi.fn();
 
@@ -41,7 +41,7 @@ describe('EventBus', () => {
   });
 
   it('does not throw when emitting with no listeners', () => {
-    const bus = new EventBus<TestEvents>();
+    const bus = createEventBus<TestEvents>();
 
     expect(() => bus.emit('ping', undefined as void)).not.toThrow();
   });
@@ -57,7 +57,7 @@ describe('EventBus', () => {
   });
 
   it('unsubscribe removes the handler', () => {
-    const bus = new EventBus<TestEvents>();
+    const bus = createEventBus<TestEvents>();
     const handler = vi.fn();
 
     const unsub = bus.on('ping', handler);
@@ -68,7 +68,7 @@ describe('EventBus', () => {
   });
 
   it('calling unsubscribe twice does not throw', () => {
-    const bus = new EventBus<TestEvents>();
+    const bus = createEventBus<TestEvents>();
     const unsub = bus.on('ping', vi.fn());
 
     unsub();
@@ -76,7 +76,7 @@ describe('EventBus', () => {
   });
 
   it('unsubscribed handler does not fire on subsequent emits', () => {
-    const bus = new EventBus<TestEvents>();
+    const bus = createEventBus<TestEvents>();
     const handler = vi.fn();
 
     const unsub = bus.on('ping', handler);
@@ -89,7 +89,7 @@ describe('EventBus', () => {
   });
 
   it('once fires handler exactly once then auto-unsubscribes', () => {
-    const bus = new EventBus<TestEvents>();
+    const bus = createEventBus<TestEvents>();
     const handler = vi.fn();
 
     bus.once('message', handler);
@@ -101,7 +101,7 @@ describe('EventBus', () => {
   });
 
   it('once unsubscribe cancels before first emit', () => {
-    const bus = new EventBus<TestEvents>();
+    const bus = createEventBus<TestEvents>();
     const handler = vi.fn();
 
     const unsub = bus.once('ping', handler);
@@ -112,7 +112,7 @@ describe('EventBus', () => {
   });
 
   it('clear(event) removes all listeners for that event', () => {
-    const bus = new EventBus<TestEvents>();
+    const bus = createEventBus<TestEvents>();
     const handler1 = vi.fn();
     const handler2 = vi.fn();
     const messageHandler = vi.fn();
@@ -131,7 +131,7 @@ describe('EventBus', () => {
   });
 
   it('clear() with no args removes all listeners for all events', () => {
-    const bus = new EventBus<TestEvents>();
+    const bus = createEventBus<TestEvents>();
     const pingHandler = vi.fn();
     const messageHandler = vi.fn();
 
@@ -147,7 +147,7 @@ describe('EventBus', () => {
   });
 
   it('throwing handler does not prevent other handlers from firing', () => {
-    const bus = new EventBus<TestEvents>();
+    const bus = createEventBus<TestEvents>();
     const badHandler = vi.fn(() => {
       throw new Error('boom');
     });
@@ -162,7 +162,7 @@ describe('EventBus', () => {
   });
 
   it('emit does not throw even when a handler throws', () => {
-    const bus = new EventBus<TestEvents>();
+    const bus = createEventBus<TestEvents>();
     bus.on('ping', () => {
       throw new Error('boom');
     });
@@ -171,7 +171,7 @@ describe('EventBus', () => {
   });
 
   it('handler added mid-emit does not fire in current cycle', () => {
-    const bus = new EventBus<TestEvents>();
+    const bus = createEventBus<TestEvents>();
     const lateHandler = vi.fn();
 
     bus.on('ping', () => {
@@ -186,7 +186,7 @@ describe('EventBus', () => {
   });
 
   it('handler removed mid-emit still fires in current cycle', () => {
-    const bus = new EventBus<TestEvents>();
+    const bus = createEventBus<TestEvents>();
     const handler2 = vi.fn();
     let unsub2: () => void;
 
@@ -201,7 +201,7 @@ describe('EventBus', () => {
   });
 
   it('re-entrant emit does not cause infinite loop', () => {
-    const bus = new EventBus<TestEvents>();
+    const bus = createEventBus<TestEvents>();
     let count = 0;
 
     bus.on('ping', () => {

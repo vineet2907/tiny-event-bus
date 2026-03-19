@@ -1,6 +1,7 @@
 import React, { createContext, useContext } from 'react';
 import type {
   EventMap,
+  EventKey,
   EventHandler,
   AnyEventHandler,
   IEventBus,
@@ -30,7 +31,7 @@ export function createBusContext<T extends EventMap>() {
     return React.createElement(Ctx.Provider, { value: bus }, children);
   }
 
-  function useEvent<K extends keyof T & string>(
+  function useEvent<K extends EventKey<T>>(
     event: K,
     handler: EventHandler<T[K]>,
   ) {

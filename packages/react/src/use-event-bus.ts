@@ -1,48 +1,30 @@
-import { useCallback } from 'react';
-import type {
-  EventMap,
-  EventHandler,
-  Unsubscribe,
-  IEventBus,
-} from '@tiny-event-bus/core';
+import { useMemo } from 'react';
+import type { IEventBus } from '@tiny-event-bus/core';
 
-export interface BusActions<T extends EventMap> {
-  emit: <K extends keyof T & string>(event: K, data: T[K]) => void;
-  on: <K extends keyof T & string>(
-    event: K,
-    handler: EventHandler<T[K]>,
-  ) => Unsubscribe;
-  once: <K extends keyof T & string>(
-    event: K,
-    handler: EventHandler<T[K]>,
-  ) => Unsubscribe;
-  clear: <K extends keyof T & string>(event?: K) => void;
-}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyFunction = (...args: any[]) => any;
 
-export function useEventBus<T extends EventMap>(
-  bus: IEventBus<T>,
-): BusActions<T> {
-  const emit = useCallback(
-    <K extends keyof T & string>(event: K, data: T[K]) => bus.emit(event, data),
-    [bus],
-  );
+export type BusMethods<B> = {
+  [K in keyof B as B[K] extends AnyFunction ? K : never]: B[K];
+};
 
-  const on = useCallback(
-    <K extends keyof T & string>(event: K, handler: EventHandler<T[K]>) =>
-      bus.on(event, handler),
-    [bus],
-  );
+// IEventBus<any> — `any` is intentional: IEventBus<T> is invariant in T, so no
+// concrete IEventBus<MyEvents> is assignable to IEventBus<EventMap>. Using `any`
+// sidesteps invariance while BusMethods<B> still preserves full static typing.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function useEventBus<B extends IEventBus<any>>(bus: B): BusMethods<B> {
+  return useMemo(() => {
+    const source = bus as Record<string, unknown>;
+    const methods: Record<string, unknown> = {};
 
-  const once = useCallback(
-    <K extends keyof T & string>(event: K, handler: EventHandler<T[K]>) =>
-      bus.once(event, handler),
-    [bus],
-  );
+    for (const key of Object.keys(source)) {
+      const fn = source[key];
+      if (typeof fn === 'function') {
+        methods[key] = (...args: unknown[]) =>
+          (fn as AnyFunction).apply(bus, args);
+      }
+    }
 
-  const clear = useCallback(
-    <K extends keyof T & string>(event?: K) => bus.clear(event),
-    [bus],
-  );
-
-  return { emit, on, once, clear };
+    return methods as BusMethods<B>;
+  }, [bus]);
 }
