@@ -40,19 +40,6 @@ updates:
           - 'minor'
           - 'patch'
 
-  # React example app
-  - package-ecosystem: 'npm'
-    directory: '/examples/react'
-    schedule:
-      interval: 'weekly'
-      day: 'wednesday'
-    open-pull-requests-limit: 10
-    groups:
-      minor-and-patch:
-        update-types:
-          - 'minor'
-          - 'patch'
-
   # Keep GitHub Actions up to date
   - package-ecosystem: 'github-actions'
     directory: '/'

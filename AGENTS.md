@@ -9,48 +9,35 @@ Framework-agnostic core + thin React hook layer.
 
 ## Architecture
 
-```
-┌─────────────────────────────────────────────────┐
-│  Consumer App                                   │
-│                                                 │
-│   ComponentA ──emit──►  EventBus  ◄──on── ComponentB
-│                          (Map+Set)              │
-│   useEventBus(bus)                 useEvent(..) │
-│       ▼                               ▼        │
-│   { emit, on, once }         useRef + useEffect │
-│   (useCallback)              (auto-cleanup)     │
-└─────────────────────────────────────────────────┘
-```
-
 **Data flow**: Producer calls `emit()` → EventBus iterates handler Set (snapshot copy) → each handler invoked in try/catch → Consumer receives typed payload. No state stored, no re-renders triggered.
 
 **Layer separation** (pnpm workspace monorepo):
 
 - **Core** (`@tiny-event-bus/core`): `EventBus` class, pure TypeScript, zero deps, framework-agnostic
+- **Replay plugin** (`@tiny-event-bus/replay`): `withReplay(bus)` decorator, buffers events for late subscribers, peer dep on `@tiny-event-bus/core`
 - **React plugin** (`@tiny-event-bus/react`): `useEvent` + `useEventBus` hooks, thin wrappers over core, peer dep on `@tiny-event-bus/core` + `react >=17`
-- Plugins import core types/classes via peer dependency — no `bus.use()` registry (yet)
+- Plugins import core types/classes via peer dependency — decorator pattern, no `bus.use()` registry
 
 ## Tech Stack
 
-| Category        | Choice                                     | Why                                                                                          |
-| --------------- | ------------------------------------------ | -------------------------------------------------------------------------------------------- |
-| Language        | TypeScript 5.7+ (strict)                   | Full generic type safety, catch errors at compile time                                       |
-| Target          | ES2020                                     | Supports Map/Set natively, covers Node 20+ and modern browsers                               |
-| Package manager | pnpm 10.x (via corepack)                   | Strict dep isolation, industry standard for TS lib monorepos (Vue/Vite/Vitest)               |
-| Monorepo        | pnpm workspaces                            | `packages/*` + `examples/*`, shared lockfile, workspace protocol for inter-package deps      |
-| Build           | plain tsc (two passes per package)         | Under 1KB — no bundler needed; ESM → `dist/esm`, CJS → `dist/cjs`                            |
-| Tests           | Vitest 3.x                                 | Fast watch mode for TDD, built-in type assertions; core uses `node` env, react uses `jsdom`  |
-| React testing   | @testing-library/react 16                  | Industry standard for hook/component testing                                                 |
-| React           | >=17 (peer dep of `@tiny-event-bus/react`) | Supports hooks API; tested with React 19                                                     |
-| Node            | >=20                                       | LTS target                                                                                   |
-| Module system   | Dual ESM/CJS                               | `"type": "module"` with CJS fallback via package exports map                                 |
-| Editor config   | EditorConfig                               | Consistent formatting across editors and contributors                                        |
-| Linting         | ESLint 10 + typescript-eslint              | Flat config, recommended rules, react-hooks plugin for React package, gates build            |
-| Formatting      | Prettier                                   | Consistent code style, integrated with ESLint via eslint-config-prettier                     |
-| Test coverage   | @vitest/coverage-v8                        | v8 provider, 90% thresholds enforced, json-summary + lcov reporters, badge via pre-push hook |
-| CI              | GitHub Actions                             | Node 22, gitleaks secret scan, lint + format + typecheck + build + test on push/PR to `main` |
-| Dep updates     | Dependabot                                 | Weekly PRs, grouped patch+minor, auto-merge via companion workflow, github-actions ecosystem |
-| Secret scanning | gitleaks                                   | Pre-commit hook for local scanning, gitleaks-action in CI, `.gitleaks.toml` config           |
+| Category        | Choice                                     |
+| --------------- | ------------------------------------------ |
+| Language        | TypeScript 5.7+ (strict)                   |
+| Target          | ES2020                                     |
+| Package manager | pnpm 10.x (via corepack)                   |
+| Monorepo        | pnpm workspaces                            |
+| Build           | plain tsc (two passes per package)         |
+| Tests           | Vitest 3.x                                 |
+| React testing   | @testing-library/react 16                  |
+| React           | >=17 (peer dep of `@tiny-event-bus/react`) |
+| Node            | >=20                                       |
+| Module system   | Dual ESM/CJS                               |
+| Linting         | ESLint 10 + typescript-eslint              |
+| Formatting      | Prettier                                   |
+| Test coverage   | @vitest/coverage-v8, 90% thresholds        |
+| CI              | GitHub Actions                             |
+| Dep updates     | Dependabot                                 |
+| Secret scanning | gitleaks                                   |
 
 **Bundle size** (ESM JS, gzipped): Core ~613 B, React ~623 B, Core + React ~1.2 KB. Keep updated after code changes.
 
@@ -58,68 +45,41 @@ Framework-agnostic core + thin React hook layer.
 
 ```text
 tiny-event-bus/                    # pnpm workspace root (private)
-├── .github/
-│   ├── dependabot.yml             # Dependabot config — npm + github-actions ecosystems, weekly
-│   └── workflows/
-│       ├── ci.yml                 # GitHub Actions CI — gitleaks, lint, format, typecheck, build, test
-│       └── dependabot-automerge.yml # Auto-approve + squash-merge patch/minor Dependabot PRs
-├── pnpm-workspace.yaml            # workspace: packages/* + examples/*
-├── .npmrc                         # link-workspace-packages=true
-├── .gitleaks.toml                 # Gitleaks config — extends default ruleset, allowlisted paths
-├── .editorconfig                  # 2-space indent, UTF-8, LF, trim trailing whitespace
-├── .prettierrc                    # singleQuote, semi, trailingComma: all
-├── .prettierignore                # dist, coverage, badges, pnpm-lock.yaml
-├── eslint.config.mjs              # ESLint 10 flat config + typescript-eslint + prettier + react-hooks
-├── .gitignore                     # node_modules, dist, coverage, tsbuildinfo, .env*, *.pem, *.key
-├── package.json                   # private, workspace scripts, shared devDeps
-├── hooks/
-│   ├── pre-commit                 # Gitleaks secret scan on staged changes
-│   └── pre-push                   # Aborts push if coverage badge is out of date
-├── scripts/
-│   ├── generate-coverage-badge.mjs # Runner: reads coverage JSON, writes badges/coverage.svg
-│   ├── vitest.config.ts           # Vitest config for script tests
-│   └── lib/
-│       ├── coverage-badge.mjs     # Pure functions: discover, parse, average, badge SVG
-│       └── __tests__/             # Unit tests for coverage badge lib
-├── badges/
-│   └── coverage.svg               # Auto-generated coverage badge (committed via pre-push hook)
+├── .github/                       # CI (ci.yml), Dependabot, auto-merge workflow
+├── hooks/                         # pre-commit (gitleaks), pre-push (coverage badge)
+├── scripts/                       # Coverage badge generation + tests
+├── badges/                        # Auto-generated coverage.svg
 ├── packages/
 │   ├── core/                      # @tiny-event-bus/core — framework-agnostic event bus
 │   │   ├── package.json           # zero deps, dual ESM/CJS exports
-│   │   ├── tsconfig.json          # ES2020, strict, declaration emit
-│   │   ├── tsconfig.cjs.json      # CJS build
-│   │   ├── vitest.config.ts       # env: node, v8 coverage, 90% thresholds
-│   │   ├── README.md              # per-package README for npmjs.com
+│   │   ├── README.md
 │   │   └── src/
 │   │       ├── types.ts           # EventMap, EventHandler, AnyEventHandler, Unsubscribe, IEventBus
 │   │       ├── event-bus.ts       # EventBus class + createEventBus factory
-│   │       ├── index.ts           # Public API
-│   │       └── __tests__/         # event-bus, introspection, on-any tests
+│   │       ├── index.ts
+│   │       └── __tests__/
+│   ├── replay/                    # @tiny-event-bus/replay — event replay plugin
+│   │   ├── package.json           # peerDep: @tiny-event-bus/core, dual ESM/CJS exports
+│   │   ├── README.md
+│   │   └── src/
+│   │       ├── types.ts           # ReplayEntry, ReplayOptions, ReplayBus interface
+│   │       ├── with-replay.ts     # withReplay(bus, options?) decorator factory
+│   │       ├── index.ts
+│   │       └── __tests__/
 │   └── react/                     # @tiny-event-bus/react — React hooks plugin
 │       ├── package.json           # peerDeps: @tiny-event-bus/core + react >=17
-│       ├── tsconfig.json          # ES2020, strict, jsx: react-jsx
-│       ├── tsconfig.cjs.json      # CJS build
-│       ├── vitest.config.ts       # env: jsdom, v8 coverage, 90% thresholds
-│       ├── README.md              # per-package README for npmjs.com
+│       ├── README.md
 │       └── src/
 │           ├── use-event.ts       # useEvent(event, handler, bus) hook
 │           ├── use-any-event.ts   # useAnyEvent(handler, bus) hook
 │           ├── use-event-bus.ts   # useEventBus(bus) → { emit, on, once }
 │           ├── create-bus-context.ts # createBusContext factory (scoped instances)
-│           ├── index.ts           # Public API
-│           └── __tests__/         # use-event, use-any-event, use-event-bus, create-bus-context, integration tests
+│           ├── index.ts
+│           └── __tests__/
 ├── examples/
 │   └── react/                     # Shopping cart demo app (Vite + React 19)
-│       ├── src/events.ts          # Event map + shared bus instance
-│       ├── src/context/           # CartContext (React state)
-│       ├── src/data/              # Shared product data
-│       ├── src/components/        # ProductCatalog, CartSidebar, ToastContainer, AnalyticsLogger, SearchModal, BusInspector
-│       └── README.md              # State vs bus decision guide
-├── docs/
-│   ├── MILESTONES.md              # Living docs, version wise milestone implementation status
-│   ├── ARCHIVE.md                 # Older milestones
-│   └── PLUGIN_ARCHITECTURE.md     # Plugin system design (decorator pattern, composition conventions)
-├── README.md                      # Living docs, updated every milestone
+├── docs/                          # MILESTONES.md, ARCHIVE.md, PLUGIN_ARCHITECTURE.md
+├── README.md
 └── AGENTS.md                      # This file
 ```
 
@@ -127,18 +87,11 @@ tiny-event-bus/                    # pnpm workspace root (private)
 
 - Generic class: `EventBus<TEventMap extends Record<string, any>>`
 - Storage: `Map<keyof TEventMap, Set<Handler>>` for O(1) add/remove, O(n) emit
-- `on()` returns an `Unsubscribe` function
+- `on()` returns an `Unsubscribe` function; `once()` wraps `on()` with auto-unsubscribe
 - `emit()` wraps each handler in try/catch for fault isolation
-- `once()` wraps `on()` with auto-unsubscribe after first call
-- `clear(event?)` removes listeners for one event or all events
 - `Set` prevents duplicate handler refs; emit snapshots the Set (`[...set]`) before iterating for safe mid-emit mutation
-- Unsubscribe closure cleans up empty Sets from the Map (`if (set.size === 0) this.listeners.delete(event)`)
-- `hasListeners(event)` checks `Set.size > 0` for O(1) lookup
-- `listenerCount(event?)` returns per-event or total count across all events
-- `eventNames()` returns `[...this.listeners.keys()]` — hygienic due to empty-Set cleanup
-- `onAny()` subscribes to all events via separate `Set<AnyEventHandler>`, invoked in `emit` after event-specific handlers, same try/catch + snapshot pattern
-- `clear()` clears both event-specific and `onAny` listeners; `clear(event)` only clears event-specific
-- `listenerCount()` includes `onAny` count in total; `listenerCount(event)` does not
+- Unsubscribe closure cleans up empty Sets from the Map
+- `onAny()` subscribes to all events via separate `Set<AnyEventHandler>`, same try/catch + snapshot pattern
 - No state storage, no getState, no replay by design
 
 ## React Plugin
@@ -151,20 +104,15 @@ tiny-event-bus/                    # pnpm workspace root (private)
 ## Package Entrypoints
 
 - `@tiny-event-bus/core` — `npm install @tiny-event-bus/core` — exports `EventBus`, `createEventBus`, types. Zero dependencies.
+- `@tiny-event-bus/replay` — `npm install @tiny-event-bus/replay` — exports `withReplay`, `ReplayBus`, `ReplayEntry`, `ReplayOptions` types. Peer dep: `@tiny-event-bus/core`.
 - `@tiny-event-bus/react` — `npm install @tiny-event-bus/react` — exports `useEvent`, `useEventBus`, `useAnyEvent`, `createBusContext`. Peer deps: `@tiny-event-bus/core` + `react >=17`.
 - Each package has dual ESM/CJS exports via `package.json` exports map.
 
 ## Key Decisions
 
-- **Monorepo**: pnpm workspaces for strict dep isolation, faster installs, industry standard for TS lib monorepos. No Turborepo — overkill for 2-3 packages.
-- **Scoped naming**: `@tiny-event-bus/core` + `@tiny-event-bus/react`. Consistent, scales to future plugins.
-- **Plugin model**: peer dependency — plugins import core types/classes directly. No `bus.use()` registry. React hooks accept `IEventBus<T>` interface (not concrete class) to enable decorator-pattern feature plugins. See [PLUGIN_ARCHITECTURE.md](docs/PLUGIN_ARCHITECTURE.md) for full design.
-- **Plugin composition**: decorator pattern — feature plugins export `withX(bus)` factories that accept `IEventBus<T>` and return enhanced bus. Framework plugins and feature plugins are independent axes, composed at the consumer level.
-- **Build tool**: plain tsc, no bundler. Library is under 1KB; consumer bundler handles tree-shaking and minification.
-- **Test runner**: Vitest 3.x. Fast watch mode for TDD, built-in expectTypeOf, jsdom support.
-- **Subscriber storage**: Map + Set. O(1) subscribe/unsubscribe, Set prevents duplicate handlers.
+- **Plugin model**: decorator pattern — `withX(bus)` factories accept `IEventBus<T>` and return enhanced bus. See [PLUGIN_ARCHITECTURE.md](docs/PLUGIN_ARCHITECTURE.md).
+- **Build tool**: plain tsc, no bundler. Library is under 1KB; consumer bundler handles tree-shaking.
 - **Global singleton**: consumer creates it, not the library. Library exports class + factory only.
-- **React test util**: @testing-library/react. Industry standard, 32M downloads/week.
 - **Handler in hooks**: useRef. Prevents re-subscription every render, avoids stale closures.
 - **Scope**: `createBusContext` factory for scoped React contexts backed by `createEventBus`.
 
