@@ -19,10 +19,7 @@ export function withReplay<T extends EventMap>(
   const buffer: ReplayEntry<T>[] = [];
 
   return {
-    on<K extends keyof T>(
-      event: K,
-      handler: EventHandler<T[K]>,
-    ): Unsubscribe {
+    on<K extends keyof T>(event: K, handler: EventHandler<T[K]>): Unsubscribe {
       if (autoReplay) {
         for (const entry of buffer) {
           if (entry.event === event) {

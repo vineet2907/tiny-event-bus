@@ -94,15 +94,15 @@ import { withReplay } from '@tiny-event-bus/replay';
 // Decorate the bus — React hooks accept IEventBus<T>
 const bus = withReplay(createEventBus<MyEvents>());
 
-// In a component — useEventBus returns core methods
-const { emit, on, clear } = useEventBus(bus);
+// In a component — useEventBus dynamically discovers all methods
+const { emit, on, clear, getHistory, clearHistory } = useEventBus(bus);
+//                        ^^^^^^^^^^  ^^^^^^^^^^^^ — plugin methods included
 
 // Plugin-specific methods accessed directly on the bus instance
 const history = bus.getHistory();
-bus.replay();
 ```
 
-### With Context (future)
+### With Context
 
 ```tsx
 const bus = withReplay(createEventBus<MyEvents>());
@@ -114,20 +114,17 @@ const { Provider, useEventBus } = createBusContext<MyEvents>();
 </Provider>;
 ```
 
-## Future: Generic `useEventBus`
+## Generic `useEventBus`
 
-Currently `useEventBus` returns `{ emit, on, once, clear }` — the core `IEventBus` methods wrapped in stable `useCallback` refs.
-
-When the first feature plugin ships, `useEventBus` will be evolved to generically return stable references for **all** methods on whatever bus type is passed. TypeScript generics ensure full type safety:
+`useEventBus<B>(bus)` returns `BusMethods<B>` — a mapped type that dynamically discovers all function-valued properties on whatever bus type is passed. This means plugin methods (e.g., `getHistory`, `clearHistory` from replay) are automatically available with full type safety:
 
 ```tsx
-// Future API — not yet implemented
 const replayBus = withReplay(createEventBus<MyEvents>());
-const { emit, on, clear, getHistory, replay } = useEventBus(replayBus);
-//                        ^^^^^^^^^^  ^^^^^^ — plugin methods included
+const { emit, on, clear, getHistory, clearHistory } = useEventBus(replayBus);
+//                        ^^^^^^^^^^  ^^^^^^^^^^^^ — plugin methods included
 ```
 
-This avoids needing separate framework wrappers for each feature plugin.
+Internally, `useEventBus` uses `Object.keys(bus)` + `useMemo` to create stable references. The factory pattern (object literals with closure-based privacy) guarantees only public methods appear on the bus — no accidental exposure of private state.
 
 ## Plugin Authoring Conventions
 
@@ -142,20 +139,20 @@ This avoids needing separate framework wrappers for each feature plugin.
 
 ## Implemented
 
-| Package                 | Status       |
-| ----------------------- | ------------ |
-| `@tiny-event-bus/core`  | ✅ Published |
-| `@tiny-event-bus/react` | ✅ Published |
+| Package                  | Status       |
+| ------------------------ | ------------ |
+| `@tiny-event-bus/core`   | ✅ Published |
+| `@tiny-event-bus/react`  | ✅ Published |
+| `@tiny-event-bus/replay` | ✅ Published |
 
 ## Planned (not yet implemented)
 
 The conventions in this document apply to future plugins:
 
-| Package                          | Description                                                   |
-| -------------------------------- | ------------------------------------------------------------- |
-| `@tiny-event-bus/replay`         | Event replay — buffer past events, replay to late subscribers |
-| `@tiny-event-bus/devtools`       | Debug/inspection tooling                                      |
-| `@tiny-event-bus/react-devtools` | React UI panel for devtools (bridge package)                  |
+| Package                          | Description                                  |
+| -------------------------------- | -------------------------------------------- |
+| `@tiny-event-bus/devtools`       | Debug/inspection tooling                     |
+| `@tiny-event-bus/react-devtools` | React UI panel for devtools (bridge package) |
 
 ## Peer Dependency Map
 
@@ -163,7 +160,7 @@ The conventions in this document apply to future plugins:
 | ------------------------------------- | ----------------------------- |
 | `@tiny-event-bus/core`                | — (no deps)                   |
 | `@tiny-event-bus/react`               | `core` + `react >=17`         |
-| `@tiny-event-bus/replay` (\*)         | `core`                        |
+| `@tiny-event-bus/replay`              | `core`                        |
 | `@tiny-event-bus/devtools` (\*)       | `core`                        |
 | `@tiny-event-bus/react-devtools` (\*) | `core` + `react` + `devtools` |
 

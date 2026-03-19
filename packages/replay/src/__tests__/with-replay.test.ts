@@ -187,8 +187,16 @@ describe('withReplay', () => {
 
     const history = replay.getHistory();
     expect(history).toHaveLength(2);
-    expect(history[0]).toEqual({ event: 'foo', data: 'a', timestamp: expect.any(Number) });
-    expect(history[1]).toEqual({ event: 'bar', data: 42, timestamp: expect.any(Number) });
+    expect(history[0]).toEqual({
+      event: 'foo',
+      data: 'a',
+      timestamp: expect.any(Number),
+    });
+    expect(history[1]).toEqual({
+      event: 'bar',
+      data: 42,
+      timestamp: expect.any(Number),
+    });
 
     // Mutating returned array does not affect buffer
     history.length = 0;

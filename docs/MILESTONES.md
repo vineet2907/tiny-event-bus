@@ -15,8 +15,8 @@ See [ARCHIVE.md](ARCHIVE.md) for older milestones.
 41. ✅ Auto-replay on subscribe — TDD: `on()` replays buffered events for event type, `once()` replays first buffered event (satisfied, no-op unsub), `onAny()` replays all in chronological order, `autoReplay: false` disables replay, fault isolation during replay, update AGENTS.md
 42. ✅ History API — TDD: `getHistory(event?)` returns filtered/all entries as defensive copy, `clearHistory(event?)` removes entries by event or all, `clear()` does NOT clear history, update replay README + AGENTS.md
 43. ✅ Generic `useEventBus` — refactored `createEventBus` to return object literal typed as `IEventBus<T>` (removed `EventBus` class export), migrated core tests to `createEventBus()`, fixed `BusInspector.tsx` type, refactored `use-event-bus.ts` to dynamically discover all bus methods via `Object.keys` + `BusMethods<B>` mapped type, stable refs via `useMemo`, backward compat verified, update AGENTS.md + READMEs
-44. ⬜ Example app: dual-bus wiring — add ActivityEvents type + `activityBus` with `withReplay`, second `createBusContext`, nest `<ActivityBusProvider>` in `<ShopBusProvider>`, ProductCatalog/CartSidebar/SearchModal emit `activity:log`, update AGENTS.md
-45. ⬜ Example app: NotificationCenter + BusInspector — new NotificationCenter component (bell icon, toggleable panel, replay on mount), move AnalyticsLogger to ActivityBus, enhance BusInspector to show both buses + getHistory(), update PLUGIN_ARCHITECTURE.md + READMEs + AGENTS.md
+44. ✅ Example app: dual-bus wiring — added `ActivityEvents` type + `activityBus` with `withReplay`, second `createBusContext`, nested `<ActivityBusProvider>` in `<ShopBusProvider>`, ProductCatalog/CartSidebar/SearchModal emit `activity:log`, added `@tiny-event-bus/replay` dep to example, update AGENTS.md
+45. ✅ Example app: NotificationCenter + BusInspector — new NotificationCenter component (bell icon, toggleable panel, replays activity history on mount), moved AnalyticsLogger to ActivityBus, enhanced BusInspector to show both buses + `getHistory()` replay history, updated PLUGIN_ARCHITECTURE.md + READMEs + AGENTS.md
 
 ## Future backlog
 

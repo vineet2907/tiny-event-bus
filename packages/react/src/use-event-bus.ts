@@ -1,11 +1,16 @@
 import { useMemo } from 'react';
-import type { IEventBus } from '@tiny-event-bus/core';
+import type { EventMap, IEventBus } from '@tiny-event-bus/core';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyFunction = (...args: any[]) => any;
 
 export type BusMethods<B> = {
-  [K in keyof B as B[K] extends (...args: any[]) => any ? K : never]: B[K];
+  [K in keyof B as B[K] extends AnyFunction ? K : never]: B[K];
 };
 
-export function useEventBus<B extends IEventBus<any>>(bus: B): BusMethods<B> {
+export function useEventBus<B extends IEventBus<EventMap>>(
+  bus: B,
+): BusMethods<B> {
   return useMemo(() => {
     const source = bus as Record<string, unknown>;
     const methods: Record<string, unknown> = {};
@@ -14,7 +19,7 @@ export function useEventBus<B extends IEventBus<any>>(bus: B): BusMethods<B> {
       const fn = source[key];
       if (typeof fn === 'function') {
         methods[key] = (...args: unknown[]) =>
-          (fn as Function).apply(bus, args);
+          (fn as AnyFunction).apply(bus, args);
       }
     }
 

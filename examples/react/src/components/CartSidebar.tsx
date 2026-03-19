@@ -1,9 +1,10 @@
 import { useCart } from '../context/CartContext';
-import { useShopEventBus } from '../events';
+import { useShopEventBus, useActivityEventBus } from '../events';
 
 export default function CartSidebar() {
   const { items, removeItem, total } = useCart();
   const { emit } = useShopEventBus();
+  const { emit: emitActivity } = useActivityEventBus();
 
   function handleRemove(id: number, name: string) {
     // STATE path — updates cart UI
@@ -14,10 +15,16 @@ export default function CartSidebar() {
       message: `${name} removed from cart`,
       severity: 'info',
     });
+
+    emitActivity('activity:log', {
+      action: 'remove-from-cart',
+      detail: name,
+    });
   }
 
   function handleCheckout() {
     emit('toast:show', { message: 'Order placed! 🎉', severity: 'success' });
+    emitActivity('activity:log', { action: 'checkout' });
   }
 
   return (

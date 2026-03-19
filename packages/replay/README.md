@@ -39,7 +39,7 @@ bus.clearHistory(); // clear buffer
 
 | Method                      | Description                                         |
 | --------------------------- | --------------------------------------------------- |
-| `withReplay(bus, options?)`  | Wrap an `IEventBus<T>` with replay capabilities    |
+| `withReplay(bus, options?)` | Wrap an `IEventBus<T>` with replay capabilities     |
 | `bus.getHistory(event?)`    | Get buffered events (all or filtered by event type) |
 | `bus.clearHistory(event?)`  | Clear buffer (all or specific event type)           |
 

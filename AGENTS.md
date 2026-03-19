@@ -13,7 +13,7 @@ Framework-agnostic core + thin React hook layer.
 
 **Layer separation** (pnpm workspace monorepo):
 
-- **Core** (`@tiny-event-bus/core`): `EventBus` class, pure TypeScript, zero deps, framework-agnostic
+- **Core** (`@tiny-event-bus/core`): `createEventBus` factory, pure TypeScript, zero deps, framework-agnostic
 - **Replay plugin** (`@tiny-event-bus/replay`): `withReplay(bus)` decorator, buffers events for late subscribers, peer dep on `@tiny-event-bus/core`
 - **React plugin** (`@tiny-event-bus/react`): `useEvent` + `useEventBus` hooks, thin wrappers over core, peer dep on `@tiny-event-bus/core` + `react >=17`
 - Plugins import core types/classes via peer dependency — decorator pattern, no `bus.use()` registry
@@ -55,7 +55,7 @@ tiny-event-bus/                    # pnpm workspace root (private)
 │   │   ├── README.md
 │   │   └── src/
 │   │       ├── types.ts           # EventMap, EventHandler, AnyEventHandler, Unsubscribe, IEventBus
-│   │       ├── event-bus.ts       # EventBus class + createEventBus factory
+│   │       ├── event-bus.ts       # createEventBus factory (object literal, closure-based privacy)
 │   │       ├── index.ts
 │   │       └── __tests__/
 │   ├── replay/                    # @tiny-event-bus/replay — event replay plugin
@@ -72,12 +72,12 @@ tiny-event-bus/                    # pnpm workspace root (private)
 │       └── src/
 │           ├── use-event.ts       # useEvent(event, handler, bus) hook
 │           ├── use-any-event.ts   # useAnyEvent(handler, bus) hook
-│           ├── use-event-bus.ts   # useEventBus(bus) → { emit, on, once }
+│           ├── use-event-bus.ts   # useEventBus<B>(bus) → BusMethods<B> (dynamic discovery)
 │           ├── create-bus-context.ts # createBusContext factory (scoped instances)
 │           ├── index.ts
 │           └── __tests__/
 ├── examples/
-│   └── react/                     # Shopping cart demo app (Vite + React 19)
+│   └── react/                     # Shopping cart demo (Vite + React 19, dual-bus: ShopBus + ActivityBus w/ replay)
 ├── docs/                          # MILESTONES.md, ARCHIVE.md, PLUGIN_ARCHITECTURE.md
 ├── README.md
 └── AGENTS.md                      # This file
@@ -85,8 +85,8 @@ tiny-event-bus/                    # pnpm workspace root (private)
 
 ## Core Design
 
-- Generic class: `EventBus<TEventMap extends Record<string, any>>`
-- Storage: `Map<keyof TEventMap, Set<Handler>>` for O(1) add/remove, O(n) emit
+- Factory: `createEventBus<T>()` returns `IEventBus<T>` object literal with closure-based privacy
+- Storage: `Map<keyof T, Set<Handler>>` for O(1) add/remove, O(n) emit
 - `on()` returns an `Unsubscribe` function; `once()` wraps `on()` with auto-unsubscribe
 - `emit()` wraps each handler in try/catch for fault isolation
 - `Set` prevents duplicate handler refs; emit snapshots the Set (`[...set]`) before iterating for safe mid-emit mutation
@@ -98,21 +98,21 @@ tiny-event-bus/                    # pnpm workspace root (private)
 
 - `useEvent(event, handler, bus)` — subscribes in useEffect, cleans up on unmount, uses useRef for handler to prevent stale closures and re-subscription on re-render. Imports types from `@tiny-event-bus/core`. Accepts `IEventBus<T>` (interface, not concrete class) to support decorator-pattern plugins.
 - `useAnyEvent(handler, bus)` — subscribes to all events via `bus.onAny`, same useRef + useEffect pattern, auto-cleanup on unmount. Accepts `IEventBus<T>`.
-- `useEventBus(bus)` — returns `{ emit, on, once, clear }` with stable references. Accepts `IEventBus<T>`.
+- `useEventBus<B>(bus)` — returns `BusMethods<B>` with stable references via `useMemo`. Dynamically discovers all function-valued properties on `bus` (supports decorated buses like `ReplayBus`). Accepts any `IEventBus<T>` or extension thereof.
 - `createBusContext<T>()` — factory returns `{ Provider, useEvent, useEventBus, useAnyEvent }`, internally wraps `React.createContext<IEventBus<T> | null>`. Provider accepts `bus` prop typed as `IEventBus<T>`. Returned hooks are pre-typed to `T` and read bus from context (no bus arg). Throws if used outside Provider.
 
 ## Package Entrypoints
 
-- `@tiny-event-bus/core` — `npm install @tiny-event-bus/core` — exports `EventBus`, `createEventBus`, types. Zero dependencies.
+- `@tiny-event-bus/core` — `npm install @tiny-event-bus/core` — exports `createEventBus`, types (`IEventBus`, `EventMap`, etc.). Zero dependencies.
 - `@tiny-event-bus/replay` — `npm install @tiny-event-bus/replay` — exports `withReplay`, `ReplayBus`, `ReplayEntry`, `ReplayOptions` types. Peer dep: `@tiny-event-bus/core`.
-- `@tiny-event-bus/react` — `npm install @tiny-event-bus/react` — exports `useEvent`, `useEventBus`, `useAnyEvent`, `createBusContext`. Peer deps: `@tiny-event-bus/core` + `react >=17`.
+- `@tiny-event-bus/react` — `npm install @tiny-event-bus/react` — exports `useEvent`, `useEventBus`, `useAnyEvent`, `createBusContext`, `BusMethods` type. Peer deps: `@tiny-event-bus/core` + `react >=17`.
 - Each package has dual ESM/CJS exports via `package.json` exports map.
 
 ## Key Decisions
 
 - **Plugin model**: decorator pattern — `withX(bus)` factories accept `IEventBus<T>` and return enhanced bus. See [PLUGIN_ARCHITECTURE.md](docs/PLUGIN_ARCHITECTURE.md).
 - **Build tool**: plain tsc, no bundler. Library is under 1KB; consumer bundler handles tree-shaking.
-- **Global singleton**: consumer creates it, not the library. Library exports class + factory only.
+- **Global singleton**: consumer creates it, not the library. Library exports factory only.
 - **Handler in hooks**: useRef. Prevents re-subscription every render, avoids stale closures.
 - **Scope**: `createBusContext` factory for scoped React contexts backed by `createEventBus`.
 

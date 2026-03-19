@@ -44,6 +44,9 @@ importers:
       '@tiny-event-bus/react':
         specifier: workspace:*
         version: link:../../packages/react
+      '@tiny-event-bus/replay':
+        specifier: workspace:*
+        version: link:../../packages/replay
       react:
         specifier: ^19.0.0
         version: 19.2.4
