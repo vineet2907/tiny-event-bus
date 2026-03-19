@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { EventBus } from '../event-bus.js';
+import { createEventBus } from '../event-bus.js';
 
 type TestEvents = {
   ping: void;
@@ -8,7 +8,7 @@ type TestEvents = {
 
 describe('onAny', () => {
   it('handler receives event name and data on emit', () => {
-    const bus = new EventBus<TestEvents>();
+    const bus = createEventBus<TestEvents>();
     const handler = vi.fn();
 
     bus.onAny(handler);
@@ -18,7 +18,7 @@ describe('onAny', () => {
   });
 
   it('fires for all event types', () => {
-    const bus = new EventBus<TestEvents>();
+    const bus = createEventBus<TestEvents>();
     const handler = vi.fn();
 
     bus.onAny(handler);
@@ -31,7 +31,7 @@ describe('onAny', () => {
   });
 
   it('unsubscribe removes the handler', () => {
-    const bus = new EventBus<TestEvents>();
+    const bus = createEventBus<TestEvents>();
     const handler = vi.fn();
 
     const unsub = bus.onAny(handler);
@@ -42,7 +42,7 @@ describe('onAny', () => {
   });
 
   it('calling unsubscribe twice does not throw', () => {
-    const bus = new EventBus<TestEvents>();
+    const bus = createEventBus<TestEvents>();
     const unsub = bus.onAny(vi.fn());
 
     unsub();
@@ -50,7 +50,7 @@ describe('onAny', () => {
   });
 
   it('multiple onAny handlers all fire', () => {
-    const bus = new EventBus<TestEvents>();
+    const bus = createEventBus<TestEvents>();
     const handler1 = vi.fn();
     const handler2 = vi.fn();
 
@@ -63,7 +63,7 @@ describe('onAny', () => {
   });
 
   it('onAny handler error does not break other handlers', () => {
-    const bus = new EventBus<TestEvents>();
+    const bus = createEventBus<TestEvents>();
     const badHandler = vi.fn(() => {
       throw new Error('boom');
     });
@@ -78,7 +78,7 @@ describe('onAny', () => {
   });
 
   it('onAny handler error does not break event-specific handlers', () => {
-    const bus = new EventBus<TestEvents>();
+    const bus = createEventBus<TestEvents>();
     const anyHandler = vi.fn(() => {
       throw new Error('boom');
     });
@@ -93,7 +93,7 @@ describe('onAny', () => {
   });
 
   it('clear() removes onAny handlers', () => {
-    const bus = new EventBus<TestEvents>();
+    const bus = createEventBus<TestEvents>();
     const handler = vi.fn();
 
     bus.onAny(handler);
@@ -104,7 +104,7 @@ describe('onAny', () => {
   });
 
   it('clear(event) does NOT remove onAny handlers', () => {
-    const bus = new EventBus<TestEvents>();
+    const bus = createEventBus<TestEvents>();
     const handler = vi.fn();
 
     bus.onAny(handler);
@@ -115,7 +115,7 @@ describe('onAny', () => {
   });
 
   it('listenerCount() includes onAny handlers in total', () => {
-    const bus = new EventBus<TestEvents>();
+    const bus = createEventBus<TestEvents>();
     bus.on('ping', vi.fn());
     bus.onAny(vi.fn());
 
@@ -123,7 +123,7 @@ describe('onAny', () => {
   });
 
   it('listenerCount(event) does NOT include onAny handlers', () => {
-    const bus = new EventBus<TestEvents>();
+    const bus = createEventBus<TestEvents>();
     bus.on('ping', vi.fn());
     bus.onAny(vi.fn());
 
@@ -131,7 +131,7 @@ describe('onAny', () => {
   });
 
   it('onAny handler added mid-emit does not fire in current cycle', () => {
-    const bus = new EventBus<TestEvents>();
+    const bus = createEventBus<TestEvents>();
     const lateHandler = vi.fn();
 
     bus.onAny(() => {
@@ -146,7 +146,7 @@ describe('onAny', () => {
   });
 
   it('onAny fires after event-specific handlers', () => {
-    const bus = new EventBus<TestEvents>();
+    const bus = createEventBus<TestEvents>();
     const order: string[] = [];
 
     bus.on('message', () => order.push('specific'));
