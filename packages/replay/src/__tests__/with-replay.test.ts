@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { createEventBus } from '@tiny-event-bus/core';
 import { withReplay } from '../with-replay.js';
 
@@ -129,5 +129,172 @@ describe('withReplay', () => {
 
     // Events still buffered for getHistory
     expect(replay.getHistory()).toHaveLength(2);
+  });
+
+  it('getHistory(event) returns only entries for that event type', () => {
+    const bus = createEventBus<TestEvents>();
+    const replay = withReplay(bus);
+
+    replay.emit('foo', 'a');
+    replay.emit('bar', 42);
+    replay.emit('foo', 'b');
+
+    const fooHistory = replay.getHistory('foo');
+    expect(fooHistory).toEqual([
+      { event: 'foo', data: 'a', timestamp: expect.any(Number) },
+      { event: 'foo', data: 'b', timestamp: expect.any(Number) },
+    ]);
+
+    const barHistory = replay.getHistory('bar');
+    expect(barHistory).toEqual([
+      { event: 'bar', data: 42, timestamp: expect.any(Number) },
+    ]);
+  });
+
+  it('clearHistory(event) removes only entries for that event type', () => {
+    const bus = createEventBus<TestEvents>();
+    const replay = withReplay(bus);
+
+    replay.emit('foo', 'a');
+    replay.emit('bar', 42);
+    replay.emit('foo', 'b');
+
+    replay.clearHistory('foo');
+
+    expect(replay.getHistory()).toEqual([
+      { event: 'bar', data: 42, timestamp: expect.any(Number) },
+    ]);
+  });
+
+  it('clear() removes listeners but does NOT clear history', () => {
+    const bus = createEventBus<TestEvents>();
+    const replay = withReplay(bus);
+
+    replay.emit('foo', 'a');
+    replay.emit('bar', 42);
+
+    replay.clear();
+
+    expect(replay.getHistory()).toHaveLength(2);
+  });
+
+  it('getHistory() returns all entries as a defensive copy', () => {
+    const bus = createEventBus<TestEvents>();
+    const replay = withReplay(bus);
+
+    replay.emit('foo', 'a');
+    replay.emit('bar', 42);
+
+    const history = replay.getHistory();
+    expect(history).toHaveLength(2);
+    expect(history[0]).toEqual({ event: 'foo', data: 'a', timestamp: expect.any(Number) });
+    expect(history[1]).toEqual({ event: 'bar', data: 42, timestamp: expect.any(Number) });
+
+    // Mutating returned array does not affect buffer
+    history.length = 0;
+    expect(replay.getHistory()).toHaveLength(2);
+  });
+
+  it('clearHistory() removes all entries', () => {
+    const bus = createEventBus<TestEvents>();
+    const replay = withReplay(bus);
+
+    replay.emit('foo', 'a');
+    replay.emit('bar', 42);
+    expect(replay.getHistory()).toHaveLength(2);
+
+    replay.clearHistory();
+    expect(replay.getHistory()).toHaveLength(0);
+  });
+
+  it('getHistory(event) returns empty array when event not in buffer', () => {
+    const bus = createEventBus<TestEvents>();
+    const replay = withReplay(bus);
+
+    replay.emit('foo', 'a');
+
+    expect(replay.getHistory('bar')).toEqual([]);
+  });
+
+  it('clearHistory(event) is a no-op when event not in buffer', () => {
+    const bus = createEventBus<TestEvents>();
+    const replay = withReplay(bus);
+
+    replay.emit('foo', 'a');
+
+    replay.clearHistory('bar');
+    expect(replay.getHistory()).toHaveLength(1);
+  });
+
+  it('hasListeners() delegates to inner bus', () => {
+    const bus = createEventBus<TestEvents>();
+    const spy = vi.spyOn(bus, 'hasListeners');
+    const replay = withReplay(bus);
+
+    replay.hasListeners('foo');
+    expect(spy).toHaveBeenCalledWith('foo');
+  });
+
+  it('listenerCount() delegates to inner bus', () => {
+    const bus = createEventBus<TestEvents>();
+    const spy = vi.spyOn(bus, 'listenerCount');
+    const replay = withReplay(bus);
+
+    replay.listenerCount('foo');
+    expect(spy).toHaveBeenCalledWith('foo');
+  });
+
+  it('eventNames() delegates to inner bus', () => {
+    const bus = createEventBus<TestEvents>();
+    const spy = vi.spyOn(bus, 'eventNames');
+    const replay = withReplay(bus);
+
+    replay.eventNames();
+    expect(spy).toHaveBeenCalled();
+  });
+
+  it('on() replay swallows handler errors', () => {
+    const bus = createEventBus<TestEvents>();
+    const replay = withReplay(bus);
+
+    replay.emit('foo', 'a');
+    replay.emit('foo', 'b');
+
+    const received: string[] = [];
+    replay.on('foo', (data) => {
+      if (data === 'a') throw new Error('boom');
+      received.push(data);
+    });
+
+    expect(received).toEqual(['b']);
+  });
+
+  it('once() replay swallows handler error', () => {
+    const bus = createEventBus<TestEvents>();
+    const replay = withReplay(bus);
+
+    replay.emit('foo', 'a');
+
+    expect(() => {
+      replay.once('foo', () => {
+        throw new Error('boom');
+      });
+    }).not.toThrow();
+  });
+
+  it('onAny() replay swallows handler errors', () => {
+    const bus = createEventBus<TestEvents>();
+    const replay = withReplay(bus);
+
+    replay.emit('foo', 'a');
+    replay.emit('bar', 42);
+
+    const received: Array<{ event: string; data: unknown }> = [];
+    replay.onAny((event, data) => {
+      if (event === 'foo') throw new Error('boom');
+      received.push({ event: String(event), data });
+    });
+
+    expect(received).toEqual([{ event: 'bar', data: 42 }]);
   });
 });

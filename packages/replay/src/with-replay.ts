@@ -83,10 +83,19 @@ export function withReplay<T extends EventMap>(
       }
       return bus.onAny(handler);
     },
-    getHistory(): ReplayEntry<T>[] {
+    getHistory<K extends keyof T>(event?: K): ReplayEntry<T>[] {
+      if (event !== undefined) {
+        return buffer.filter((entry) => entry.event === event);
+      }
       return [...buffer];
     },
-    clearHistory(): void {
+    clearHistory<K extends keyof T>(event?: K): void {
+      if (event !== undefined) {
+        for (let i = buffer.length - 1; i >= 0; i--) {
+          if (buffer[i].event === event) buffer.splice(i, 1);
+        }
+        return;
+      }
       buffer.length = 0;
     },
   };
