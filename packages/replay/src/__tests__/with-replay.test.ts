@@ -53,4 +53,81 @@ describe('withReplay', () => {
     expect(history).toHaveLength(1);
     expect(history[0].data).toBe('hello');
   });
+
+  it('on() replays buffered events for that event type to new subscriber', () => {
+    const bus = createEventBus<TestEvents>();
+    const replay = withReplay(bus);
+
+    replay.emit('foo', 'a');
+    replay.emit('bar', 42);
+    replay.emit('foo', 'b');
+
+    const received: string[] = [];
+    replay.on('foo', (data) => received.push(data));
+
+    expect(received).toEqual(['a', 'b']);
+  });
+
+  it('once() replays first buffered event and is satisfied', () => {
+    const bus = createEventBus<TestEvents>();
+    const replay = withReplay(bus);
+
+    replay.emit('foo', 'a');
+    replay.emit('foo', 'b');
+
+    const received: string[] = [];
+    replay.once('foo', (data) => received.push(data));
+
+    // Should only get the first buffered event
+    expect(received).toEqual(['a']);
+
+    // Future emits should not reach this handler (it's satisfied)
+    replay.emit('foo', 'c');
+    expect(received).toEqual(['a']);
+  });
+
+  it('onAny() replays all buffered events in chronological order', () => {
+    const bus = createEventBus<TestEvents>();
+    const replay = withReplay(bus);
+
+    replay.emit('foo', 'a');
+    replay.emit('bar', 42);
+    replay.emit('foo', 'b');
+
+    const received: Array<{ event: string; data: unknown }> = [];
+    replay.onAny((event, data) =>
+      received.push({ event: String(event), data }),
+    );
+
+    expect(received).toEqual([
+      { event: 'foo', data: 'a' },
+      { event: 'bar', data: 42 },
+      { event: 'foo', data: 'b' },
+    ]);
+  });
+
+  it('autoReplay: false disables replay on on(), once(), and onAny()', () => {
+    const bus = createEventBus<TestEvents>();
+    const replay = withReplay(bus, { autoReplay: false });
+
+    replay.emit('foo', 'a');
+    replay.emit('bar', 42);
+
+    const onReceived: string[] = [];
+    replay.on('foo', (data) => onReceived.push(data));
+    expect(onReceived).toEqual([]);
+
+    const onceReceived: string[] = [];
+    replay.once('foo', (data) => onceReceived.push(data));
+    expect(onceReceived).toEqual([]);
+
+    const anyReceived: Array<{ event: string; data: unknown }> = [];
+    replay.onAny((event, data) =>
+      anyReceived.push({ event: String(event), data }),
+    );
+    expect(anyReceived).toEqual([]);
+
+    // Events still buffered for getHistory
+    expect(replay.getHistory()).toHaveLength(2);
+  });
 });
