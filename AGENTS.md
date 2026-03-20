@@ -39,7 +39,7 @@ Framework-agnostic core + thin React hook layer.
 | Dep updates     | Dependabot                                 |
 | Secret scanning | gitleaks                                   |
 
-**Bundle size** (ESM JS, gzipped): Core ~613 B, React ~623 B, Core + React ~1.2 KB. Keep updated after code changes.
+**Bundle size** (ESM JS, gzipped): Core ~633 B, React ~915 B, Replay ~764 B. Keep updated after code changes.
 
 ## Project Structure
 

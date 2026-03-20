@@ -1,6 +1,6 @@
 # @tiny-event-bus/react
 
-React hooks plugin for `@tiny-event-bus/core`. ~623 B gzipped.
+React hooks plugin for `@tiny-event-bus/core`. ~915 B gzipped.
 
 Requires React >=17 and `@tiny-event-bus/core` as peer dependencies.
 
