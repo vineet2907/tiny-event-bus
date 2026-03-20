@@ -1,6 +1,6 @@
 # @tiny-event-bus/core
 
-Zero-dependency, TypeScript-first event bus. Framework-agnostic core. ~613 B gzipped.
+Zero-dependency, TypeScript-first event bus. Framework-agnostic core. ~633 B gzipped.
 
 ## Install
 

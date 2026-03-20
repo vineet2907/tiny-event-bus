@@ -21,6 +21,8 @@ See [ARCHIVE.md](ARCHIVE.md) for older milestones.
 ## Future backlog
 
 - evaluate react-hooks/refs rule for render-time ref assignment pattern in useEvent/useAnyEvent
+- Trigger CI on main after Dependabot auto-merge (GITHUB_TOKEN merges don't trigger workflows)
+- Versioning and release planning — publish workflow, changelog generation, coordinated package versioning across core/react/replay
 - Debug/DevTools mode
 - `onceAny` — fire catch-all handler only once then auto-unsubscribe
 

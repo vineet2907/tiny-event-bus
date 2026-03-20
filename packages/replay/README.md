@@ -1,6 +1,6 @@
 # @tiny-event-bus/replay
 
-Event replay plugin for tiny-event-bus — buffer past events, auto-replay to late subscribers.
+Event replay plugin for tiny-event-bus — buffer past events, auto-replay to late subscribers. ~764 B gzipped.
 
 ## Install
 
