@@ -2,12 +2,6 @@
 
 See [ARCHIVE.md](ARCHIVE.md) for older milestones.
 
-## v0.8.0 Milestones
-
-36. ✅ Dependabot configuration — `.github/dependabot.yml` with `npm` ecosystem entries for all workspace directories + `github-actions` ecosystem, weekly Wednesday schedule, grouping for reduced PR noise, `.github/workflows/dependabot-automerge.yml` for auto-approving + squash-merging patch/minor updates after CI passes, update AGENTS.md
-37. ✅ Gitleaks secret scanning — `.gitleaks.toml` config, `hooks/pre-commit` shell script runs gitleaks on staged changes, `gitleaks-action` CI step in `.github/workflows/ci.yml`, document local setup (`brew install gitleaks`) in README.md, update AGENTS.md
-38. ✅ Harden .gitignore + final docs — added `.env*`, `*.pem`, `*.key`, `.secrets` patterns to `.gitignore`, final AGENTS.md review (Tech Stack table, Project Structure, CI description), update MILESTONES.md
-
 ## v0.9.0 Milestones
 
 39. ✅ Replay package scaffolding — `packages/replay/` with `package.json` (`@tiny-event-bus/replay`), peer dep on `@tiny-event-bus/core`, dual ESM/CJS exports, `tsconfig.json`, `tsconfig.cjs.json`, `vitest.config.ts` (90% thresholds), `src/types.ts` (ReplayEntry, ReplayOptions, ReplayBus interface), `src/with-replay.ts` (shell decorator delegating to inner bus), `src/index.ts`, `README.md`, skeleton tests, update AGENTS.md + README.md
@@ -18,11 +12,20 @@ See [ARCHIVE.md](ARCHIVE.md) for older milestones.
 44. ✅ Example app: dual-bus wiring — added `ActivityEvents` type + `activityBus` with `withReplay`, second `createBusContext`, nested `<ActivityBusProvider>` in `<ShopBusProvider>`, ProductCatalog/CartSidebar/SearchModal emit `activity:log`, added `@tiny-event-bus/replay` dep to example, update AGENTS.md
 45. ✅ Example app: NotificationCenter + BusInspector — new NotificationCenter component (bell icon, toggleable panel, replays activity history on mount), moved AnalyticsLogger to ActivityBus, enhanced BusInspector to show both buses + `getHistory()` replay history, updated PLUGIN_ARCHITECTURE.md + READMEs + AGENTS.md
 
+## v0.10.0 Milestones
+
+46. ✅ Package metadata & npm readiness — add `publishConfig`, `repository`, `homepage`, `bugs` to all three package.json files, set all versions to `0.10.0`, verify with `npm pack --dry-run`
+47. ⬜ Changesets setup — install `@changesets/cli`, `changeset init`, configure `.changeset/config.json` (public access, main branch, independent versioning, auto-patch internal deps), add root scripts (`changeset`, `version`, `release`)
+48. ⬜ End-to-end dry-run validation — single-package + multi-package dry-runs: create changesets → `pnpm version` → verify bumps + changelogs + peer deps → `npm publish --dry-run` → revert
+49. ⬜ Documentation & AGENTS.md updates — AGENTS.md (Tech Stack, Project Structure, Key Decisions), README (Releasing section with release branch workflow + git tags), MILESTONES.md, package READMEs (npm version badges)
+50. ⬜ First publish to npm — manual step when ready: `npm login` + 2FA, release branch PR, `pnpm release`, `git push --tags`
+
 ## Future backlog
 
 - evaluate react-hooks/refs rule for render-time ref assignment pattern in useEvent/useAnyEvent
 - Trigger CI on main after Dependabot auto-merge (GITHUB_TOKEN merges don't trigger workflows)
-- Versioning and release planning — publish workflow, changelog generation, coordinated package versioning across core/react/replay
+- GitHub Action for automated CI publish (changesets/action)
+- Migration to Conventional Commits + semantic-release
 - Debug/DevTools mode
 - `onceAny` — fire catch-all handler only once then auto-unsubscribe
 
