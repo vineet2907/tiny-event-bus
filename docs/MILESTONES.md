@@ -15,8 +15,8 @@ See [ARCHIVE.md](ARCHIVE.md) for older milestones.
 ## v0.10.0 Milestones
 
 46. ✅ Package metadata & npm readiness — add `publishConfig`, `repository`, `homepage`, `bugs` to all three package.json files, set all versions to `0.10.0`, verify with `npm pack --dry-run`
-47. ⬜ Changesets setup — install `@changesets/cli`, `changeset init`, configure `.changeset/config.json` (public access, main branch, independent versioning, auto-patch internal deps), add root scripts (`changeset`, `version`, `release`)
-48. ⬜ End-to-end dry-run validation — single-package + multi-package dry-runs: create changesets → `pnpm version` → verify bumps + changelogs + peer deps → `npm publish --dry-run` → revert
+47. ✅ Changesets setup — install `@changesets/cli`, `changeset init`, configure `.changeset/config.json` (public access, main branch, independent versioning, auto-patch internal deps), add root scripts (`changeset`, `version`, `release`)
+48. ✅ End-to-end dry-run validation — single-package + multi-package dry-runs: create changesets → `pnpm version` → verify bumps + changelogs + peer deps → `npm publish --dry-run` → revert
 49. ⬜ Documentation & AGENTS.md updates — AGENTS.md (Tech Stack, Project Structure, Key Decisions), README (Releasing section with release branch workflow + git tags), MILESTONES.md, package READMEs (npm version badges)
 50. ⬜ First publish to npm — manual step when ready: `npm login` + 2FA, release branch PR, `pnpm release`, `git push --tags`
 
