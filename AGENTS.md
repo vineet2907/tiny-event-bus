@@ -38,6 +38,8 @@ Framework-agnostic core + thin React hook layer.
 | CI              | GitHub Actions                             |
 | Dep updates     | Dependabot                                 |
 | Secret scanning | gitleaks                                   |
+| Versioning      | Changesets (@changesets/cli)               |
+| Publishing      | npm (manual, `changeset publish`)          |
 
 **Bundle size** (ESM JS, gzipped): Core ~633 B, React ~915 B, Replay ~764 B. Keep updated after code changes.
 
@@ -45,6 +47,7 @@ Framework-agnostic core + thin React hook layer.
 
 ```text
 tiny-event-bus/                    # pnpm workspace root (private)
+├── .changeset/                    # Changesets config + pending changeset files
 ├── .github/                       # CI (ci.yml), Dependabot, auto-merge workflow
 ├── hooks/                         # pre-commit (gitleaks), pre-push (coverage badge)
 ├── scripts/                       # Coverage badge generation + tests
@@ -115,6 +118,7 @@ tiny-event-bus/                    # pnpm workspace root (private)
 - **Global singleton**: consumer creates it, not the library. Library exports factory only.
 - **Handler in hooks**: useRef. Prevents re-subscription every render, avoids stale closures.
 - **Scope**: `createBusContext` factory for scoped React contexts backed by `createEventBus`.
+- **Release workflow**: manual via Changesets — `pnpm changeset` (record intent), `pnpm changeset:version` (bump + changelog), `pnpm release` (build + publish + git tags). Release branch PR strategy for protected main. Independent versioning per package.
 
 ## Milestones
 

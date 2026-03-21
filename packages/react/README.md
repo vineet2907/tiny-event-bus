@@ -1,5 +1,7 @@
 # @tiny-event-bus/react
 
+[![npm version](https://img.shields.io/npm/v/@tiny-event-bus/react)](https://www.npmjs.com/package/@tiny-event-bus/react)
+
 React hooks plugin for `@tiny-event-bus/core`. ~915 B gzipped.
 
 Requires React >=17 and `@tiny-event-bus/core` as peer dependencies.
