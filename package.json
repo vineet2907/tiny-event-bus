@@ -16,12 +16,16 @@
     "typecheck": "pnpm -r run typecheck",
     "badge": "node scripts/generate-coverage-badge.mjs",
     "prepare": "git config core.hooksPath hooks",
-    "example": "pnpm --filter tiny-event-bus-react-demo run dev"
+    "example": "pnpm --filter tiny-event-bus-react-demo run dev",
+    "changeset": "changeset",
+    "changeset:version": "changeset version",
+    "release": "pnpm build && changeset publish"
   },
   "engines": {
     "node": ">=20"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.30.0",
     "@eslint/js": "^10.0.1",
     "@vitest/coverage-v8": "^3.2.4",
     "eslint": "^10.0.3",

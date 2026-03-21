@@ -1,8 +1,20 @@
 {
   "name": "@tiny-event-bus/core",
-  "version": "0.4.0",
-  "description": "Zero-dependency, TypeScript-first event bus. Framework-agnostic core.",
+  "version": "0.10.0",
+  "description": "Zero-dependency, TypeScript-first event bus",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vineet2907/tiny-event-bus.git",
+    "directory": "packages/core"
+  },
+  "homepage": "https://github.com/vineet2907/tiny-event-bus/tree/main/packages/core#readme",
+  "bugs": {
+    "url": "https://github.com/vineet2907/tiny-event-bus/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",

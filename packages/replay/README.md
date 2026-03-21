@@ -1,5 +1,7 @@
 # @tiny-event-bus/replay
 
+[![npm version](https://img.shields.io/npm/v/@tiny-event-bus/replay)](https://www.npmjs.com/package/@tiny-event-bus/replay)
+
 Event replay plugin for tiny-event-bus — buffer past events, auto-replay to late subscribers. ~764 B gzipped.
 
 ## Install

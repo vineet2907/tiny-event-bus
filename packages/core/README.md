@@ -1,5 +1,7 @@
 # @tiny-event-bus/core
 
+[![npm version](https://img.shields.io/npm/v/@tiny-event-bus/core)](https://www.npmjs.com/package/@tiny-event-bus/core)
+
 Zero-dependency, TypeScript-first event bus. Framework-agnostic core. ~633 B gzipped.
 
 ## Install
