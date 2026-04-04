@@ -142,6 +142,25 @@ describe('emit interception', () => {
 
 });
 
+describe('re-entrant emit', () => {
+  it('middleware that calls emit() gets its own independent chain', () => {
+    const inner = createEventBus<TestEvents>();
+    const fooReceived: string[] = [];
+    const barReceived: number[] = [];
+    const bus = withMiddleware(inner, [
+      (payload, next) => {
+        if (payload.event === 'foo') bus.emit('bar', 42);
+        next(payload);
+      },
+    ]);
+    bus.on('foo', (data) => fooReceived.push(data));
+    bus.on('bar', (data) => barReceived.push(data));
+    bus.emit('foo', 'hello');
+    expect(fooReceived).toEqual(['hello']);
+    expect(barReceived).toEqual([42]);
+  });
+});
+
 describe('error propagation', () => {
   it('throwing middleware propagates the error to the caller', () => {
     const inner = createEventBus<TestEvents>();

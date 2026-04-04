@@ -57,17 +57,3 @@ The payload is a discriminated union — narrowing `event` automatically narrows
 - Passing a different event name to `next` throws a runtime error — event names are immutable for the lifetime of the chain.
 - Errors thrown inside middleware propagate to the caller of `emit()` — unlike handler errors, middleware errors are not swallowed.
 
-### `bus.use(middleware)` → `Unsubscribe`
-
-<!-- TODO: implement use() in milestone 54 -->
-
-Add middleware at runtime. Returns an unsubscribe function to remove it.
-
-```ts
-const stop = bus.use((payload, next) => {
-  console.log(payload.event, payload.data);
-  next(payload);
-});
-
-stop(); // remove
-```

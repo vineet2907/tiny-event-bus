@@ -144,7 +144,7 @@ Internally, `useEventBus` uses `Object.keys(bus)` + `useMemo` to create stable r
 | `@tiny-event-bus/core`        | ✅ Published |
 | `@tiny-event-bus/react`       | ✅ Published |
 | `@tiny-event-bus/replay`      | ✅ Published |
-| `@tiny-event-bus/middleware`  | 🚧 In progress |
+| `@tiny-event-bus/middleware`  | ✅ Complete |
 
 ## Planned (not yet implemented)
 

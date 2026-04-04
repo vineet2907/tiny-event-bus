@@ -11,6 +11,7 @@ export type Middleware<T extends EventMap> = (
 
 export function withMiddleware<T extends EventMap>(bus: IEventBus<T>, middlewares: Middleware<T>[] = []) {
   function runChain<K extends EventKey<T>>(event: K, data: T[K]): void {
+    const snapshot = [...middlewares];
     let index = 0;
     const next = (payload: MiddlewarePayload<T>) => {
       if (payload.event !== event) {
@@ -18,7 +19,7 @@ export function withMiddleware<T extends EventMap>(bus: IEventBus<T>, middleware
           `[middleware] Cannot change event name. Expected "${event}", got "${payload.event}".`,
         );
       }
-      const mw = middlewares[index++];
+      const mw = snapshot[index++];
       if (mw) {
         mw(payload, next);
       } else {
@@ -53,6 +54,5 @@ export function withMiddleware<T extends EventMap>(bus: IEventBus<T>, middleware
     onAny(handler: AnyEventHandler<T>): Unsubscribe {
       return bus.onAny(handler);
     },
-    // TODO: add use(middleware) for runtime middleware addition (milestone 54)
   };
 }

@@ -74,8 +74,7 @@ tiny-event-bus/                    # pnpm workspace root (private)
 │   │   ├── package.json           # peerDep: @tiny-event-bus/core, dual ESM/CJS exports
 │   │   ├── README.md
 │   │   └── src/
-│   │       ├── types.ts           # Middleware<T>, MiddlewareNext<T>, MiddlewareBus<T>
-│   │       ├── with-middleware.ts # withMiddleware(bus, middlewares[]) decorator factory
+│   │       ├── with-middleware.ts # withMiddleware(bus, middlewares[]) decorator factory, Middleware<T>, MiddlewarePayload<T>
 │   │       ├── index.ts
 │   │       └── __tests__/
 │   └── react/                     # @tiny-event-bus/react — React hooks plugin
@@ -117,7 +116,7 @@ tiny-event-bus/                    # pnpm workspace root (private)
 
 - `@tiny-event-bus/core` — `npm install @tiny-event-bus/core` — exports `createEventBus`, types (`IEventBus`, `EventMap`, etc.). Zero dependencies.
 - `@tiny-event-bus/replay` — `npm install @tiny-event-bus/replay` — exports `withReplay`, `ReplayBus`, `ReplayEntry`, `ReplayOptions` types. Peer dep: `@tiny-event-bus/core`.
-- `@tiny-event-bus/middleware` — `npm install @tiny-event-bus/middleware` — exports `withMiddleware`, `Middleware`, `MiddlewareNext`, `MiddlewareBus` types. Peer dep: `@tiny-event-bus/core`.
+- `@tiny-event-bus/middleware` — `npm install @tiny-event-bus/middleware` — exports `withMiddleware`, `Middleware`, `MiddlewarePayload` types. Peer dep: `@tiny-event-bus/core`.
 - `@tiny-event-bus/react` — `npm install @tiny-event-bus/react` — exports `useEvent`, `useEventBus`, `useAnyEvent`, `createBusContext`, `BusMethods` type. Peer deps: `@tiny-event-bus/core` + `react >=17`.
 - Each package has dual ESM/CJS exports via `package.json` exports map.
 
