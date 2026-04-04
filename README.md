@@ -69,7 +69,7 @@ This is a pnpm workspace monorepo.
 ```bash
 pnpm install              # install all deps (workspace linking)
 pnpm -r run build         # build all packages (ESM + CJS)
-pnpm -r run test          # run all tests (70 tests across core + react)
+pnpm -r run test          # run all tests (109 tests across core + replay + middleware + react)
 pnpm run test:coverage    # run tests with v8 coverage (90% thresholds)
 pnpm -r run typecheck     # type-check all packages
 pnpm run lint             # ESLint
@@ -81,6 +81,8 @@ Per-package commands:
 
 ```bash
 pnpm --filter @tiny-event-bus/core run test
+pnpm --filter @tiny-event-bus/replay run test
+pnpm --filter @tiny-event-bus/middleware run test
 pnpm --filter @tiny-event-bus/react run test
 ```
 

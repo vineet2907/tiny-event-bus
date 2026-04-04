@@ -31,6 +31,7 @@ Same user action, two paths, zero coupling between them.
 │                                                                  │
 │  <ShopBusProvider bus={shopBus}>                                 │
 │    <ActivityBusProvider bus={activityBus}>                       │
+│      shopBus    = withMiddleware(createEventBus<ShopEvents>())   │
 │      activityBus = withReplay(createEventBus<ActivityEvents>())  │
 │                                                                  │
 │  ┌──── STATE PATH ────┐     ┌──── BUS PATH ────────────────┐    │
@@ -85,9 +86,9 @@ pnpm run dev
 
 ## Things to Try
 
-1. **Add items to cart** — watch the cart sidebar update (state) while toasts appear and analytics log (bus)
-2. **Remove items** — same dual-path pattern
+1. **Add items to cart** — watch the cart sidebar update (state) while toasts appear with emoji prefix (✅) and analytics log (bus)
+2. **Remove items** — toast shows ℹ️ prefix via middleware
 3. **Press ⌘K / Ctrl+K** — search modal opens via bus event, add products from search
 4. **Click the 🔔 bell icon** — notification panel shows activity history replayed from `getHistory()`
 5. **Click "Refresh" on Bus Inspector** — see live listener counts for both ShopBus and ActivityBus, plus replay history
-6. **Checkout** — toast fires, activity logged, cart state unchanged (deliberate: no clear on checkout in this demo)
+6. **Checkout** — toast fires with ✅ prefix, activity logged, cart state unchanged (deliberate: no clear on checkout in this demo)

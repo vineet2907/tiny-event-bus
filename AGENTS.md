@@ -42,7 +42,7 @@ Framework-agnostic core + thin React hook layer.
 | Versioning      | Changesets (@changesets/cli)               |
 | Publishing      | npm (manual, `changeset publish`)          |
 
-**Bundle size** (ESM JS, gzipped): Core ~633 B, React ~915 B, Replay ~764 B, Middleware ~TBD. Keep updated after code changes.
+**Bundle size** (ESM JS, gzipped): Core ~633 B, React ~915 B, Replay ~764 B, Middleware ~469 B. Keep updated after code changes.
 
 ## Project Structure
 
@@ -88,7 +88,7 @@ tiny-event-bus/                    # pnpm workspace root (private)
 │           ├── index.ts
 │           └── __tests__/
 ├── examples/
-│   └── react/                     # Shopping cart demo (Vite + React 19, dual-bus: ShopBus + ActivityBus w/ replay)
+│   └── react/                     # Shopping cart demo (Vite + React 19, dual-bus: ShopBus w/ middleware + ActivityBus w/ replay)
 ├── docs/                          # MILESTONES.md, ARCHIVE.md, PLUGIN_ARCHITECTURE.md
 ├── README.md
 └── AGENTS.md                      # This file
@@ -123,7 +123,7 @@ tiny-event-bus/                    # pnpm workspace root (private)
 ## Key Decisions
 
 - **Plugin model**: decorator pattern — `withX(bus)` factories accept `IEventBus<T>` and return enhanced bus. See [PLUGIN_ARCHITECTURE.md](docs/PLUGIN_ARCHITECTURE.md).
-- **Build tool**: plain tsc, no bundler. Library is under 1KB; consumer bundler handles tree-shaking.
+- **Build tool**: plain tsc, no bundler. Each package is under 1KB; consumer bundler handles tree-shaking.
 - **Global singleton**: consumer creates it, not the library. Library exports factory only.
 - **Handler in hooks**: useRef. Prevents re-subscription every render, avoids stale closures.
 - **Scope**: `createBusContext` factory for scoped React contexts backed by `createEventBus`.

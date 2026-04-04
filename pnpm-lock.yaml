@@ -44,6 +44,9 @@ importers:
       '@tiny-event-bus/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@tiny-event-bus/middleware':
+        specifier: workspace:*
+        version: link:../../packages/middleware
       '@tiny-event-bus/react':
         specifier: workspace:*
         version: link:../../packages/react
