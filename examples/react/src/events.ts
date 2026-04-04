@@ -13,7 +13,9 @@ export type ActivityEvents = {
   'activity:log': { action: string; detail?: string };
 };
 
-export const shopBus = withMiddleware(createEventBus<ShopEvents>(), [toastFormatter]);
+export const shopBus = withMiddleware(createEventBus<ShopEvents>(), [
+  toastFormatter,
+]);
 export const activityBus = withReplay(createEventBus<ActivityEvents>());
 
 export const {

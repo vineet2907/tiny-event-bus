@@ -45,7 +45,7 @@ Wraps an `IEventBus<T>` and returns an enhanced bus. All `emit()` calls pass thr
 
 ```ts
 type Middleware<T> = (
-  payload: MiddlewarePayload<T>,  // discriminated union — narrowing event narrows data
+  payload: MiddlewarePayload<T>, // discriminated union — narrowing event narrows data
   next: (payload: MiddlewarePayload<T>) => void,
 ) => void;
 ```
@@ -56,4 +56,3 @@ The payload is a discriminated union — narrowing `event` automatically narrows
 - To intentionally block an event, return without calling `next`.
 - Passing a different event name to `next` throws a runtime error — event names are immutable for the lifetime of the chain.
 - Errors thrown inside middleware propagate to the caller of `emit()` — unlike handler errors, middleware errors are not swallowed.
-

@@ -81,7 +81,12 @@ describe('emit interception', () => {
     const inner = createEventBus<TestEvents>();
     let callCount = 0;
     let received: { event: string; data: unknown } | undefined;
-    const bus = withMiddleware(inner, [({ event, data }) => { callCount++; received = { event, data }; }]);
+    const bus = withMiddleware(inner, [
+      ({ event, data }) => {
+        callCount++;
+        received = { event, data };
+      },
+    ]);
     bus.emit('foo', 'hello');
     expect(callCount).toBe(1);
     expect(received).toEqual({ event: 'foo', data: 'hello' });
@@ -89,7 +94,11 @@ describe('emit interception', () => {
 
   it('not calling next() blocks the event from reaching handlers', () => {
     const inner = createEventBus<TestEvents>();
-    const bus = withMiddleware(inner, [() => { /* does not call next */ }]);
+    const bus = withMiddleware(inner, [
+      () => {
+        /* does not call next */
+      },
+    ]);
     const received: string[] = [];
     bus.on('foo', (data) => received.push(data));
     bus.emit('foo', 'hello');
@@ -98,10 +107,13 @@ describe('emit interception', () => {
 
   it('middleware can mutate data before passing to next()', () => {
     const inner = createEventBus<TestEvents>();
-    const bus = withMiddleware(inner, [({ event, data }, next) => {
-      if (event === 'foo') next({ event, data: data + '!' }); // data is string here ✅
-      else next({ event, data });
-    }]);
+    const bus = withMiddleware(inner, [
+      ({ event, data }, next) => {
+        if (event === 'foo')
+          next({ event, data: data + '!' }); // data is string here ✅
+        else next({ event, data });
+      },
+    ]);
     const received: string[] = [];
     bus.on('foo', (data) => received.push(data));
     bus.emit('foo', 'hello');
@@ -110,7 +122,9 @@ describe('emit interception', () => {
 
   it('changing event name in next() throws an error', () => {
     const inner = createEventBus<TestEvents>();
-    const bus = withMiddleware(inner, [(_payload, next) => next({ event: 'bar', data: 42 })]);
+    const bus = withMiddleware(inner, [
+      (_payload, next) => next({ event: 'bar', data: 42 }),
+    ]);
     expect(() => bus.emit('foo', 'hello')).toThrow(
       '[middleware] Cannot change event name. Expected "foo", got "bar".',
     );
@@ -119,10 +133,12 @@ describe('emit interception', () => {
   it('middleware is called for each emit independently', () => {
     const inner = createEventBus<TestEvents>();
     const received: string[] = [];
-    const bus = withMiddleware(inner, [(payload, next) => {
-      if (payload.event === 'foo') received.push(payload.data);
-      next(payload);
-    }]);
+    const bus = withMiddleware(inner, [
+      (payload, next) => {
+        if (payload.event === 'foo') received.push(payload.data);
+        next(payload);
+      },
+    ]);
     bus.emit('foo', 'first');
     bus.emit('foo', 'second');
     expect(received).toEqual(['first', 'second']);
@@ -132,14 +148,22 @@ describe('emit interception', () => {
     const inner = createEventBus<TestEvents>();
     const order: number[] = [];
     const bus = withMiddleware(inner, [
-      (payload, next) => { order.push(1); next(payload); },
-      (payload, next) => { order.push(2); next(payload); },
-      (payload, next) => { order.push(3); next(payload); },
+      (payload, next) => {
+        order.push(1);
+        next(payload);
+      },
+      (payload, next) => {
+        order.push(2);
+        next(payload);
+      },
+      (payload, next) => {
+        order.push(3);
+        next(payload);
+      },
     ]);
     bus.emit('foo', 'hello');
     expect(order).toEqual([1, 2, 3]);
   });
-
 });
 
 describe('re-entrant emit', () => {
@@ -164,7 +188,11 @@ describe('re-entrant emit', () => {
 describe('error propagation', () => {
   it('throwing middleware propagates the error to the caller', () => {
     const inner = createEventBus<TestEvents>();
-    const bus = withMiddleware(inner, [() => { throw new Error('boom'); }]);
+    const bus = withMiddleware(inner, [
+      () => {
+        throw new Error('boom');
+      },
+    ]);
     expect(() => bus.emit('foo', 'hello')).toThrow('boom');
   });
 
@@ -172,8 +200,13 @@ describe('error propagation', () => {
     const inner = createEventBus<TestEvents>();
     const reached: string[] = [];
     const bus = withMiddleware(inner, [
-      () => { throw new Error('boom'); },
-      (payload, next) => { reached.push('mw2'); next(payload); },
+      () => {
+        throw new Error('boom');
+      },
+      (payload, next) => {
+        reached.push('mw2');
+        next(payload);
+      },
     ]);
     bus.on('foo', () => reached.push('handler'));
     expect(() => bus.emit('foo', 'hello')).toThrow('boom');
@@ -184,9 +217,17 @@ describe('error propagation', () => {
     const inner = createEventBus<TestEvents>();
     const reached: string[] = [];
     const bus = withMiddleware(inner, [
-      (payload, next) => { reached.push('mw1'); next(payload); },
-      () => { reached.push('mw2'); /* does not call next */ },
-      (payload, next) => { reached.push('mw3'); next(payload); },
+      (payload, next) => {
+        reached.push('mw1');
+        next(payload);
+      },
+      () => {
+        reached.push('mw2'); /* does not call next */
+      },
+      (payload, next) => {
+        reached.push('mw3');
+        next(payload);
+      },
     ]);
     bus.on('foo', () => reached.push('handler'));
     bus.emit('foo', 'hello');

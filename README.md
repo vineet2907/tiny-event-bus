@@ -7,8 +7,8 @@ Zero-dependency, TypeScript-first event bus.
 
 ## Packages
 
-| Package                                               | Description                                                                                                   |
-| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Package                                                       | Description                                                                                                   |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
 | [`@tiny-event-bus/core`](packages/core/README.md)             | Framework-agnostic event bus — type-safe, zero deps, fault-isolated, `on`/`once`/`emit`/`onAny`/introspection |
 | [`@tiny-event-bus/replay`](packages/replay/README.md)         | Event replay plugin — buffer past events, auto-replay to late subscribers, history inspection                 |
 | [`@tiny-event-bus/middleware`](packages/middleware/README.md) | Middleware plugin — intercept `emit()` calls, transform payloads, filter events, compose pipelines            |

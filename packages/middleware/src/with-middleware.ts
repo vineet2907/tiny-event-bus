@@ -1,4 +1,11 @@
-import type { EventMap, EventKey, EventHandler, AnyEventHandler, Unsubscribe, IEventBus } from '@tiny-event-bus/core';
+import type {
+  EventMap,
+  EventKey,
+  EventHandler,
+  AnyEventHandler,
+  Unsubscribe,
+  IEventBus,
+} from '@tiny-event-bus/core';
 
 export type MiddlewarePayload<T extends EventMap> = {
   [K in EventKey<T>]: { event: K; data: T[K] };
@@ -9,7 +16,10 @@ export type Middleware<T extends EventMap> = (
   next: (payload: MiddlewarePayload<T>) => void,
 ) => void;
 
-export function withMiddleware<T extends EventMap>(bus: IEventBus<T>, middlewares: Middleware<T>[] = []) {
+export function withMiddleware<T extends EventMap>(
+  bus: IEventBus<T>,
+  middlewares: Middleware<T>[] = [],
+) {
   function runChain<K extends EventKey<T>>(event: K, data: T[K]): void {
     const snapshot = [...middlewares];
     let index = 0;
@@ -30,10 +40,16 @@ export function withMiddleware<T extends EventMap>(bus: IEventBus<T>, middleware
   }
 
   return {
-    on<K extends EventKey<T>>(event: K, handler: EventHandler<T[K]>): Unsubscribe {
+    on<K extends EventKey<T>>(
+      event: K,
+      handler: EventHandler<T[K]>,
+    ): Unsubscribe {
       return bus.on(event, handler);
     },
-    once<K extends EventKey<T>>(event: K, handler: EventHandler<T[K]>): Unsubscribe {
+    once<K extends EventKey<T>>(
+      event: K,
+      handler: EventHandler<T[K]>,
+    ): Unsubscribe {
       return bus.once(event, handler);
     },
     emit<K extends EventKey<T>>(event: K, data: T[K]): void {
