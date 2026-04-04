@@ -15,7 +15,7 @@ Framework-agnostic core + thin React hook layer.
 
 - **Core** (`@tiny-event-bus/core`): `createEventBus` factory, pure TypeScript, zero deps, framework-agnostic
 - **Replay plugin** (`@tiny-event-bus/replay`): `withReplay(bus)` decorator, buffers events for late subscribers, peer dep on `@tiny-event-bus/core`
-- **Middleware plugin** (`@tiny-event-bus/middleware`): `withMiddleware(bus, middlewares[])` decorator, intercepts `emit()` calls through a composable chain, peer dep on `@tiny-event-bus/core`
+- **Middleware plugin** (`@tiny-event-bus/middleware`): `withMiddleware(bus, middlewares[])` decorator, intercepts `emit()` calls through a composable chain, peer dep on `@tiny-event-bus/core`. Middleware errors propagate to the caller (unlike handler errors in core which are swallowed). Event names are immutable within a chain — changing them throws at runtime.
 - **React plugin** (`@tiny-event-bus/react`): `useEvent` + `useEventBus` hooks, thin wrappers over core, peer dep on `@tiny-event-bus/core` + `react >=17`
 - Plugins import core types/classes via peer dependency — decorator pattern, no `bus.use()` registry
 

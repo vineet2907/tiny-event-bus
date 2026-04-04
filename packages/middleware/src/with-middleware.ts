@@ -20,7 +20,6 @@ export function withMiddleware<T extends EventMap>(bus: IEventBus<T>, middleware
       }
       const mw = middlewares[index++];
       if (mw) {
-        // TODO: wrap in try/catch for fault isolation (milestone 53)
         mw(payload, next);
       } else {
         bus.emit(payload.event as K, payload.data as T[K]);

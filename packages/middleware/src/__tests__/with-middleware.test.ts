@@ -141,3 +141,36 @@ describe('emit interception', () => {
   });
 
 });
+
+describe('error propagation', () => {
+  it('throwing middleware propagates the error to the caller', () => {
+    const inner = createEventBus<TestEvents>();
+    const bus = withMiddleware(inner, [() => { throw new Error('boom'); }]);
+    expect(() => bus.emit('foo', 'hello')).toThrow('boom');
+  });
+
+  it('throwing middleware stops the chain — subsequent middlewares and handlers do not run', () => {
+    const inner = createEventBus<TestEvents>();
+    const reached: string[] = [];
+    const bus = withMiddleware(inner, [
+      () => { throw new Error('boom'); },
+      (payload, next) => { reached.push('mw2'); next(payload); },
+    ]);
+    bus.on('foo', () => reached.push('handler'));
+    expect(() => bus.emit('foo', 'hello')).toThrow('boom');
+    expect(reached).toEqual([]);
+  });
+
+  it('blocking mid-chain stops subsequent middlewares and handlers', () => {
+    const inner = createEventBus<TestEvents>();
+    const reached: string[] = [];
+    const bus = withMiddleware(inner, [
+      (payload, next) => { reached.push('mw1'); next(payload); },
+      () => { reached.push('mw2'); /* does not call next */ },
+      (payload, next) => { reached.push('mw3'); next(payload); },
+    ]);
+    bus.on('foo', () => reached.push('handler'));
+    bus.emit('foo', 'hello');
+    expect(reached).toEqual(['mw1', 'mw2']);
+  });
+});

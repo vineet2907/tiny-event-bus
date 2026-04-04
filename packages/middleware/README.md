@@ -39,7 +39,7 @@ bus.emit('toast:show', { message: 'Saved!', severity: 'success' });
 
 ### `withMiddleware(bus, middlewares?)`
 
-Wraps an `IEventBus<T>` and returns a `MiddlewareBus<T>`. All `emit()` calls pass through the middleware chain before reaching handlers. All other methods delegate to the inner bus unchanged.
+Wraps an `IEventBus<T>` and returns an enhanced bus. All `emit()` calls pass through the middleware chain before reaching handlers. All other methods delegate to the inner bus unchanged.
 
 ### Middleware function
 
@@ -55,7 +55,7 @@ The payload is a discriminated union — narrowing `event` automatically narrows
 - **Always call `next({ event, data })`** to continue the chain. If you don't, the pipeline short-circuits — no further middleware runs and the event is never emitted to handlers.
 - To intentionally block an event, return without calling `next`.
 - Passing a different event name to `next` throws a runtime error — event names are immutable for the lifetime of the chain.
-- Errors thrown inside middleware are swallowed; the chain stops at that point.
+- Errors thrown inside middleware propagate to the caller of `emit()` — unlike handler errors, middleware errors are not swallowed.
 
 ### `bus.use(middleware)` → `Unsubscribe`
 
