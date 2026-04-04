@@ -52,6 +52,53 @@ The original `emit`, `on`, `once`, etc. are all preserved with full typing.
 
 **`createBusContext<T>()`** — Returns a React context `{ Provider, useEvent, useEventBus, useAnyEvent }` pre-typed to `T`. No bus argument needed in hooks — they read from context.
 
+## Layer 5 — Middleware Plugin
+
+`withMiddleware(bus, middlewares[])` wraps an `IEventBus<T>` and intercepts every `emit()` call through a chain of middleware functions.
+
+**The core type challenge:** middleware receives both `event` and `data`, but a naive two-parameter signature loses their correlation:
+
+```ts
+// ❌ event and data are independent — narrowing one tells TypeScript nothing about the other
+type Middleware<T> = (event: EventKey<T>, data: T[EventKey<T>], next: ...) => void;
+
+const mw: Middleware<ShopEvents> = (event, data, next) => {
+  if (event === 'toast:show') {
+    data.severity; // ❌ type error — data is still the full union
+  }
+};
+```
+
+**The fix — `MiddlewarePayload<T>` as a discriminated union:**
+
+```ts
+type MiddlewarePayload<T extends EventMap> = {
+  [K in EventKey<T>]: { event: K; data: T[K] };
+}[EventKey<T>];
+
+type Middleware<T extends EventMap> = (
+  payload: MiddlewarePayload<T>,
+  next: (payload: MiddlewarePayload<T>) => void,
+) => void;
+```
+
+This mapped type produces a union of correlated `{ event, data }` shapes. Because `event` is a literal type in each member, it acts as a discriminant — narrowing `event` narrows `data` for free:
+
+```ts
+const mw: Middleware<ShopEvents> = (payload, next) => {
+  if (payload.event === 'toast:show') {
+    const { event, data } = payload; // narrowed — data is ShopEvents['toast:show']
+    next({ event, data: { ...data, message: `✅ ${data.message}` } }); // ✅
+  } else {
+    next(payload); // ✅ pass payload directly — avoids reconstruction type errors
+  }
+};
+```
+
+When middleware does not transform data, always pass `payload` directly to `next` rather than reconstructing `{ event, data }`. Destructuring loses the correlation between `event` and `data`, which causes type errors when rebuilding the object across event maps with multiple events.
+
+**Event immutability** is enforced at runtime — passing a different event name to `next` throws immediately with a clear error message. TypeScript's type system cannot enforce this constraint without losing narrowing, so the runtime check is the guard.
+
 ## Why `useEventBus` Uses `B extends IEventBus<any>`
 
 You might expect `useEventBus<B extends IEventBus<EventMap>>`, but `IEventBus<T>` is **invariant** in `T` — the type parameter `T` appears in both input positions (like `emit(event, data: T[K])`) and output positions (like handler callbacks). This means `IEventBus<ShopEvents>` is **not** assignable to `IEventBus<EventMap>`, even though `ShopEvents` extends `EventMap`.

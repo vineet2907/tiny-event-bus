@@ -18,12 +18,13 @@ type AppEvents = {
   'toast:show': { message: string; severity: 'info' | 'success' | 'error' };
 };
 
-const toastFormatter: Middleware<AppEvents> = (event, data, next) => {
-  if (event === 'toast:show') {
+const toastFormatter: Middleware<AppEvents> = (payload, next) => {
+  if (payload.event === 'toast:show') {
+    const { event, data } = payload;
     const icon = { success: '✅', info: 'ℹ️', error: '❌' }[data.severity];
-    next(event, { ...data, message: `${icon} ${data.message}` });
+    next({ event, data: { ...data, message: `${icon} ${data.message}` } });
   } else {
-    next(event, data);
+    next(payload);
   }
 };
 
@@ -44,24 +45,28 @@ Wraps an `IEventBus<T>` and returns a `MiddlewareBus<T>`. All `emit()` calls pas
 
 ```ts
 type Middleware<T> = (
-  event: EventKey<T>,
-  data: T[EventKey<T>],
-  next: MiddlewareNext<T>,
+  payload: MiddlewarePayload<T>,  // discriminated union — narrowing event narrows data
+  next: (payload: MiddlewarePayload<T>) => void,
 ) => void;
 ```
 
-- Call `next(event, data)` to continue — optionally with modified event name or payload.
-- Return without calling `next` to block the event entirely.
+The payload is a discriminated union — narrowing `event` automatically narrows `data` to the correct type, with no manual casting required.
+
+- **Always call `next({ event, data })`** to continue the chain. If you don't, the pipeline short-circuits — no further middleware runs and the event is never emitted to handlers.
+- To intentionally block an event, return without calling `next`.
+- Passing a different event name to `next` throws a runtime error — event names are immutable for the lifetime of the chain.
 - Errors thrown inside middleware are swallowed; the chain stops at that point.
 
 ### `bus.use(middleware)` → `Unsubscribe`
 
+<!-- TODO: implement use() in milestone 54 -->
+
 Add middleware at runtime. Returns an unsubscribe function to remove it.
 
 ```ts
-const stop = bus.use((event, data, next) => {
-  console.log(event, data);
-  next(event, data);
+const stop = bus.use((payload, next) => {
+  console.log(payload.event, payload.data);
+  next(payload);
 });
 
 stop(); // remove
