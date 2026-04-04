@@ -1,0 +1,62 @@
+{
+  "name": "@tiny-event-bus/middleware",
+  "version": "0.11.0",
+  "description": "Middleware plugin for tiny-event-bus.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vineet2907/tiny-event-bus.git",
+    "directory": "packages/middleware"
+  },
+  "homepage": "https://github.com/vineet2907/tiny-event-bus/tree/main/packages/middleware#readme",
+  "bugs": {
+    "url": "https://github.com/vineet2907/tiny-event-bus/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/esm/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build:esm": "tsc -p tsconfig.json",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build": "rm -rf dist && pnpm run build:esm && pnpm run build:cjs",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "peerDependencies": {
+    "@tiny-event-bus/core": "workspace:^"
+  },
+  "devDependencies": {
+    "@tiny-event-bus/core": "workspace:*"
+  },
+  "keywords": [
+    "event-bus",
+    "middleware",
+    "interceptor",
+    "plugin",
+    "typescript"
+  ]
+}

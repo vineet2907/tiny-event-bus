@@ -75,6 +75,12 @@ importers:
 
   packages/core: {}
 
+  packages/middleware:
+    devDependencies:
+      '@tiny-event-bus/core':
+        specifier: workspace:*
+        version: link:../core
+
   packages/react:
     devDependencies:
       '@testing-library/react':

@@ -15,6 +15,7 @@ Framework-agnostic core + thin React hook layer.
 
 - **Core** (`@tiny-event-bus/core`): `createEventBus` factory, pure TypeScript, zero deps, framework-agnostic
 - **Replay plugin** (`@tiny-event-bus/replay`): `withReplay(bus)` decorator, buffers events for late subscribers, peer dep on `@tiny-event-bus/core`
+- **Middleware plugin** (`@tiny-event-bus/middleware`): `withMiddleware(bus, middlewares[])` decorator, intercepts `emit()` calls through a composable chain, peer dep on `@tiny-event-bus/core`
 - **React plugin** (`@tiny-event-bus/react`): `useEvent` + `useEventBus` hooks, thin wrappers over core, peer dep on `@tiny-event-bus/core` + `react >=17`
 - Plugins import core types/classes via peer dependency — decorator pattern, no `bus.use()` registry
 
@@ -41,7 +42,7 @@ Framework-agnostic core + thin React hook layer.
 | Versioning      | Changesets (@changesets/cli)               |
 | Publishing      | npm (manual, `changeset publish`)          |
 
-**Bundle size** (ESM JS, gzipped): Core ~633 B, React ~915 B, Replay ~764 B. Keep updated after code changes.
+**Bundle size** (ESM JS, gzipped): Core ~633 B, React ~915 B, Replay ~764 B, Middleware ~TBD. Keep updated after code changes.
 
 ## Project Structure
 
@@ -67,6 +68,14 @@ tiny-event-bus/                    # pnpm workspace root (private)
 │   │   └── src/
 │   │       ├── types.ts           # ReplayEntry, ReplayOptions, ReplayBus interface
 │   │       ├── with-replay.ts     # withReplay(bus, options?) decorator factory
+│   │       ├── index.ts
+│   │       └── __tests__/
+│   ├── middleware/                # @tiny-event-bus/middleware — middleware plugin
+│   │   ├── package.json           # peerDep: @tiny-event-bus/core, dual ESM/CJS exports
+│   │   ├── README.md
+│   │   └── src/
+│   │       ├── types.ts           # Middleware<T>, MiddlewareNext<T>, MiddlewareBus<T>
+│   │       ├── with-middleware.ts # withMiddleware(bus, middlewares[]) decorator factory
 │   │       ├── index.ts
 │   │       └── __tests__/
 │   └── react/                     # @tiny-event-bus/react — React hooks plugin
@@ -108,6 +117,7 @@ tiny-event-bus/                    # pnpm workspace root (private)
 
 - `@tiny-event-bus/core` — `npm install @tiny-event-bus/core` — exports `createEventBus`, types (`IEventBus`, `EventMap`, etc.). Zero dependencies.
 - `@tiny-event-bus/replay` — `npm install @tiny-event-bus/replay` — exports `withReplay`, `ReplayBus`, `ReplayEntry`, `ReplayOptions` types. Peer dep: `@tiny-event-bus/core`.
+- `@tiny-event-bus/middleware` — `npm install @tiny-event-bus/middleware` — exports `withMiddleware`, `Middleware`, `MiddlewareNext`, `MiddlewareBus` types. Peer dep: `@tiny-event-bus/core`.
 - `@tiny-event-bus/react` — `npm install @tiny-event-bus/react` — exports `useEvent`, `useEventBus`, `useAnyEvent`, `createBusContext`, `BusMethods` type. Peer deps: `@tiny-event-bus/core` + `react >=17`.
 - Each package has dual ESM/CJS exports via `package.json` exports map.
 
