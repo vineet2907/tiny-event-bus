@@ -42,7 +42,7 @@ Framework-agnostic core + thin React hook layer.
 | Versioning      | Changesets (@changesets/cli)               |
 | Publishing      | npm (manual, `changeset publish`)          |
 
-**Bundle size** (ESM JS, gzipped): Core ~633 B, React ~915 B, Replay ~764 B, Middleware ~469 B. Keep updated after code changes.
+**Bundle size** (ESM JS, gzipped): Core ~633 B, React ~915 B, Replay ~764 B, Middleware ~477 B. Keep updated after code changes.
 
 ## Project Structure
 
@@ -74,7 +74,8 @@ tiny-event-bus/                    # pnpm workspace root (private)
 │   │   ├── package.json           # peerDep: @tiny-event-bus/core, dual ESM/CJS exports
 │   │   ├── README.md
 │   │   └── src/
-│   │       ├── with-middleware.ts # withMiddleware(bus, middlewares[]) decorator factory, Middleware<T>, MiddlewarePayload<T>
+│   │       ├── types.ts           # Middleware<T>, MiddlewarePayload<T>
+│   │       ├── with-middleware.ts # withMiddleware(bus, middlewares[]) decorator factory
 │   │       ├── index.ts
 │   │       └── __tests__/
 │   └── react/                     # @tiny-event-bus/react — React hooks plugin
