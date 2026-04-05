@@ -1,6 +1,6 @@
 {
   "name": "@tiny-event-bus/middleware",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Middleware plugin for tiny-event-bus.",
   "license": "MIT",
   "repository": {
