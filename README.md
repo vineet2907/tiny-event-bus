@@ -7,11 +7,12 @@ Zero-dependency, TypeScript-first event bus.
 
 ## Packages
 
-| Package                                               | Description                                                                                                   |
-| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| [`@tiny-event-bus/core`](packages/core/README.md)     | Framework-agnostic event bus — type-safe, zero deps, fault-isolated, `on`/`once`/`emit`/`onAny`/introspection |
-| [`@tiny-event-bus/replay`](packages/replay/README.md) | Event replay plugin — buffer past events, auto-replay to late subscribers, history inspection                 |
-| [`@tiny-event-bus/react`](packages/react/README.md)   | React hooks plugin — `useEvent`, `useEventBus`, `useAnyEvent`, `createBusContext` with auto-cleanup           |
+| Package                                                       | Description                                                                                                   |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| [`@tiny-event-bus/core`](packages/core/README.md)             | Framework-agnostic event bus — type-safe, zero deps, fault-isolated, `on`/`once`/`emit`/`onAny`/introspection |
+| [`@tiny-event-bus/replay`](packages/replay/README.md)         | Event replay plugin — buffer past events, auto-replay to late subscribers, history inspection                 |
+| [`@tiny-event-bus/middleware`](packages/middleware/README.md) | Middleware plugin — intercept `emit()` calls, transform payloads, filter events, compose pipelines            |
+| [`@tiny-event-bus/react`](packages/react/README.md)           | React hooks plugin — `useEvent`, `useEventBus`, `useAnyEvent`, `createBusContext` with auto-cleanup           |
 
 Install only what you need. See each package README for install, API, and examples.
 
@@ -68,7 +69,7 @@ This is a pnpm workspace monorepo.
 ```bash
 pnpm install              # install all deps (workspace linking)
 pnpm -r run build         # build all packages (ESM + CJS)
-pnpm -r run test          # run all tests (70 tests across core + react)
+pnpm -r run test          # run all tests (109 tests across core + replay + middleware + react)
 pnpm run test:coverage    # run tests with v8 coverage (90% thresholds)
 pnpm -r run typecheck     # type-check all packages
 pnpm run lint             # ESLint
@@ -80,6 +81,8 @@ Per-package commands:
 
 ```bash
 pnpm --filter @tiny-event-bus/core run test
+pnpm --filter @tiny-event-bus/replay run test
+pnpm --filter @tiny-event-bus/middleware run test
 pnpm --filter @tiny-event-bus/react run test
 ```
 

@@ -1,0 +1,66 @@
+import type {
+  EventMap,
+  EventKey,
+  EventHandler,
+  AnyEventHandler,
+  Unsubscribe,
+  IEventBus,
+} from '@tiny-event-bus/core';
+import { Middleware, MiddlewarePayload } from './types';
+
+export function withMiddleware<T extends EventMap>(
+  bus: IEventBus<T>,
+  middlewares: Middleware<T>[] = [],
+) {
+  function runChain<K extends EventKey<T>>(event: K, data: T[K]): void {
+    const snapshot = [...middlewares];
+    let index = 0;
+    const next = (payload: MiddlewarePayload<T>) => {
+      if (payload.event !== event) {
+        throw new Error(
+          `[middleware] Cannot change event name. Expected "${event}", got "${payload.event}".`,
+        );
+      }
+      const mw = snapshot[index++];
+      if (mw) {
+        mw(payload, next);
+      } else {
+        bus.emit(payload.event as K, payload.data as T[K]);
+      }
+    };
+    next({ event, data });
+  }
+
+  return {
+    on<K extends EventKey<T>>(
+      event: K,
+      handler: EventHandler<T[K]>,
+    ): Unsubscribe {
+      return bus.on(event, handler);
+    },
+    once<K extends EventKey<T>>(
+      event: K,
+      handler: EventHandler<T[K]>,
+    ): Unsubscribe {
+      return bus.once(event, handler);
+    },
+    emit<K extends EventKey<T>>(event: K, data: T[K]): void {
+      runChain(event, data);
+    },
+    clear<K extends EventKey<T>>(event?: K): void {
+      bus.clear(event);
+    },
+    hasListeners<K extends EventKey<T>>(event: K): boolean {
+      return bus.hasListeners(event);
+    },
+    listenerCount<K extends EventKey<T>>(event?: K): number {
+      return bus.listenerCount(event);
+    },
+    eventNames(): EventKey<T>[] {
+      return bus.eventNames();
+    },
+    onAny(handler: AnyEventHandler<T>): Unsubscribe {
+      return bus.onAny(handler);
+    },
+  };
+}

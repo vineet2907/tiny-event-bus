@@ -44,6 +44,9 @@ importers:
       '@tiny-event-bus/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@tiny-event-bus/middleware':
+        specifier: workspace:*
+        version: link:../../packages/middleware
       '@tiny-event-bus/react':
         specifier: workspace:*
         version: link:../../packages/react
@@ -74,6 +77,12 @@ importers:
         version: 8.0.3(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(esbuild@0.27.4)
 
   packages/core: {}
+
+  packages/middleware:
+    devDependencies:
+      '@tiny-event-bus/core':
+        specifier: workspace:*
+        version: link:../core
 
   packages/react:
     devDependencies:

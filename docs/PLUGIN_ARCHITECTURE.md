@@ -139,11 +139,12 @@ Internally, `useEventBus` uses `Object.keys(bus)` + `useMemo` to create stable r
 
 ## Implemented
 
-| Package                  | Status       |
-| ------------------------ | ------------ |
-| `@tiny-event-bus/core`   | ✅ Published |
-| `@tiny-event-bus/react`  | ✅ Published |
-| `@tiny-event-bus/replay` | ✅ Published |
+| Package                      | Status       |
+| ---------------------------- | ------------ |
+| `@tiny-event-bus/core`       | ✅ Published |
+| `@tiny-event-bus/react`      | ✅ Published |
+| `@tiny-event-bus/replay`     | ✅ Published |
+| `@tiny-event-bus/middleware` | ✅ Complete  |
 
 ## Planned (not yet implemented)
 
@@ -161,6 +162,7 @@ The conventions in this document apply to future plugins:
 | `@tiny-event-bus/core`                | — (no deps)                   |
 | `@tiny-event-bus/react`               | `core` + `react >=17`         |
 | `@tiny-event-bus/replay`              | `core`                        |
+| `@tiny-event-bus/middleware`          | `core`                        |
 | `@tiny-event-bus/devtools` (\*)       | `core`                        |
 | `@tiny-event-bus/react-devtools` (\*) | `core` + `react` + `devtools` |
 
