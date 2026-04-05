@@ -6,15 +6,7 @@ import type {
   Unsubscribe,
   IEventBus,
 } from '@tiny-event-bus/core';
-
-export type MiddlewarePayload<T extends EventMap> = {
-  [K in EventKey<T>]: { event: K; data: T[K] };
-}[EventKey<T>];
-
-export type Middleware<T extends EventMap> = (
-  payload: MiddlewarePayload<T>,
-  next: (payload: MiddlewarePayload<T>) => void,
-) => void;
+import { Middleware, MiddlewarePayload } from './types';
 
 export function withMiddleware<T extends EventMap>(
   bus: IEventBus<T>,
