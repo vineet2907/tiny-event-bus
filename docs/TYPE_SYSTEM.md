@@ -42,17 +42,7 @@ bus.emit('nonexistent', {}); // ❌ type error
 
 The original `emit`, `on`, `once`, etc. are all preserved with full typing.
 
-## Layer 4 — React Hooks
-
-**`useEvent(event, handler, bus)`** — Subscribes to one event. Generic over `<T, K>`, so the handler is fully typed.
-
-**`useAnyEvent(handler, bus)`** — Subscribes to all events. Handler receives `(event: EventKey<T>, data)`.
-
-**`useEventBus(bus)`** — Returns `BusMethods<B>`: a mapped type that extracts every function from the bus object. Works with plain buses and decorated buses alike.
-
-**`createBusContext<T>()`** — Returns a React context `{ Provider, useEvent, useEventBus, useAnyEvent }` pre-typed to `T`. No bus argument needed in hooks — they read from context.
-
-## Layer 5 — Middleware Plugin
+## Layer 4 — Middleware Plugin
 
 `withMiddleware(bus, middlewares[])` wraps an `IEventBus<T>` and intercepts every `emit()` call through a chain of middleware functions.
 
@@ -99,7 +89,17 @@ When middleware does not transform data, always pass `payload` directly to `next
 
 **Event immutability** is enforced at runtime — passing a different event name to `next` throws immediately with a clear error message. TypeScript's type system cannot enforce this constraint without losing narrowing, so the runtime check is the guard.
 
-## Why `useEventBus` Uses `B extends IEventBus<any>`
+## Layer 5 — React Hooks
+
+**`useEvent(event, handler, bus)`** — Subscribes to one event. Generic over `<T, K>`, so the handler is fully typed.
+
+**`useAnyEvent(handler, bus)`** — Subscribes to all events. Handler receives `(event: EventKey<T>, data)`.
+
+**`useEventBus(bus)`** — Returns `BusMethods<B>`: a mapped type that extracts every function from the bus object. Works with plain buses and decorated buses alike.
+
+**`createBusContext<T>()`** — Returns a React context `{ Provider, useEvent, useEventBus, useAnyEvent }` pre-typed to `T`. No bus argument needed in hooks — they read from context.
+
+### Why `useEventBus` Uses `B extends IEventBus<any>`
 
 You might expect `useEventBus<B extends IEventBus<EventMap>>`, but `IEventBus<T>` is **invariant** in `T` — the type parameter `T` appears in both input positions (like `emit(event, data: T[K])`) and output positions (like handler callbacks). This means `IEventBus<ShopEvents>` is **not** assignable to `IEventBus<EventMap>`, even though `ShopEvents` extends `EventMap`.
 
