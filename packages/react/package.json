@@ -55,8 +55,8 @@
     "@testing-library/react": "^16.3.0",
     "@types/react": "^19.0.0",
     "jsdom": "^29.1.1",
-    "react": "^19.2.5",
-    "react-dom": "^19.2.5"
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6"
   },
   "keywords": [
     "event-bus",
