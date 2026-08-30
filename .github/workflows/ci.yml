@@ -23,7 +23,7 @@ jobs:
           GITLEAKS_ENABLE_UPLOAD_ARTIFACT: false
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v5
+        uses: pnpm/action-setup@v6
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
